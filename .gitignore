@@ -3,3 +3,4 @@
 package-lock.json
 logs/all.log
 logs/error.log
+.env
