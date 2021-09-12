@@ -1,2 +1,1 @@
 # vinomio-api
-test
