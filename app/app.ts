@@ -1,22 +1,33 @@
 import * as dotenv from 'dotenv';
 dotenv.config()
-import bodyParser from "body-parser";
+
 import express from 'express';
+import * as http from 'http';
+import * as bodyparser from 'body-parser';
 
 import Logger from "./lib/logger";
 import morganMiddleware from './config/morganMiddleware'
-
+import helmet from 'helmet';
 
 import { dbConfig } from "./common/models";
-import * as http from 'http';
-
 import { CommonRoutesConfig } from './common/common.routes.config';
 import { ProducersRoutes } from './producers/producers.routes.config';
 
 
 const app: express.Application = express();
 
+// middleware
+
+
+app.use(require("cors")());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 app.use(morganMiddleware)
+
+if (process.env.NODE_ENV === "production") {            
+    app.use(require("helmet")());           
+    app.use(require("compression")());
+}
 
 
 const server: http.Server = http.createServer(app);
@@ -24,13 +35,6 @@ const PORT = 3000;
 const routes: any = [];
 
 routes.push(new ProducersRoutes(app));
-
-if (process.env.NODE_ENV === "production") {            
-    app.use(require("helmet")());           
-    app.use(require("compression")());
-  } else {
-     app.use(require("cors")());
-}
 
 dbConfig
 .authenticate().then(() =>{
@@ -47,3 +51,4 @@ dbConfig
     Logger.error(ex);
 });
 
+export default app;

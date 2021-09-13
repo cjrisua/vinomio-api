@@ -2,6 +2,7 @@ import { BuildOptions, Model } from "sequelize";
 
 export interface ProducerAttributes {
     id: number;
+    slug: string;
     name: string;
     createdAt?: Date;
     updatedAt?: Date;

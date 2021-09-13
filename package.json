@@ -4,8 +4,9 @@
   "description": "Vinomio REST API",
   "main": "dist/app.js",
   "scripts": {
-    "tsc": "tsc",
-    "start": "npm run tsc && node ./dist/app.js",
+    "build": "tsc",
+    "start": "tsc & node .",
+    "dev": "tsc -w & nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -28,10 +29,13 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "helmet": "^4.6.0",
     "morgan": "^1.10.0",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
+    "sequelize-slugify": "^1.6.0",
+    "short-uuid": "^4.2.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {

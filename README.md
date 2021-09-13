@@ -12,7 +12,7 @@ npm i pg pg-hstore
 npm i @types/sequelize -D
 npm install morgan @types/morgan
 npm install dotenv
-
+npm install sequelize-slugify
 
 echo "Step 1- create a docker bridge network database-network "
 docker network create database-network 

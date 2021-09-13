@@ -16,7 +16,7 @@ export class ProducerService implements CRUD{
     }
 
     create(resource: any){
-        return null;
+        return ProducerDao.getInstance().addProducer(resource);
     }
     deleteById(resourceId: any){
         return null;

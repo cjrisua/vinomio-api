@@ -15,8 +15,10 @@ export class ProducersController {
   getProducerById(req: express.Request, res: express.Response) {
     res.status(200).send(`Get to Producer ${req.params.producerId}`);
   }
-  createProducer(req: express.Request, res: express.Response) {
-    res.status(200).send(`Post to Producer ${req.params.producerId}`);
+  async createProducer(req: express.Request, res: express.Response) {
+    const producerService = ProducerService.getInstance();
+    const producerId = await producerService.create(req.body);
+    res.status(201).send({id: producerId});
   }
   patch(req: express.Request, res: express.Response) {
     res.status(200).send(`Patch to Producer ${req.params.producerId}`);

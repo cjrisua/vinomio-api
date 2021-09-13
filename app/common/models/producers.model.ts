@@ -1,12 +1,17 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 import { ProducerStatic } from "../../producers/types/producers.type";
+import SequelizeSlugify from 'sequelize-slugify';
 
 export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
-    return <ProducerStatic>sequelize.define("producers", {
+    const Producers = <ProducerStatic>sequelize.define("producers", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
+        },
+        slug: {
+            type: DataTypes.STRING,
+            unique: true
         },
         name: {
             type: DataTypes.STRING,
@@ -23,4 +28,10 @@ export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
             defaultValue: DataTypes.NOW,
         },
     });
+
+    SequelizeSlugify.slugifyModel(<any>Producers, {
+        source: ['name']
+    });
+
+    return Producers;
 }
