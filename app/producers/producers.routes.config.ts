@@ -1,8 +1,6 @@
-import {
-  CommonRoutesConfig,
-  configureRoutes,
-} from "../common/common.routes.config";
+import {CommonRoutesConfig,configureRoutes,} from "../common/common.routes.config";
 import { ProducersController } from "./controllers/producers.controller";
+import {ProducersMiddleware} from "./middleware/producers.middleware";
 
 import express from "express";
 
@@ -17,23 +15,30 @@ export class ProducersRoutes
 
   configureRoutes() {
     const producerController = new ProducersController();
+    const producersMiddleware = ProducersMiddleware.getInstance();
 
-    this.app.get("/producers", [
+    this.app.get("/api/producers", [
         producerController.listProducers
     ]);
-    this.app.post("/producers", [
+    this.app.post("/api/producers", [
         producerController.createProducer
     ]);
-    this.app.put(`/producers/:producerId`, [
+    this.app.put(`/api/producers/:producerId`, [
+        producersMiddleware.validateProducerExists,
+        producersMiddleware.extractProducerId,
         producerController.put
     ]);
-    this.app.patch(`/producers/:producerId`, [
+    this.app.patch(`/api/producers/:producerId`, [
+        producersMiddleware.validateProducerExists,
+        producersMiddleware.extractProducerId,
         producerController.patch
     ]);
-    this.app.delete(`/producers/:producerId`, [
+    this.app.delete(`/api/producers/:producerId`, [
+      producersMiddleware.validateProducerExists,
       producerController.removeProducer,
     ]);
-    this.app.get(`/producers/:producerId`, [
+    this.app.get(`/api/producers/:producerId`, [
+      producersMiddleware.validateProducerExists,
       producerController.getProducerById,
     ]);
   }

@@ -37,6 +37,7 @@ const routes: any = [];
 routes.push(new ProducersRoutes(app));
 
 dbConfig
+//.sync().then(() =>{
 .authenticate().then(() =>{
     Logger.info("connected to db")
     app.listen(PORT,() =>

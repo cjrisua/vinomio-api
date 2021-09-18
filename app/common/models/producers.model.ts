@@ -3,7 +3,7 @@ import { ProducerStatic } from "../../producers/types/producers.type";
 import SequelizeSlugify from 'sequelize-slugify';
 
 export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
-    const Producers = <ProducerStatic>sequelize.define("producers", {
+    const Producers = <ProducerStatic>sequelize.define("Producers", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,

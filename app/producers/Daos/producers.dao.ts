@@ -23,8 +23,32 @@ export class ProducerDao {
     }
 
     async listProducers(limit: number = 25, page: number = 0){
-        const producers = await Producer.findAll();
+        const producers = await Producer.findAll({ offset: page, limit: limit } )
         return producers;
+    }
+    
+    async removeProducerById(producerId: string){
+        const producers = await Producer.destroy({where: {id: producerId} })
+        return producers;
+    }
+
+    async getProducerBySlug(slug: string){
+        return Producer.findOne({where: {slug: slug}});
+    }
+
+    async getProducerById(producerId: string) {
+        return Producer.findOne({where: {id: producerId} });
+    }
+
+    async patchProducer(producerFields: any) {
+        console.log(JSON.stringify(producerFields))
+        let producer: any = await Producer.findOne({where: {id: producerFields.id}});
+        if(producer){
+            for (let i in producerFields) {
+                producer[i] = producerFields[i];
+            }
+            return await producer.save()
+        }
     }
 }
  

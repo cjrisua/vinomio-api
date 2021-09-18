@@ -12,21 +12,34 @@ export class ProducersController {
     const producers = await producerService.list(100,0);
     res.status(200).send(producers);
   }
-  getProducerById(req: express.Request, res: express.Response) {
-    res.status(200).send(`Get to Producer ${req.params.producerId}`);
+
+  async getProducerById(req: express.Request, res: express.Response) {
+    const producerService = ProducerService.getInstance();
+    const producers = await producerService.readById(req.params.producerId);
+    res.status(200).send(producers);
   }
+
   async createProducer(req: express.Request, res: express.Response) {
     const producerService = ProducerService.getInstance();
     const producerId = await producerService.create(req.body);
     res.status(201).send({id: producerId});
   }
-  patch(req: express.Request, res: express.Response) {
-    res.status(200).send(`Patch to Producer ${req.params.producerId}`);
+  
+  async patch(req: express.Request, res: express.Response) {
+    let producerService = ProducerService.getInstance();
+    const producers = await producerService.patchById(req.body);
+    res.status(204).send(``);
   }
-  put(req: express.Request, res: express.Response) {
-    res.status(200).send(`Put to Producer ${req.params.producerId}`);
+
+  async put(req: express.Request, res: express.Response) {
+    const producerService = ProducerService.getInstance();
+    const producers = await producerService.updateById(req.body);
+    res.status(204).send(``);
   }
-  removeProducer(req: express.Request, res: express.Response) {
-    res.status(200).send(`Delete to Producer ${req.params.producerId}`);
+
+  async removeProducer(req: express.Request, res: express.Response) {
+    const producerService = ProducerService.getInstance();
+    const producers = await producerService.deleteById(req.params.producerId);
+    res.status(204).send(``);
   }
 }
