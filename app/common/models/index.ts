@@ -1,5 +1,6 @@
 import * as sequelize from 'sequelize';
 import { ProducerFactory } from './producers.model';
+import { CountryFactory } from './countries.model';
 import * as config from '../../config/config.json'
 
 const env: string = process.env.NODE_ENV || "Local";
@@ -13,3 +14,4 @@ else{
 }
 export const dbConfig = sequelize_info;
 export const Producer = ProducerFactory(dbConfig)
+export const Country = CountryFactory(dbConfig)

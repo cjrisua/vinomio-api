@@ -1,7 +1,6 @@
 import {CommonRoutesConfig,configureRoutes,} from "../common/common.routes.config";
-import { ProducersController } from "./controllers/producers.controller";
+import {ProducersController } from "./controllers/producers.controller";
 import {ProducersMiddleware} from "./middleware/producers.middleware";
-
 import express from "express";
 
 export class ProducersRoutes

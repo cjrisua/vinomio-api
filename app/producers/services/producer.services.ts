@@ -1,6 +1,6 @@
 import { CRUD } from "../../common/interface/crud.interface";
 import Logger from "../../lib/logger";
-import { ProducerDao } from "../Daos/producers.dao";
+import { ProducerDao } from "../daos/producers.dao";
 
 export class ProducerService implements CRUD{
     private static instance: ProducerService;
@@ -11,10 +11,10 @@ export class ProducerService implements CRUD{
 
     static getInstance(): ProducerService {
         if (!ProducerService.instance) {
-            Logger.info("New DAO Instance");
+            //Logger.info("New DAO Instance");
             ProducerService.instance = new ProducerService();
         }
-        Logger.info("Return DAO Instance");
+        //Logger.info("Return DAO Instance");
         return ProducerService.instance;
     }
 

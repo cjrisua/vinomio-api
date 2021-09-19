@@ -12,6 +12,7 @@ import helmet from 'helmet';
 import { dbConfig } from "./common/models";
 import { CommonRoutesConfig } from './common/common.routes.config';
 import { ProducersRoutes } from './producers/producers.routes.config';
+import { CountriesRoutes } from './countries/countries.routers.config';
 
 
 const app: express.Application = express();
@@ -35,10 +36,11 @@ const PORT = 3000;
 const routes: any = [];
 
 routes.push(new ProducersRoutes(app));
+routes.push(new CountriesRoutes(app));
 
 dbConfig
-//.sync().then(() =>{
-.authenticate().then(() =>{
+.sync().then(() =>{
+//.authenticate().then(() =>{
     Logger.info("connected to db")
     app.listen(PORT,() =>
     {
