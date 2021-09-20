@@ -1,0 +1,16 @@
+import { BuildOptions, Model } from "sequelize";
+
+export interface {^Scaffold^}Attributes {
+    id: number;
+    slug: string;
+    name: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }
+
+export interface {^Scaffold^}Model extends Model<{^Scaffold^}Attributes>, {^Scaffold^}Attributes {}
+
+export class {^Scaffold^} extends Model<{^Scaffold^}Model, {^Scaffold^}Attributes> {}
+
+export type {^Scaffold^}Static = typeof Model & { new (values ?: object, options?: BuildOptions) : {^Scaffold^}Model;
+};

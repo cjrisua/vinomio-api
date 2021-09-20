@@ -1,0 +1,37 @@
+import { CRUD } from "../../common/interface/crud.interface";
+import Logger from "../../lib/logger";
+import { {^Scaffold^}Daos } from "../daos/{^scaffold^}.daos";
+
+export class {^Scaffold^}Services implements CRUD{
+    private static instance: {^Scaffold^}Services;
+
+    constructor() {
+        
+    }
+
+    static getInstance(): {^Scaffold^}Services {
+        if (!{^Scaffold^}Services.instance) {
+            {^Scaffold^}Services.instance = new {^Scaffold^}Services();
+        }
+        return {^Scaffold^}Services.instance;
+    }
+
+    create(resource: any){
+        return {^Scaffold^}Daos.getInstance().add{^Scaffold^}(resource);
+    }
+    deleteById(resourceId: any){
+        return {^Scaffold^}Daos.getInstance().remove{^Scaffold^}ById(resourceId);
+    }
+    list(limit: number, page: number){
+        return {^Scaffold^}Daos.getInstance().list{^Scaffold+^}(limit, page);
+    }
+    patchById(resource: any){
+        return {^Scaffold^}Daos.getInstance().patch{^Scaffold^}(resource);
+    }
+    readById(resourceId: any){
+        return {^Scaffold^}Daos.getInstance().get{^Scaffold^}ById(resourceId);
+    }
+    updateById(resource: any){
+        return {^Scaffold^}Daos.getInstance().patch{^Scaffold^}(resource);
+    }
+}

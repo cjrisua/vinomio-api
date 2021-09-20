@@ -1,9 +1,9 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { ProducerStatic } from "../../producer/types/producer.type";
+import { RegionStatic } from "../../region/types/region.type";
 import SequelizeSlugify from 'sequelize-slugify';
 
-export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
-    const Producers = <ProducerStatic>sequelize.define("Producers", {
+export function RegionFactory (sequelize:Sequelize) : RegionStatic {
+    const Regions = <RegionStatic>sequelize.define("Regions", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -29,9 +29,9 @@ export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
         },
     });
 
-    SequelizeSlugify.slugifyModel(<any>Producers, {
+    SequelizeSlugify.slugifyModel(<any>Regions, {
         source: ['name']
     });
 
-    return Producers;
+    return Regions;
 }

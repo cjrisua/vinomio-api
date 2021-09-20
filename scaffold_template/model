@@ -1,9 +1,9 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { ProducerStatic } from "../../producer/types/producer.type";
+import { {^Scaffold^}Static } from "../../{^scaffold^}/types/{^scaffold^}.type";
 import SequelizeSlugify from 'sequelize-slugify';
 
-export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
-    const Producers = <ProducerStatic>sequelize.define("Producers", {
+export function {^Scaffold^}Factory (sequelize:Sequelize) : {^Scaffold^}Static {
+    const {^Scaffold+^} = <{^Scaffold^}Static>sequelize.define("{^Scaffold+^}", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -29,9 +29,9 @@ export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
         },
     });
 
-    SequelizeSlugify.slugifyModel(<any>Producers, {
+    SequelizeSlugify.slugifyModel(<any>{^Scaffold+^}, {
         source: ['name']
     });
 
-    return Producers;
+    return {^Scaffold+^};
 }

@@ -1,0 +1,54 @@
+import { dbConfig, {^Scaffold^} } from "../../common/models"
+import { {^Scaffold^}Factory } from "../../common/models/{^scaffold+^}.model"
+import * as shortUUID from "short-uuid";
+
+export class {^Scaffold^}Daos {
+
+    private static {^Scaffold^} = {^Scaffold^}Factory(dbConfig)
+    private static instance: {^Scaffold^}Daos;
+
+
+    constructor(){}
+    
+    public static getInstance() {
+        if (!this.instance) {
+            this.instance = new {^Scaffold^}Daos();
+        }
+        return this.instance;
+    }
+
+    async add{^Scaffold^}({^scaffold^}Fields: any) {
+        const {^scaffold^} = await {^Scaffold^}.create({^scaffold^}Fields);
+        return {^scaffold^}.id;
+    }
+
+    async list{^Scaffold+^}(limit: number = 25, page: number = 0){
+        const {^scaffold+^} = await {^Scaffold^}.findAll({ offset: page, limit: limit } )
+        return {^scaffold+^};
+    }
+    
+    async remove{^Scaffold^}ById({^scaffold^}Id: string){
+        const {^scaffold+^} = await {^Scaffold^}.destroy({where: {id: {^scaffold^}Id} })
+        return {^scaffold+^};
+    }
+
+    async get{^Scaffold^}BySlug(slug: string){
+        return {^Scaffold^}.findOne({where: {slug: slug}});
+    }
+
+    async get{^Scaffold^}ById({^scaffold^}Id: string) {
+        return {^Scaffold^}.findOne({where: {id: {^scaffold^}Id} });
+    }
+
+    async patch{^Scaffold^}({^scaffold^}Fields: any) {
+        console.log(JSON.stringify({^scaffold^}Fields))
+        let {^scaffold^}: any = await {^Scaffold^}.findOne({where: {id: {^scaffold^}Fields.id}});
+        if({^scaffold^}){
+            for (let i in {^scaffold^}Fields) {
+                {^scaffold^}[i] = {^scaffold^}Fields[i];
+            }
+            return await {^scaffold^}.save()
+        }
+    }
+}
+ 

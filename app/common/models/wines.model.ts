@@ -1,9 +1,9 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { ProducerStatic } from "../../producer/types/producer.type";
+import { WineStatic } from "../../wine/types/wine.type";
 import SequelizeSlugify from 'sequelize-slugify';
 
-export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
-    const Producers = <ProducerStatic>sequelize.define("Producers", {
+export function WineFactory (sequelize:Sequelize) : WineStatic {
+    const Wines = <WineStatic>sequelize.define("Wines", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -29,9 +29,9 @@ export function ProducerFactory (sequelize:Sequelize) : ProducerStatic {
         },
     });
 
-    SequelizeSlugify.slugifyModel(<any>Producers, {
+    SequelizeSlugify.slugifyModel(<any>Wines, {
         source: ['name']
     });
 
-    return Producers;
+    return Wines;
 }

@@ -11,8 +11,10 @@ import helmet from 'helmet';
 
 import { dbConfig } from "./common/models";
 import { CommonRoutesConfig } from './common/common.routes.config';
-import { ProducersRoutes } from './producers/producers.routes.config';
-import { CountriesRoutes } from './countries/countries.routers.config';
+import { ProducerRoutes } from './producer/producer.routes.config';
+import { WineRoutes } from './wine/wine.routes.config';
+import { CountryRoutes } from './country/country.routes.config';
+import { RegionRoutes } from './region/region.routes.config';
 
 
 const app: express.Application = express();
@@ -35,8 +37,10 @@ const server: http.Server = http.createServer(app);
 const PORT = 3000;
 const routes: any = [];
 
-routes.push(new ProducersRoutes(app));
-routes.push(new CountriesRoutes(app));
+routes.push(new ProducerRoutes(app));
+routes.push(new CountryRoutes(app));
+routes.push(new WineRoutes(app));
+routes.push(new RegionRoutes(app));
 
 dbConfig
 .sync().then(() =>{

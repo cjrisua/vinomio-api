@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { CountryStatic } from "../../countries/types/countries.types";
+import { CountryStatic } from "../../country/types/country.type";
 import SequelizeSlugify from 'sequelize-slugify';
 
 export function CountryFactory (sequelize:Sequelize) : CountryStatic {

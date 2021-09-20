@@ -1,0 +1,27 @@
+
+import express from 'express';
+import { {^Scaffold^}Services } from '../services/{^scaffold^}.services';
+
+export class {^Scaffold^}Middleware {
+    private static instance: {^Scaffold^}Middleware;
+
+    static getInstance() {
+        if (!{^Scaffold^}Middleware.instance) {
+            {^Scaffold^}Middleware.instance = new {^Scaffold^}Middleware();
+        }
+        return {^Scaffold^}Middleware.instance;
+    }
+    async validate{^Scaffold^}Exists(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const {^scaffold^}Services = {^Scaffold^}Services.getInstance();
+        const {^scaffold^} = await {^scaffold^}Services.readById(req.params.{^scaffold^}Id);
+        if ({^scaffold^}) {
+            next();
+        } else {
+            res.status(404).send({error: `{^Scaffold^} ${req.params.{^scaffold^}Id} not found`});
+        }
+    }
+    async extract{^Scaffold^}Id(req: express.Request, res: express.Response, next: express.NextFunction) {
+        req.body.id = req.params.{^scaffold^}Id;
+        next();
+    }
+}
