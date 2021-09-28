@@ -1,9 +1,10 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { WineStatic } from "../../wine/types/wine.type";
+import { Producer } from ".";
 import SequelizeSlugify from 'sequelize-slugify';
 
 export function WineFactory (sequelize:Sequelize) : WineStatic {
-    const Wines = <WineStatic>sequelize.define("Wines", {
+    const Wine = <WineStatic>sequelize.define("Wines", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -29,9 +30,11 @@ export function WineFactory (sequelize:Sequelize) : WineStatic {
         },
     });
 
-    SequelizeSlugify.slugifyModel(<any>Wines, {
+    SequelizeSlugify.slugifyModel(<any>Wine, {
         source: ['name']
     });
 
-    return Wines;
+    //Wine.hasOne(Producer, {sourceKey:"id"});
+    Producer.hasMany(Wine, { foreignKey:'producerId'});
+    return Wine;
 }
