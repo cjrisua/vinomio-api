@@ -4,6 +4,8 @@ import { CountryFactory } from './countries.model';
 import { WineFactory } from './wines.model';
 import { RegionFactory } from './regions.model';
 import * as config from '../../config/config.json'
+import { VarietyFactory } from './varieties.model';
+import { MasterVarietalFactory } from './mastervarietals.model';
 
 const env: string = process.env.NODE_ENV || "Local";
 let sequelize_info = null;
@@ -19,3 +21,5 @@ export const Producer = ProducerFactory(dbConfig)
 export const Country = CountryFactory(dbConfig)
 export const Wine = WineFactory(dbConfig)
 export const Region = RegionFactory(dbConfig)
+export const Variety = VarietyFactory(dbConfig)
+export const MasterVarietal = MasterVarietalFactory(dbConfig) 

@@ -1,10 +1,9 @@
-import { dbConfig, Region } from "../../common/models"
-import { RegionFactory } from "../../common/models/regions.model"
-import * as shortUUID from "short-uuid";
+import { Region } from "../../common/models"
 
 export class RegionDaos {
 
-    private static Region = RegionFactory(dbConfig)
+    //Region = RegionFactory(dbConfig)
+    //private test = new 
     private static instance: RegionDaos;
 
 
@@ -19,7 +18,7 @@ export class RegionDaos {
 
     async addRegion(regionFields: any) {
         const region = await Region.create(regionFields);
-        return region.id;
+        return region;
     }
 
     async listRegions(limit: number = 25, page: number = 0){
@@ -37,7 +36,12 @@ export class RegionDaos {
     }
 
     async getRegionById(regionId: string) {
-        return Region.findOne({where: {id: regionId} });
+        console.log(Region.associations)
+        return Region.findOne({where: 
+            {id: regionId},
+            include:{ all: true},
+            attributes: {exclude: ['parentId','countryId']},//[Region.associations.parent],
+        });
     }
 
     async patchRegion(regionFields: any) {

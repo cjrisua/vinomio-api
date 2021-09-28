@@ -1,10 +1,9 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
-import { RegionStatic } from "../../region/types/region.type";
-import { Country } from ".";
+import { DataTypes, Sequelize } from "sequelize";
+import { VarietyStatic } from "../../variety/types/variety.type";
 import SequelizeSlugify from 'sequelize-slugify';
 
-export function RegionFactory (sequelize:Sequelize) : RegionStatic {
-    const Regions = <RegionStatic>sequelize.define("Regions", {
+export function VarietyFactory (sequelize:Sequelize) : VarietyStatic {
+    const Variety = <VarietyStatic>sequelize.define("Varieties", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -29,15 +28,10 @@ export function RegionFactory (sequelize:Sequelize) : RegionStatic {
             defaultValue: DataTypes.NOW,
         },
     });
-    
-    SequelizeSlugify.slugifyModel(<any>Regions, {
+
+    SequelizeSlugify.slugifyModel(<any>Variety, {
         source: ['name']
     });
 
-    Regions.belongsTo(Country,{ as: 'country', foreignKey: {name: 'countryId', allowNull:false} });
-    
-    Regions.belongsTo(Regions, { as: 'parent', foreignKey: 'parentId'});
-    Regions.hasMany(Regions, {as: 'regions', foreignKey: 'parentId'})
-
-    return Regions;
+    return Variety;
 }

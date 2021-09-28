@@ -15,6 +15,8 @@ import { ProducerRoutes } from './producer/producer.routes.config';
 import { WineRoutes } from './wine/wine.routes.config';
 import { CountryRoutes } from './country/country.routes.config';
 import { RegionRoutes } from './region/region.routes.config';
+import { VarietalRoutes } from './variety/variety.routes.config';
+import { MasterVarietyRoutes } from './mastervarietal/mastervarietal.routes.config';
 
 
 const app: express.Application = express();
@@ -41,6 +43,8 @@ routes.push(new ProducerRoutes(app));
 routes.push(new CountryRoutes(app));
 routes.push(new WineRoutes(app));
 routes.push(new RegionRoutes(app));
+routes.push(new VarietalRoutes(app));
+routes.push(new MasterVarietyRoutes(app));
 
 dbConfig
 .sync().then(() =>{

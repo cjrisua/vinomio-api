@@ -1,0 +1,54 @@
+import { dbConfig, Variety } from "../../common/models"
+import { VarietyFactory } from "../../common/models/varieties.model"
+import * as shortUUID from "short-uuid";
+
+export class VarietyDaos {
+
+    //private static Variety = VarietyFactory(dbConfig)
+    private static instance: VarietyDaos;
+
+
+    constructor(){}
+    
+    public static getInstance() {
+        if (!this.instance) {
+            this.instance = new VarietyDaos();
+        }
+        return this.instance;
+    }
+
+    async addVariety(varietyFields: any) {
+        return await Variety.create(varietyFields)
+        .then((v)=>{return v.id})
+        .catch(()=>{})
+        //return variety.id;
+    }
+
+    async listVarieties(limit: number = 25, page: number = 0){
+        return await Variety.findAll({ offset: page, limit: limit } )
+    }
+    
+    async removeVarietyById(varietalId: string){
+        return await Variety.destroy({where: {id: varietalId} })
+    }
+
+    async getVarietyBySlug(slug: string){
+        return await Variety.findOne({where: {slug: slug}});
+    }
+
+    async getVarietyById(varietyId: string) {
+        return await Variety.findOne({where: {id: varietyId} });
+    }
+
+    async patchVariety(varietyFields: any) {
+        //console.log(JSON.stringify(varietyFields))
+        let variety: any = await Variety.findOne({where: {id: varietyFields.id}});
+        if(variety){
+            for (let i in varietyFields) {
+                variety[i] = varietyFields[i];
+            }
+            return await variety.save()
+        }
+    }
+}
+ 

@@ -1,4 +1,8 @@
-import { BuildOptions, Model } from "sequelize";
+import { 
+  BuildOptions, Model, Association,
+  HasManyGetAssociationsMixin, 
+  HasManyAddAssociationMixin,
+} from "sequelize";
 
 export interface RegionAttributes {
     id: number;
@@ -10,7 +14,25 @@ export interface RegionAttributes {
 
 export interface RegionModel extends Model<RegionAttributes>, RegionAttributes {}
 
-export class Region extends Model<RegionModel, RegionAttributes> {}
+export class Region extends Model<RegionModel, RegionAttributes>  implements RegionAttributes {
+  
+  public id!: number;
+  public slug!: string;
+  public name!: string;
+  public readonly createdAt?: Date;
+  public readonly updatedAt?: Date;
 
-export type RegionStatic = typeof Model & { new (values ?: object, options?: BuildOptions) : RegionModel;
+  public getRegions !: HasManyGetAssociationsMixin<Region>
+  public addRegion!: HasManyAddAssociationMixin<Region, number>;
+
+  public readonly regions?: Region[];
+  
+  public static associations: {
+    regions: Association<Region>;
+    parent: Association<Region>;
+  };
+}
+
+export type RegionStatic = typeof Model & { new (values ?: object, options?: BuildOptions) : Region;
 };
+
