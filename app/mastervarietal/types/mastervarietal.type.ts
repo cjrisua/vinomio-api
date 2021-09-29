@@ -16,7 +16,7 @@ export interface MasterVarietalAttributes {
 
 export interface MasterVarietyModel extends Model<MasterVarietalAttributes>, MasterVarietalAttributes {}
 
-export class MasterVarietal extends Model<MasterVarietyModel, MasterVarietalAttributes> implements MasterVarietal {
+export class MasterVarietal extends Model<MasterVarietyModel, MasterVarietalAttributes> implements MasterVarietalAttributes {
 
   public id!: number;
   public slug!: string;
