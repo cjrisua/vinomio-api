@@ -1,8 +1,10 @@
 
 import express from 'express';
+import { CommonMiddlewareConfig } from '../../common/common.middleware.config';
+import { RegionSchemaFactory } from '../schema/region.schema';
 import { RegionServices } from '../services/region.services';
 
-export class RegionMiddleware {
+export class RegionMiddleware extends CommonMiddlewareConfig {
     private static instance: RegionMiddleware;
 
     static getInstance() {
@@ -10,6 +12,16 @@ export class RegionMiddleware {
             RegionMiddleware.instance = new RegionMiddleware();
         }
         return RegionMiddleware.instance;
+    }
+    async validateRegionPOST(req: express.Request, res: express.Response, next: express.NextFunction){
+        const schema = RegionSchemaFactory().CreatePOST;
+        await schema.validateAsync(req.body)
+        .then(()=>{
+            next();
+        })
+        .catch((error:any) => {
+            RegionMiddleware.processValidationError(error,res);
+        });
     }
     async validateRegionExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const regionServices = RegionServices.getInstance();
