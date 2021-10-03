@@ -13,24 +13,30 @@ import { WineFactory } from "../models/wines.model";
 import { VarietyBlendFactory } from "../models/varietyblend.model";
 
 
-const producer = new Promise(async function(resolve, reject){
-    const Producer = ProducerFactory(dbConfig);
-    const producers = await Producer.create({"name":"Domaine du Clos de Tart"});
-    resolve(producers.id)
-});
 
-const wine = function(mastervarietalId:number, regionId:number, producerId:number){
-    return new Promise(async function(resolve, reject){
+const AddProducer = function(producername:string){
+    return new Promise<number>(async function(resolve, reject){
+        const Producer = ProducerFactory(dbConfig);
+        const producer = await Producer.create({"name":producername});
+        const id:number = producer.id || 0;
+        resolve(id)
+    });
+}
+
+
+const addWine = function(name:string, mastervarietalId:number, regionId:number, producerId:number){
+    return new Promise<number>(async function(resolve, reject){
         const Wine = WineFactory(dbConfig);
-        const producers = await Wine.create(
+        const wine = await Wine.create(
                 {
-                    "name":"Domaine du Clos de Tart Clos de Tart",
+                    "name":name,
                     "mastervarietalId": mastervarietalId,
                     "producerId":producerId,
                     "regionId":regionId
                 }
             );
-        resolve(producers.id)
+        const id:number = wine.id || 0;
+        resolve(id)
     });
     
 }
@@ -41,29 +47,31 @@ const deleteAll = function(){
         const Region =  RegionFactory(dbConfig);
         const MasterVarietal = MasterVarietalFactory(dbConfig);
         const Variety = VarietyFactory(dbConfig);
-        const VarietyBlend = VarietyBlendFactory(dbConfig)
+        const VarietyBlend = VarietyBlendFactory(dbConfig);
+        const Producer = ProducerFactory(dbConfig);
 
         MasterVarietal.destroy({where:{}});
         Variety.destroy({where:{}});
         VarietyBlend.destroy({where:{}});
-        
         Region.destroy({where:{}});
         Country.destroy({where:{}});
-
+        Producer.destroy({where:{}});
         resolve("done!")
     });
 };
 
-const country = new Promise(async function(resolve, reject){
-    const Country = CountryFactory(dbConfig);
-    const Region =  RegionFactory(dbConfig);
-    const country = await Country.create({"name":"France"});
-    const id:number = country.id || 0;
-    resolve(id)
-});
+const AddCountry = function(countryname:string){
+    return new Promise<number>(async function(resolve, reject){
+        const Country = CountryFactory(dbConfig);
+        const Region =  RegionFactory(dbConfig);
+        const country = await Country.create({"name":countryname});
+        const id:number = country.id || 0;
+        resolve(id)
+    });
+}
 
-const addRegion = function(countryid:number, regionname:string, parentid?:number){
-    return new Promise(async function(resolve, reject){
+const AddRegion = function(countryid:number, regionname:string, parentid?:number){
+    return new Promise<number>(async function(resolve, reject){
         const Region = RegionFactory(dbConfig);
         let region:any = undefined;
         //console.log(`parentid = ${parentid}`);
@@ -76,48 +84,68 @@ const addRegion = function(countryid:number, regionname:string, parentid?:number
     });
 }
 
-const variety = new Promise(async function(resolve, reject){
-    const Variety = VarietyFactory(dbConfig);
-    const variety = await Variety.create({"name":"Pinot Noir"});
-    const id:number = variety.id || 0;
-    resolve(id)
-});
-const addMasterVarietal = function(varieties:any){
-    return new Promise(async function(resolve, reject){
+const addVariety = function(varietyname:string){
+    return new Promise<number>(async function(resolve, reject){
+        const Variety = VarietyFactory(dbConfig);
+        const variety = await Variety.create({"name":varietyname});
+        const id:number = variety.id || 0;
+        resolve(id)
+     });
+};
+const addMasterVarietal = function(mastervarietalname:string, varieties:any){
+    return new Promise<Number>(async function(resolve, reject){
         const Mastervarietal = MasterVarietalFactory(dbConfig);
-        const mastervarietal = await Mastervarietal.create({"name":"Pinot Noir","varieties":varieties});
-        varieties.forEach((element:number) => {
-            mastervarietal.addVariety(element);
-        });
+        const mastervarietal = await Mastervarietal.create({"name":mastervarietalname});
+        varieties.filter((f:any)=>f.name == 'Pinot Noir').map((e:any)=>{ return mastervarietal.addVariety(e.id)})
         const id:number = mastervarietal.id || 0;
         resolve(id)
     });
 };
-
-deleteAll().then((result)=>{
-
-    variety.then((result:any)=>{
-        let varieties = []
-        varieties.push(result);
-        addMasterVarietal(varieties)
-    });
-
-    country.then((result:any)=>{
-        const countryid:number = result || 0;
-        addRegion(countryid,"Burgundy")
-        .then((result:any)=>{
-        const regionid:number = result;
-        addRegion(countryid,"Côte de Nuits",regionid)
-        .then((parentid:any)=>{
-                addRegion(countryid,"Morey-Saint-Denis",parentid)
-                .then((parentid:any)=>{
-                    addRegion(countryid,"Clos de Tart",parentid)
-                });
-            })
-        }) 
+const AddVarieties =  function(){
+    ['Pinot Noir','Merlot','Cabernet Sauvignon','Malbec','Cabernet Franc','Petit Verdot'].forEach((variety) =>{
+        addVariety(variety).then((id:any)=>{ setVarieties(variety,id)})
     })
+}
 
-    producer.then((result:any)=>{
+let country:number = 0
+function setCountry(x: number){
+   country = x;
+}
+let region:number = 0
+function setRegion(x: number){
+    region = x;
+}
+let producer:number = 0
+function setProducer(x: number){
+    producer = x;
+}
 
-    })
-});
+let mastervarietal:number = 0
+function setMasterVarietal(x: number){
+    mastervarietal = x;
+}
+
+let varieties: { name: string; id: number; }[] =[]
+function setVarieties(name:string, value: number){
+    varieties.push({'name':name, 'id':value})
+}
+
+async function seed(){
+    let countryid = undefined;
+    let parentid = undefined;
+    await deleteAll()
+    await AddCountry("France").then((id:number)=>setCountry(id))
+    await AddRegion(country,"Burgundy").then((id:number)=>setRegion(id))
+    await AddRegion(country,"Côte de Nuits",region).then((id:number)=>setRegion(id))
+    await AddRegion(country,"Morey-Saint-Denis",region).then((id:number)=>setRegion(id))
+    await AddRegion(country,"Clos de Tart",region).then((id:number)=>setRegion(id))
+    await AddVarieties()
+    await addMasterVarietal('Pinot Noir',varieties).then((id:any)=>{ setMasterVarietal(id)})
+    await AddProducer("Domaine du Clos de Tart").then((id:number)=> setProducer(id));
+    await addWine("Domaine du Clos de Tart Clos de Tart", mastervarietal,region,producer);
+}
+seed()
+/*
+producer.then((producerID:any)=>{
+    addWine("Domaine du Clos de Tart Clos de Tart",0,_regionid,producerID).catch(()=>{})
+})*/
