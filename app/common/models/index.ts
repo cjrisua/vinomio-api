@@ -12,6 +12,8 @@ import { VintageFactory } from './vintages.model';
 const env: string = process.env.NODE_ENV || "Local";
 let sequelize_info = null;
 
+//console.log(process.env);
+
 if(env == "Local"){
     sequelize_info = new sequelize.Sequelize(`postgres://${config.development.username}:${config.development.password}@${config.development.host}:${config.development.port}/${config.development.database}`)
 }

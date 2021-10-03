@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { WineStatic } from "../../wine/types/wine.type";
-import { MasterVarietal, Producer } from ".";
+import { MasterVarietal, Producer, Region } from ".";
 import SequelizeSlugify from 'sequelize-slugify';
 
 export function WineFactory (sequelize:Sequelize) : WineStatic {
@@ -33,8 +33,19 @@ export function WineFactory (sequelize:Sequelize) : WineStatic {
             references: {
               model: MasterVarietal, // 'Movies' would also work
               key: 'id'
+            },
+            /*
+             onUpdate: 'CASCADE',
+             onDelete: 'CASCADE',
+             */
+        },
+        regionId:{
+            type: DataTypes.INTEGER,
+            references: {
+              model: Region, // 'Movies' would also work
+              key: 'id'
             }
-          },
+        }
     });
 
     SequelizeSlugify.slugifyModel(<any>Wine, {
@@ -43,6 +54,7 @@ export function WineFactory (sequelize:Sequelize) : WineStatic {
 
     //Wine.hasOne(Producer, {sourceKey:"id"});
     Producer.hasMany(Wine, { foreignKey:'producerId'});
+    //Region.hasMany(Wine, { foreignKey:'regionId'});
     //MasterVarietal.hasMany(Wine, { foreignKey:'mastervarietalId'});
     return Wine;
 }

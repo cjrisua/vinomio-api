@@ -1,8 +1,8 @@
 import { BuildOptions, Model } from "sequelize";
 
 export interface VarietyAttributes {
-    id: number;
-    slug: string;
+    id?: number;
+    slug?: string;
     name: string;
     createdAt?: Date;
     updatedAt?: Date;

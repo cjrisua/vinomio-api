@@ -7,9 +7,10 @@ import {
 import { Variety } from "../../variety/types/variety.type";
 
 export interface MasterVarietalAttributes {
-    id: number;
-    slug: string;
+    id?: number;
+    slug?: string;
     name: string;
+    varieties?:[];
     createdAt?: Date;
     updatedAt?: Date;
   }
@@ -21,6 +22,7 @@ export class MasterVarietal extends Model<MasterVarietyModel, MasterVarietalAttr
   public id!: number;
   public slug!: string;
   public name!: string;
+  public varieties!:[]
   public readonly createdAt?: Date;
   public readonly updatedAt?: Date;
 

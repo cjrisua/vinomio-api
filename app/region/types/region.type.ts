@@ -5,11 +5,13 @@ import {
 } from "sequelize";
 
 export interface RegionAttributes {
-    id: number;
-    slug: string;
+    id?: number;
+    slug?: string;
     name: string;
     createdAt?: Date;
     updatedAt?: Date;
+    countryId: number;
+    parentId?: number;
   }
 
 export interface RegionModel extends Model<RegionAttributes>, RegionAttributes {}
@@ -21,6 +23,8 @@ export class Region extends Model<RegionModel, RegionAttributes>  implements Reg
   public name!: string;
   public readonly createdAt?: Date;
   public readonly updatedAt?: Date;
+  public countryId!: number;
+  public parentId!: number;
 
   public getRegions !: HasManyGetAssociationsMixin<Region>
   public addRegion!: HasManyAddAssociationMixin<Region, number>;
