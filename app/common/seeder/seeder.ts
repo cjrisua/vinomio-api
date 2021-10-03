@@ -1,17 +1,11 @@
-//import { Producer } from "../models";
 import { dbConfig } from "../models";
 import { ProducerFactory } from "../models/producers.model";
-import { ProducerAttributes } from "../../producer/types/producer.type";
-import { ProducerServices } from "../../producer/services/producer.services";
 import { CountryFactory } from "../models/countries.model";
 import { RegionFactory } from "../models/regions.model";
-import { number } from "yargs";
-import { Region } from "../../region/types/region.type";
 import { VarietyFactory } from "../models/varieties.model";
 import { MasterVarietalFactory } from "../models/mastervarietals.model";
 import { WineFactory } from "../models/wines.model";
 import { VarietyBlendFactory } from "../models/varietyblend.model";
-
 
 
 const AddProducer = function(producername:string){
@@ -21,10 +15,8 @@ const AddProducer = function(producername:string){
         const id:number = producer.id || 0;
         resolve(id)
     });
-}
-
-
-const addWine = function(name:string, mastervarietalId:number, regionId:number, producerId:number){
+};
+const AddWine = function(name:string, mastervarietalId:number, regionId:number, producerId:number){
     return new Promise<number>(async function(resolve, reject){
         const Wine = WineFactory(dbConfig);
         const wine = await Wine.create(
@@ -39,9 +31,8 @@ const addWine = function(name:string, mastervarietalId:number, regionId:number, 
         resolve(id)
     });
     
-}
-
-const deleteAll = function(){
+};
+const DeleteAll = function(){
     return new Promise(async function (resolve, reject) {
         const Country = CountryFactory(dbConfig);
         const Region =  RegionFactory(dbConfig);
@@ -59,7 +50,6 @@ const deleteAll = function(){
         resolve("done!")
     });
 };
-
 const AddCountry = function(countryname:string){
     return new Promise<number>(async function(resolve, reject){
         const Country = CountryFactory(dbConfig);
@@ -68,8 +58,7 @@ const AddCountry = function(countryname:string){
         const id:number = country.id || 0;
         resolve(id)
     });
-}
-
+};
 const AddRegion = function(countryid:number, regionname:string, parentid?:number){
     return new Promise<number>(async function(resolve, reject){
         const Region = RegionFactory(dbConfig);
@@ -82,9 +71,8 @@ const AddRegion = function(countryid:number, regionname:string, parentid?:number
         //console.log(`From Promise: ${region.id}`);
         resolve(region.id)
     });
-}
-
-const addVariety = function(varietyname:string){
+};
+const AddVariety = function(varietyname:string){
     return new Promise<number>(async function(resolve, reject){
         const Variety = VarietyFactory(dbConfig);
         const variety = await Variety.create({"name":varietyname});
@@ -92,7 +80,7 @@ const addVariety = function(varietyname:string){
         resolve(id)
      });
 };
-const addMasterVarietal = function(mastervarietalname:string, varieties:any){
+const AddMasterVarietal = function(mastervarietalname:string, varieties:any){
     return new Promise<Number>(async function(resolve, reject){
         const Mastervarietal = MasterVarietalFactory(dbConfig);
         const mastervarietal = await Mastervarietal.create({"name":mastervarietalname});
@@ -103,7 +91,7 @@ const addMasterVarietal = function(mastervarietalname:string, varieties:any){
 };
 const AddVarieties =  function(){
     ['Pinot Noir','Merlot','Cabernet Sauvignon','Malbec','Cabernet Franc','Petit Verdot'].forEach((variety) =>{
-        addVariety(variety).then((id:any)=>{ setVarieties(variety,id)})
+        AddVariety(variety).then((id:any)=>{ setVarieties(variety,id)})
     })
 }
 
@@ -119,7 +107,6 @@ let producer:number = 0
 function setProducer(x: number){
     producer = x;
 }
-
 let mastervarietal:number = 0
 function setMasterVarietal(x: number){
     mastervarietal = x;
@@ -131,21 +118,15 @@ function setVarieties(name:string, value: number){
 }
 
 async function seed(){
-    let countryid = undefined;
-    let parentid = undefined;
-    await deleteAll()
+    await DeleteAll()
     await AddCountry("France").then((id:number)=>setCountry(id))
     await AddRegion(country,"Burgundy").then((id:number)=>setRegion(id))
     await AddRegion(country,"Côte de Nuits",region).then((id:number)=>setRegion(id))
     await AddRegion(country,"Morey-Saint-Denis",region).then((id:number)=>setRegion(id))
     await AddRegion(country,"Clos de Tart",region).then((id:number)=>setRegion(id))
     await AddVarieties()
-    await addMasterVarietal('Pinot Noir',varieties).then((id:any)=>{ setMasterVarietal(id)})
+    await AddMasterVarietal('Pinot Noir',varieties).then((id:any)=>{ setMasterVarietal(id)})
     await AddProducer("Domaine du Clos de Tart").then((id:number)=> setProducer(id));
-    await addWine("Domaine du Clos de Tart Clos de Tart", mastervarietal,region,producer);
+    await AddWine("Domaine du Clos de Tart Clos de Tart", mastervarietal,region,producer);
 }
-seed()
-/*
-producer.then((producerID:any)=>{
-    addWine("Domaine du Clos de Tart Clos de Tart",0,_regionid,producerID).catch(()=>{})
-})*/
+seed();
