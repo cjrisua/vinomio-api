@@ -24,7 +24,6 @@ export class CountryServices implements CRUD{
         return CountryDaos.getInstance().removeCountryById(resourceId);
     }
     list(limit: number, page: number, filter: any){
-        
         return CountryDaos.getInstance().listCountries(limit, page, filter);
     }
     patchById(resource: any){

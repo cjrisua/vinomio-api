@@ -3,5 +3,8 @@ export type Filter = {
     slug?: string;
   };
 export interface IFilter{
-    [name:string] : Filter;
+    //[name:string] : Filter;
+    where?: Filter;
+    limit ?: number;
+    page ?: number;
 }
