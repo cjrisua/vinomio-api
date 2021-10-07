@@ -17,6 +17,7 @@ export class WineRoutes
     const wineMiddleware = WineMiddleware.getInstance();
 
     this.app.get("/api/wine", [
+        wineMiddleware.validateWineQueryParamExists,
         wineControllers.listWines
     ]);
     this.app.post("/api/wine", [

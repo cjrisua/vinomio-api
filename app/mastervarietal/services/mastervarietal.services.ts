@@ -22,8 +22,8 @@ export class MasterVarietalServices implements CRUD{
     deleteById(resourceId: any){
         return MasterVarietalDaos.getInstance().removeMastervarietalById(resourceId);
     }
-    list(limit: number, page: number){
-        return MasterVarietalDaos.getInstance().listMastervarietals(limit, page);
+    list(limit: number, page: number, filter:any){
+        return MasterVarietalDaos.getInstance().listMastervarietals(limit, page, filter);
     }
     patchById(resource: any){
         return MasterVarietalDaos.getInstance().patchMastervarietal(resource);

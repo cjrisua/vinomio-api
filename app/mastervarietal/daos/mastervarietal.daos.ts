@@ -3,6 +3,7 @@ import { MasterVarietalFactory } from "../../common/models/mastervarietals.model
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
 import { number } from "yargs";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class MasterVarietalDaos {
 
@@ -31,8 +32,8 @@ export class MasterVarietalDaos {
         return masterVarietal.id;
     }
 
-    async listMastervarietals(limit: number = 25, page: number = 0){
-        const mastervarietals = await MasterVarietal.findAll({ offset: page, limit: limit } )
+    async listMastervarietals(limit: number = 25, page: number = 0, filter:IFilter){
+        const mastervarietals = await MasterVarietal.findAll({ where:filter.where, offset: page, limit: limit } )
         return mastervarietals;
     }
     

@@ -1,6 +1,7 @@
 import { dbConfig, Variety } from "../../common/models"
 import { VarietyFactory } from "../../common/models/varieties.model"
 import * as shortUUID from "short-uuid";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class VarietyDaos {
 
@@ -24,8 +25,8 @@ export class VarietyDaos {
         //return variety.id;
     }
 
-    async listVarieties(limit: number = 25, page: number = 0){
-        return await Variety.findAll({ offset: page, limit: limit } )
+    async listVarieties(limit: number = 25, page: number = 0, filter: IFilter){
+        return await Variety.findAll({ where: filter.where, offset: page, limit: limit } )
     }
     
     async removeVarietyById(varietalId: string){

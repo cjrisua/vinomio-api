@@ -1,3 +1,4 @@
+import { IFilter } from "../../common/interface/filter.interface";
 import { Region } from "../../common/models"
 
 export class RegionDaos {
@@ -21,8 +22,8 @@ export class RegionDaos {
         return region;
     }
 
-    async listRegions(limit: number = 25, page: number = 0){
-        const regions = await Region.findAll({ offset: page, limit: limit } )
+    async listRegions(limit: number = 25, page: number = 0, filter: IFilter){
+        const regions = await Region.findAll({ where:filter.where, offset: page, limit: limit } )
         return regions;
     }
     

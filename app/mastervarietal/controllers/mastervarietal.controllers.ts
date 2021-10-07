@@ -1,4 +1,5 @@
 import express from "express";
+import { filterByKeyFindAll } from "../../common/common.middleware.config";
 import { MasterVarietalServices } from "../services/mastervarietal.services";
 
 export class MasterVarietalControllers {
@@ -9,7 +10,7 @@ export class MasterVarietalControllers {
 
   async listMastervarietals(req: express.Request, res: express.Response) {
     const masterVarietalServices = MasterVarietalServices.getInstance();
-    const mastervarietals = await masterVarietalServices.list(100,0);
+    const mastervarietals = await masterVarietalServices.list(100,0, filterByKeyFindAll(req));
     res.status(200).send(mastervarietals);
   }
 

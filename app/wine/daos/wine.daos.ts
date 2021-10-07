@@ -1,6 +1,7 @@
 import { dbConfig, Wine } from "../../common/models"
 import { WineFactory } from "../../common/models/wines.model"
 import * as shortUUID from "short-uuid";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class WineDaos {
 
@@ -22,8 +23,8 @@ export class WineDaos {
         return wine.id;
     }
 
-    async listWines(limit: number = 25, page: number = 0){
-        const wines = await Wine.findAll({ offset: page, limit: limit } )
+    async listWines(limit: number = 25, page: number = 0, filter: IFilter){
+        const wines = await Wine.findAll({ where: filter.where, offset: page, limit: limit } )
         return wines;
     }
     

@@ -1,4 +1,5 @@
 import express from "express";
+import { filterByKeyFindAll } from "../../common/common.middleware.config";
 import { RegionServices } from "../services/region.services";
 
 export class RegionControllers {
@@ -9,7 +10,7 @@ export class RegionControllers {
 
   async listRegions(req: express.Request, res: express.Response) {
     const regionServices = RegionServices.getInstance();
-    const regions = await regionServices.list(100,0);
+    const regions = await regionServices.list(100,0, filterByKeyFindAll(req));
     res.status(200).send(regions);
   }
 

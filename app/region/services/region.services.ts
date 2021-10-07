@@ -22,8 +22,8 @@ export class RegionServices implements CRUD{
     deleteById(resourceId: any){
         return RegionDaos.getInstance().removeRegionById(resourceId);
     }
-    list(limit: number, page: number){
-        return RegionDaos.getInstance().listRegions(limit, page);
+    list(limit: number, page: number, filter: any){
+        return RegionDaos.getInstance().listRegions(limit, page, filter);
     }
     patchById(resource: any){
         return RegionDaos.getInstance().patchRegion(resource);

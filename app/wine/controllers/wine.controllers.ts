@@ -1,4 +1,5 @@
 import express from "express";
+import { filterByKeyFindAll } from "../../common/common.middleware.config";
 import { WineServices } from "../services/wine.services";
 
 export class WineControllers {
@@ -9,7 +10,7 @@ export class WineControllers {
 
   async listWines(req: express.Request, res: express.Response) {
     const wineServices = WineServices.getInstance();
-    const wines = await wineServices.list(100,0);
+    const wines = await wineServices.list(100,0,filterByKeyFindAll(req));
     res.status(200).send(wines);
   }
 

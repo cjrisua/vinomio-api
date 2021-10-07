@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
 import { RegionSchemaFactory } from '../schema/region.schema';
 import { RegionServices } from '../services/region.services';
 
@@ -25,15 +25,29 @@ export class RegionMiddleware extends CommonMiddlewareConfig {
     }
     async validateRegionExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const regionServices = RegionServices.getInstance();
-        const region = await regionServices.readById(req.params.regionId);
-        if (region) {
-            next();
-        } else {
-            res.status(404).send({error: `Region ${req.params.regionId} not found`});
+        if(isNaN(Number(req.params.regionId)))
+            res.status(422).send({error: `Unprocessable Region Id: ${req.params.regionId}`});
+        else{
+            const region = await regionServices.readById(req.params.regionId);
+            if (region) {
+                next();
+            } else {
+                res.status(404).send({error: `Region ${req.params.regionId} not found`});
+            }
         }
     }
     async extractRegionId(req: express.Request, res: express.Response, next: express.NextFunction) {
         req.body.id = req.params.regionId;
         next();
+    }
+    async validateRegionQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const regionServices = RegionServices.getInstance();
+        const filterStatement = filterByKeyFindAll(req)
+        const region = await regionServices.list(100,0,filterStatement);
+        if (region && region.length > 0) {
+            next();
+        } else {
+            res.status(404).send({error: `Region not found`});
+        }
     }
 }

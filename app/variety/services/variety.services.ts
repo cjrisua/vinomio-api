@@ -22,8 +22,8 @@ export class VarietyServices implements CRUD{
     deleteById(resourceId: any){
         return VarietyDaos.getInstance().removeVarietyById(resourceId);
     }
-    list(limit: number, page: number){
-        return VarietyDaos.getInstance().listVarieties(limit, page);
+    list(limit: number, page: number, filter: any){
+        return VarietyDaos.getInstance().listVarieties(limit, page, filter);
     }
     patchById(resource: any){
         return VarietyDaos.getInstance().patchVariety(resource);

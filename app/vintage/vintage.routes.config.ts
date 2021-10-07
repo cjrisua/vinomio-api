@@ -17,6 +17,7 @@ export class VintageRoutes
     const vintageMiddleware = VintageMiddleware.getInstance();
 
     this.app.get("/api/vintage", [
+        vintageMiddleware.validateVintageQueryParamExists,
         vintageControllers.listVintages
     ]);
     this.app.post("/api/vintage", [

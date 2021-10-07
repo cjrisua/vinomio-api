@@ -1,6 +1,7 @@
 import { dbConfig, Vintage } from "../../common/models"
 import { VintageFactory } from "../../common/models/vintages.model"
 import * as shortUUID from "short-uuid";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class VintageDaos {
 
@@ -22,8 +23,8 @@ export class VintageDaos {
         return vintage.id;
     }
 
-    async listVintages(limit: number = 25, page: number = 0){
-        const vintages = await Vintage.findAll({ offset: page, limit: limit } )
+    async listVintages(limit: number = 25, page: number = 0, filter: IFilter){
+        const vintages = await Vintage.findAll({ where:filter.where, offset: page, limit: limit } )
         return vintages;
     }
     

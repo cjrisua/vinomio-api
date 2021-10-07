@@ -22,8 +22,8 @@ export class VintageServices implements CRUD{
     deleteById(resourceId: any){
         return VintageDaos.getInstance().removeVintageById(resourceId);
     }
-    list(limit: number, page: number){
-        return VintageDaos.getInstance().listVintages(limit, page);
+    list(limit: number, page: number, filter: any){
+        return VintageDaos.getInstance().listVintages(limit, page, filter);
     }
     patchById(resource: any){
         return VintageDaos.getInstance().patchVintage(resource);

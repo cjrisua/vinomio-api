@@ -1,4 +1,5 @@
 import express from "express";
+import { filterByKeyFindAll } from "../../common/common.middleware.config";
 import { VarietyServices } from "../services/variety.services";
 
 export class VarietyControllers {
@@ -9,7 +10,7 @@ export class VarietyControllers {
 
   async listVarieties(req: express.Request, res: express.Response) {
     const varietyServices = VarietyServices.getInstance();
-    const varieties = await varietyServices.list(100,0);
+    const varieties = await varietyServices.list(100,0,filterByKeyFindAll(req));
     res.status(200).send(varieties);
   }
 

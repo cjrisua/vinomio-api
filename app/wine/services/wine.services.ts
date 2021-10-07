@@ -22,8 +22,8 @@ export class WineServices implements CRUD{
     deleteById(resourceId: any){
         return WineDaos.getInstance().removeWineById(resourceId);
     }
-    list(limit: number, page: number){
-        return WineDaos.getInstance().listWines(limit, page);
+    list(limit: number, page: number, filter:any){
+        return WineDaos.getInstance().listWines(limit, page,filter);
     }
     patchById(resource: any){
         return WineDaos.getInstance().patchWine(resource);

@@ -17,6 +17,7 @@ export class VarietalRoutes
     const varietalMiddleware = VarietyMiddleware.getInstance();
 
     this.app.get("/api/variety", [
+        varietalMiddleware.validateVarietyQueryParamExists,
         varietalControllers.listVarieties
     ]);
     this.app.post("/api/variety", [

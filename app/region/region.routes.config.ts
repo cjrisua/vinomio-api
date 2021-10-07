@@ -17,6 +17,7 @@ export class RegionRoutes
     const regionMiddleware = RegionMiddleware.getInstance();
 
     this.app.get("/api/region", [
+        regionMiddleware.validateRegionQueryParamExists,
         regionControllers.listRegions
     ]);
     this.app.post("/api/region", [

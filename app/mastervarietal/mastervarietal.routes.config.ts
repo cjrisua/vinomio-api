@@ -17,6 +17,7 @@ export class MasterVarietyRoutes
     const masterVarietyMiddleware = MasterVarietalMiddleware.getInstance();
 
     this.app.get("/api/mastervarietal", [
+        masterVarietyMiddleware.validateMastervarietalQueryParamExists,
         masterVarietyControllers.listMastervarietals
     ]);
     this.app.post("/api/mastervarietal", [

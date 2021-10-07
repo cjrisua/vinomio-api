@@ -1,4 +1,5 @@
 import express from "express";
+import { filterByKeyFindAll } from "../../common/common.middleware.config";
 import { VintageServices } from "../services/vintage.services";
 
 export class VintageControllers {
@@ -9,7 +10,7 @@ export class VintageControllers {
 
   async listVintages(req: express.Request, res: express.Response) {
     const vintageServices = VintageServices.getInstance();
-    const vintages = await vintageServices.list(100,0);
+    const vintages = await vintageServices.list(100,0,filterByKeyFindAll(req));
     res.status(200).send(vintages);
   }
 
