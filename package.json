@@ -47,6 +47,7 @@
     "sequelize-cli-typescript": "^3.2.0-c",
     "sequelize-slugify": "^1.6.0",
     "short-uuid": "^4.2.0",
+    "slugify": "^1.6.1",
     "winston": "^3.3.3",
     "yargs": "^17.1.1"
   },

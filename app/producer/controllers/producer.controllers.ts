@@ -1,4 +1,5 @@
 import express from "express";
+import { filterByKeyFindAll } from "../../common/common.middleware.config";
 import { ProducerServices } from "../services/producer.services";
 
 export class ProducerControllers {
@@ -9,7 +10,7 @@ export class ProducerControllers {
 
   async listProducers(req: express.Request, res: express.Response) {
     const producerServices = ProducerServices.getInstance();
-    const producers = await producerServices.list(100,0);
+    const producers = await producerServices.list(100,0,filterByKeyFindAll(req));
     res.status(200).send(producers);
   }
 

@@ -17,10 +17,10 @@ export class ProducerRoutes
     const producerMiddleware = ProducerMiddleware.getInstance();
 
     this.app.get("/api/producer", [
+        producerMiddleware.validateProducerQueryParamExists,
         producerControllers.listProducers
     ]);
     this.app.post("/api/producer", [
-        producerMiddleware.validateProducerSlugExists,
         producerControllers.createProducer
     ]);
     this.app.put(`/api/producer/:producerId`, [

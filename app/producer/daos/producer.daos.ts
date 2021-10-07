@@ -1,6 +1,7 @@
 import { dbConfig, Producer } from "../../common/models"
 import { ProducerFactory } from "../../common/models/producers.model"
 import * as shortUUID from "short-uuid";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class ProducerDaos {
 
@@ -22,8 +23,8 @@ export class ProducerDaos {
         return producer.id;
     }
 
-    async listProducers(limit: number = 25, page: number = 0){
-        const producers = await Producer.findAll({ offset: page, limit: limit } )
+    async listProducers(limit: number = 25, page: number = 0, filter:IFilter){
+        const producers = await Producer.findAll({ where:filter.where, offset: page, limit: limit } )
         return producers;
     }
     

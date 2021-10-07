@@ -1,4 +1,5 @@
 import { CRUD } from "../../common/interface/crud.interface";
+import { IFilter } from "../../common/interface/filter.interface";
 import Logger from "../../lib/logger";
 import { ProducerDaos } from "../daos/producer.daos";
 
@@ -22,8 +23,8 @@ export class ProducerServices implements CRUD{
     deleteById(resourceId: any){
         return ProducerDaos.getInstance().removeProducerById(resourceId);
     }
-    list(limit: number, page: number){
-        return ProducerDaos.getInstance().listProducers(limit, page);
+    list(limit: number, page: number, filter: any){
+        return ProducerDaos.getInstance().listProducers(limit, page, filter);
     }
     patchById(resource: any){
         return ProducerDaos.getInstance().patchProducer(resource);
