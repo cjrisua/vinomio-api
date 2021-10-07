@@ -1,3 +1,4 @@
+import { number } from "joi";
 import { CRUD } from "../../common/interface/crud.interface";
 import Logger from "../../lib/logger";
 import { CountryDaos } from "../daos/country.daos";
@@ -22,8 +23,9 @@ export class CountryServices implements CRUD{
     deleteById(resourceId: any){
         return CountryDaos.getInstance().removeCountryById(resourceId);
     }
-    list(limit: number, page: number){
-        return CountryDaos.getInstance().listCountries(limit, page);
+    list(limit: number, page: number, filter: any){
+        
+        return CountryDaos.getInstance().listCountries(limit, page, filter);
     }
     patchById(resource: any){
         return CountryDaos.getInstance().patchCountry(resource);

@@ -20,6 +20,7 @@ export class ProducerRoutes
         producerControllers.listProducers
     ]);
     this.app.post("/api/producer", [
+        producerMiddleware.validateProducerSlugExists,
         producerControllers.createProducer
     ]);
     this.app.put(`/api/producer/:producerId`, [

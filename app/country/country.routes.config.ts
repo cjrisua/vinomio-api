@@ -17,6 +17,7 @@ export class CountryRoutes
     const countryMiddleware = CountryMiddleware.getInstance();
 
     this.app.get("/api/country", [
+        countryMiddleware.validateCountryQueryParamExists,
         countryControllers.listCountries
     ]);
     this.app.post("/api/country", [

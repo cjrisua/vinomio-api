@@ -22,8 +22,12 @@ export class CountryDaos {
         return country.id;
     }
 
-    async listCountries(limit: number = 25, page: number = 0){
-        const countries = await Country.findAll({ offset: page, limit: limit } )
+    async listCountries(limit: number = 25, page: number = 0, filter:any){
+        //page offser
+        filter.offset = page;
+        //page limit
+        filter.limit = limit;
+        const countries = await Country.findAll(filter)
         return countries;
     }
     
