@@ -22,6 +22,7 @@ export class MasterVarietyRoutes
     ]);
     this.app.post("/api/mastervarietal", [
         masterVarietyMiddleware.validateMasterVarietalPOST,
+        masterVarietyMiddleware.validateMasterVarietalIsUnique,
         masterVarietyControllers.createMastervarietal
     ]);
     this.app.put(`/api/mastervarietal/:masterVarietalId`, [

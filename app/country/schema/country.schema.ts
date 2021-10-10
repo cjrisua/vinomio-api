@@ -4,14 +4,11 @@ import Logger from "../../lib/logger";
 const Joi = require('joi');
 
 
-export function WineSchemaFactory ()  {
+export function CountrySchemaFactory ()  {
   const schemas = { 
     CreatePOST: Joi.object().keys(
             { 
-              name: Joi.string().required(),
-              producerId: Joi.number().required(),
-              mastervarietalId: Joi.number().required(),
-              regionId: Joi.number().required()
+              name: Joi.string().required()
             }) 
   };
   return schemas;

@@ -5,6 +5,6 @@ export type Filter = {
 export interface IFilter{
     //[name:string] : Filter;
     where?: Filter;
-    limit ?: number;
+    limit?: number;
     page ?: number;
 }

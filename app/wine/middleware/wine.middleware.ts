@@ -1,6 +1,8 @@
 
 import express from 'express';
 import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { IFilter } from '../../common/interface/filter.interface';
+import Logger from '../../lib/logger';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { WineServices } from '../services/wine.services';
 
@@ -42,12 +44,21 @@ export class WineMiddleware extends CommonMiddlewareConfig {
     }
     async validateWineQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const wineServices = WineServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
+        const filterStatement = filterByKeyFindAll(req);
         const wine = await wineServices.list(100,0,filterStatement);
-        if (wine && wine.length > 0) {
+        if (wine && wine.length > 0 || Object.keys(filterStatement).length == 0) {
             next();
         } else {
             res.status(404).send({error: `Wine not found`});
         }
+    }
+    async validateWineIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const wineServices = WineServices.getInstance();
+        const filter : IFilter = { where: {slug: CommonMiddlewareConfig.slugify(req.body.name)}}
+        const producer = await wineServices.list(1,0,filter);
+        if (producer && producer.length > 0)
+            res.status(409).send({error: `Wine ${req.body.name} exists`});
+        else
+            next();
     }
 }

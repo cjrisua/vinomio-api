@@ -21,6 +21,8 @@ export class ProducerRoutes
         producerControllers.listProducers
     ]);
     this.app.post("/api/producer", [
+        producerMiddleware.validateProducerPOST,
+        producerMiddleware.validateProducersIsUnique,
         producerControllers.createProducer
     ]);
     this.app.put(`/api/producer/:producerId`, [

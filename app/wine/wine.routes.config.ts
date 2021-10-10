@@ -22,6 +22,7 @@ export class WineRoutes
     ]);
     this.app.post("/api/wine", [
         wineMiddleware.validateWinePOST,
+        wineMiddleware.validateWineIsUnique,
         wineControllers.createWine
     ]);
     this.app.put(`/api/wine/:wineId`, [

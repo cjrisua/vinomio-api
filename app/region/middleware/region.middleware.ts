@@ -1,6 +1,7 @@
 
 import express from 'express';
 import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { IFilter } from '../../common/interface/filter.interface';
 import { RegionSchemaFactory } from '../schema/region.schema';
 import { RegionServices } from '../services/region.services';
 
@@ -22,6 +23,15 @@ export class RegionMiddleware extends CommonMiddlewareConfig {
         .catch((error:any) => {
             RegionMiddleware.processValidationError(error,res);
         });
+    }
+    async validateRegionIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const regionServices = RegionServices.getInstance();
+        const filter : IFilter = { where: {slug: RegionMiddleware.slugify(req.body.name)}}
+        const region = await regionServices.list(1,0,filter);
+        if (region && region.length > 0)
+            res.status(409).send({error: `Region ${req.body.name} exists`});
+        else
+            next();
     }
     async validateRegionExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const regionServices = RegionServices.getInstance();

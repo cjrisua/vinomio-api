@@ -1,6 +1,8 @@
 
 import express from 'express';
 import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { IFilter } from '../../common/interface/filter.interface';
+import { CountrySchemaFactory } from '../schema/country.schema';
 import { CountryServices } from '../services/country.services';
 
 export class CountryMiddleware extends CommonMiddlewareConfig{
@@ -11,6 +13,25 @@ export class CountryMiddleware extends CommonMiddlewareConfig{
             CountryMiddleware.instance = new CountryMiddleware();
         }
         return CountryMiddleware.instance;
+    }
+    async validateCountryIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const countryServices = CountryServices.getInstance();
+        const filter : IFilter = { where: {slug: CountryMiddleware.slugify(req.body.name)}}
+        const country = await countryServices.list(1,0,filter);
+        if (country && country.length > 0)
+            res.status(409).send({error: `Country ${req.body.name} exists`});
+        else
+            next();
+    }
+    async validateCountryPOST(req: express.Request, res: express.Response, next: express.NextFunction){
+        const schema = CountrySchemaFactory().CreatePOST;
+        await schema.validateAsync(req.body)
+        .then(()=>{
+            next();
+        })
+        .catch((error:any) => {
+            CountryMiddleware.processValidationError(error,res);
+        });
     }
     async validateCountryExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const countryServices = CountryServices.getInstance();
@@ -32,7 +53,6 @@ export class CountryMiddleware extends CommonMiddlewareConfig{
     async validateCountryQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const countryServices = CountryServices.getInstance();
         const filterStatement = filterByKeyFindAll(req)
-        console.log(filterStatement)
         const country = await countryServices.list(100,0,filterStatement);
         if (country && country.length > 0) {
             next();

@@ -22,6 +22,7 @@ export class RegionRoutes
     ]);
     this.app.post("/api/region", [
         regionMiddleware.validateRegionPOST,
+        regionMiddleware.validateRegionIsUnique,
         regionControllers.createRegion
     ]);
     this.app.put(`/api/region/:regionId`, [

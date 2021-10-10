@@ -21,6 +21,8 @@ export class CountryRoutes
         countryControllers.listCountries
     ]);
     this.app.post("/api/country", [
+        countryMiddleware.validateCountryPOST,
+        countryMiddleware.validateCountryIsUnique,
         countryControllers.createCountry
     ]);
     this.app.put(`/api/country/:countryId`, [

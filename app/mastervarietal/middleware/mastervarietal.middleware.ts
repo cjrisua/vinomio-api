@@ -4,6 +4,7 @@ import { MasterVarietalSchema, MasterVarietalSchemaFactory } from '../schema/mas
 import Logger from '../../lib/logger';
 import { MasterVarietalFactory } from '../../common/models/mastervarietals.model';
 import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { IFilter } from '../../common/interface/filter.interface';
 const Joi = require('joi'); 
 export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
     private static instance: MasterVarietalMiddleware;
@@ -24,6 +25,15 @@ export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
         .catch((error:any) => {
             MasterVarietalMiddleware.processValidationError(error,res);
         });
+    }
+    async validateMasterVarietalIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const masterVarietalServices = MasterVarietalServices.getInstance();
+        const filter : IFilter = { where: {slug: CommonMiddlewareConfig.slugify(req.body.name)}}
+        const masterVarietal = await masterVarietalServices.list(1,0,filter);
+        if (masterVarietal && masterVarietal.length > 0)
+            res.status(409).send({error: `Master Varietal ${req.body.name} exists`});
+        else
+            next();
     }
     async validateMasterVarietalExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const masterVarietalServices = MasterVarietalServices.getInstance();
