@@ -1,8 +1,11 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { any, number } from 'joi';
+import { CommonMiddlewareConfig, MapQParams } from '../../common/common.middleware.config';
+import { Filter } from '../../common/interface/filter.interface';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { VintageServices } from '../services/vintage.services';
+import { VintageApiQPrams } from '../types/vintage.type';
 
 export class VintageMiddleware extends CommonMiddlewareConfig {
     private static instance: VintageMiddleware;
@@ -41,13 +44,18 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
         next();
     }
     async validateVintageQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
+    
         const vintageServices = VintageServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
-        const vintage = await vintageServices.list(100,0,filterStatement);
+        const queryItems: VintageApiQPrams = {
+            id!: Number(req.query.id),
+            year!: Number(req.query.year)
+        };
+        const filter = MapQParams(queryItems);
+        const vintage = await vintageServices.list(100,0,filter);
         if (vintage && vintage.length > 0) {
             next();
         } else {
-            res.status(404).send({error: `Variety not found`});
+            res.status(404).send({error: `Vintage not found`});
         }
     }
 }

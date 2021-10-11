@@ -1,9 +1,10 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, MapQParams } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import { CountrySchemaFactory } from '../schema/country.schema';
 import { CountryServices } from '../services/country.services';
+import { CountryApiQPrams } from '../types/country.type';
 
 export class CountryMiddleware extends CommonMiddlewareConfig{
     private static instance: CountryMiddleware;
@@ -52,8 +53,14 @@ export class CountryMiddleware extends CommonMiddlewareConfig{
     }
     async validateCountryQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const countryServices = CountryServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
-        const country = await countryServices.list(100,0,filterStatement);
+        const countryQueryPrams : CountryApiQPrams = {
+            id : Number(req.query.id),
+            slug: <string><unknown>req.query.slug
+        }
+
+        const filter = MapQParams(countryQueryPrams);
+        const country = await countryServices.list(100,0,filter);
+        
         if (country && country.length > 0) {
             next();
         } else {

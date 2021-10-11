@@ -1,5 +1,10 @@
 import { BuildOptions, Model } from "sequelize";
 
+export interface VintageApiQPrams{
+  id: number;
+  year: number;
+}
+
 export interface VintageAttributes {
     id: number;
     year: number;

@@ -1,0 +1,10 @@
+Drop table "Countries";
+Drop table "MasterVarietals";
+Drop table "Producers";
+Drop table "Regions";
+Drop table "Varieties";
+Drop table "VarietyBlend";
+Drop table "VarietyBlends";
+Drop table "Vintages";
+Drop table "Wines";
+Drop table "producers";
