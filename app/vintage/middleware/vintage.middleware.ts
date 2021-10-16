@@ -1,11 +1,11 @@
 
 import express from 'express';
-import { any, number } from 'joi';
 import { CommonMiddlewareConfig, MapQParams } from '../../common/common.middleware.config';
 import { Filter } from '../../common/interface/filter.interface';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { VintageServices } from '../services/vintage.services';
-import { VintageApiQPrams } from '../types/vintage.type';
+import { VintageQParameterFilter } from '../types/vintage.type';
+
 
 export class VintageMiddleware extends CommonMiddlewareConfig {
     private static instance: VintageMiddleware;
@@ -46,16 +46,25 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
     async validateVintageQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
     
         const vintageServices = VintageServices.getInstance();
-        const queryItems: VintageApiQPrams = {
-            id!: Number(req.query.id),
-            year!: Number(req.query.year)
-        };
-        const filter = MapQParams(queryItems);
-        const vintage = await vintageServices.list(100,0,filter);
-        if (vintage && vintage.length > 0) {
+        const filter:Filter = VintageQParameterFilter(req)
+        if(Object.keys(filter.where).length == 0)
             next();
-        } else {
-            res.status(404).send({error: `Vintage not found`});
+        else{
+            const vintage = await vintageServices.list(100,0,VintageQParameterFilter(req));
+            if (vintage && vintage.length > 0) {
+                next();
+            } else {
+                res.status(404).send({error: `Vintage not found`});
+            }
         }
+    }
+    async validateVintageIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const vintageServices = VintageServices.getInstance();
+        const filter  = { where: {wineId: req.body.wineId, year:req.body.year}}
+        const vinatge = await vintageServices.list(1,0,filter);
+        if (vinatge && vinatge.length > 0)
+            res.status(409).send({error: `Vintage ${req.body.name} exists`});
+        else
+            next();
     }
 }

@@ -5,3 +5,4 @@ logs/all.log
 logs/error.log
 .env
 scaffold.js
+.env_mac

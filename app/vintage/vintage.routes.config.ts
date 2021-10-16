@@ -22,6 +22,7 @@ export class VintageRoutes
     ]);
     this.app.post("/api/vintage", [
         vintageMiddleware.validateWinePOST,
+        vintageMiddleware.validateVintageIsUnique,
         vintageControllers.createVintage
     ]);
     this.app.put(`/api/vintage/:vintageId`, [

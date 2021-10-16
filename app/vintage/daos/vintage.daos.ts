@@ -24,7 +24,12 @@ export class VintageDaos {
     }
 
     async listVintages(limit: number = 25, page: number = 0, filter: IFilter){
-        const vintages = await Vintage.findAll({ where:filter.where, offset: page, limit: limit } )
+        const vintages = await Vintage.findAll({ 
+            where:filter.where, 
+            offset: page, 
+            limit: limit,
+            include:{ all: true},
+        } )
         return vintages;
     }
     
