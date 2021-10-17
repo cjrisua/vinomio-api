@@ -1,0 +1,40 @@
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+    "name": "elastic-sink",
+    "config": {
+        "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+        "tasks.max": "1",
+        "topics": "postgres.public.Producers",
+        "connection.url": "http://elastic:9200",
+        "transforms": "unwrap,key",
+        "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+        "transforms.unwrap.drop.tombstones": "false",
+        "transforms.key.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+        "transforms.key.field": "id",
+        "key.ignore": "false",
+        "type.name": "_doc",
+        "behavior.on.null.values": "delete"
+    }
+}'
+
+
+
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+  "name": "vino-connector",  
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector", 
+    "tasksMax": "1",
+    "plugin.name": "pgoutput",
+    "database.hostname": "postgres", 
+    "database.port": "5432", 
+    "database.user": "wino", 
+    "database.password": "w1ne14fun", 
+    "database.dbname" : "vino_db", 
+    "database.server.name": "postgres", 
+    "schema.include.list": "public.Producers" 
+  }
+}'
+
+
+curl -X DELETE http://localhost:8083/connectors/

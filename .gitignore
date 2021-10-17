@@ -6,3 +6,5 @@ logs/error.log
 .env
 scaffold.js
 .env_mac
+/docker/kafka-connect-jdbc/*
+docker/kafka-connect-jdbc.tar
