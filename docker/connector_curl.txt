@@ -1,27 +1,15 @@
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Producers --from-beginning
+./kafka-topics.sh --list --bootstrap-server=kafka:9092
+
+curl -X DELETE http://localhost:8083/connectors/elastic-sink
+curl -XDELETE http://localhost:9200/vinomio.vinomio_data.producers
+
+
+curl -X DELETE http://localhost:8083/connectors/vinomio-postgres-connector
+curl -X POST http://localhost:8083/connectors/vinomio-postgres-connector/restart
 curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
 {
-    "name": "elastic-sink",
-    "config": {
-        "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
-        "tasks.max": "1",
-        "topics": "postgres.public.Producers",
-        "connection.url": "http://elastic:9200",
-        "transforms": "unwrap,key",
-        "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
-        "transforms.unwrap.drop.tombstones": "false",
-        "transforms.key.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
-        "transforms.key.field": "id",
-        "key.ignore": "false",
-        "type.name": "_doc",
-        "behavior.on.null.values": "delete"
-    }
-}'
-
-
-
-curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
-{
-  "name": "vino-connector",  
+  "name": "vinomio-postgres-connector",  
   "config": {
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector", 
     "tasksMax": "1",
@@ -32,9 +20,88 @@ curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
     "database.password": "w1ne14fun", 
     "database.dbname" : "vino_db", 
     "database.server.name": "postgres", 
-    "schema.include.list": "public.Producers" 
+    "schema.include.list": "public" 
   }
 }'
 
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+  "name": "winesearch-connector", 
+  "config": {
+    "connector.class": "io.debezium.connector.mongodb.MongoDbConnector", 
+    "mongodb.hosts": "rsmongo/mongodb1:27017", 
+    "mongodb.name": "wine", 
+    "collection.include.list": "inventory[.]*",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.connector.mongodb.transforms.ExtractNewDocumentState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode":"drop",
+    "transforms.unwrap.operation.header":"true",
+    "key.print":"true"
+  }
+}'
 
-curl -X DELETE http://localhost:8083/connectors/
+********OLD *****
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+   "name": "elastic-sink",
+    "config": {
+        "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+        "connection.url": "http://elastic:9200",
+        "tasks.max": "1",
+        "topics": "wine.wine.inventory",
+        "type.name": "_doc",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter.schemas.enable": "false",
+        "schema.ignore": "true",
+        "key.ignore": "true"
+    }
+}'
+***************************
+
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+   "name": "elastic-sink",
+    "config": {
+        "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+        "connection.url": "http://elastic:9200",
+        "tasks.max": "1",
+        "topics": "wine.wine.inventory",
+        "transforms": "unwrap,extractField",
+        "transforms.unwrap.type": "io.debezium.connector.mongodb.transforms.ExtractNewDocumentState",
+        "transforms.extractField.type":"org.apache.kafka.connect.transforms.ExtractField$Key",
+        "transforms.extractField.field":"id",
+        "type.name": "collection"
+    }
+}'
+
+
+
+curl -X DELETE http://localhost:8083/connectors/elastic-sink
+curl -X DELETE http://localhost:8083/connectors/winesearch-connector
+curl -XDELETE http://localhost:9200/wine.wine.inventorys
+
+
+rsconf = {
+   _id : "rsmongo",
+   members: [
+       {
+           "_id": 0,
+           "host": "mongodb1:27017",
+           "priority": 4
+       },
+       {
+           "_id": 1,
+           "host": "mongodb2:27017",
+           "priority": 2
+       },
+       {
+           "_id": 2,
+           "host": "mongodb3:27017",
+           "priority": 1
+       }
+   ]
+}
+rs.initiate(rsconf); 
+rsmongo:PRIMARY> rs.conf() 
+rsmongodb:SECONDARY> rs.secondaryOk() 
