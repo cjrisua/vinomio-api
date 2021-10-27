@@ -5,15 +5,15 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: "pg_isready -U wino -d vino_db"
+      test: "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"
       interval: 2s
       timeout: 20s
       retries: 10
     environment:
-      - POSTGRES_USER=wino
-      - POSTGRES_PASSWORD=w1ne14fun
-      - POSTGRES_DB=vino_db
-      - PGPASSWORD=w1ne14fun
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+      - PGPASSWORD=${DB_PASSWORD}
     volumes:
       - ./scripts:/docker-entrypoint-initdb.d
   zookeeper:
@@ -97,6 +97,10 @@ services:
 
   vinomio:
     image: vinomioapi
+    build:
+      context: "../"
+      dockerfile: Dockerfile
+    container_name: "vinomioapi"
     environment:
       NODE_ENV: development
     ports:
@@ -106,6 +110,13 @@ services:
     depends_on:
       - postgres
 
+  vinomiostream:
+    image: vinomiostream
+    build:
+      context: ./vinomio-streamer
+      dockerfile: Dockerfile
+    ports:
+      - 7000:7000
     
 
 volumes:
