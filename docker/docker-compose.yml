@@ -16,20 +16,40 @@ services:
       - PGPASSWORD=${DB_PASSWORD}
     volumes:
       - ./scripts:/docker-entrypoint-initdb.d
+  
   zookeeper:
-    image: debezium/zookeeper
-    ports:
-     - 2181:2181
-     - 2888:2888
-     - 3888:3888
+    image: confluentinc/cp-zookeeper:6.2.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
-    image: debezium/kafka
+    image: confluentinc/cp-kafka:6.2.0
     ports:
      - 9092:9092
     links:
      - zookeeper
     environment:
-     - ZOOKEEPER_CONNECT=zookeeper:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:6.2.0
+    hostname: schema-registry
+    ports:
+      - 8081:8081
+    depends_on:
+      - zookeeper
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     ports:
@@ -53,9 +73,13 @@ services:
     environment:
      - BOOTSTRAP_SERVERS=kafka:9092
      - GROUP_ID=1
+     - ADVERTISED_HOST_NAME=connect
      - CONFIG_STORAGE_TOPIC=my_connect_configs
      - OFFSET_STORAGE_TOPIC=my_connect_offsets
      - STATUS_STORAGE_TOPIC=my_source_connect_statuses
+     - CONNECT_INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+     - CONNECT_INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+
   mongodb1:
     image: mongo:4
     restart: always

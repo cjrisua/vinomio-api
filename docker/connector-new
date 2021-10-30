@@ -1,0 +1,24 @@
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+  "name": "vinomio-postgres-connector",  
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector", 
+    "tasksMax": "1",
+    "plugin.name": "pgoutput",
+    "database.hostname": "postgres", 
+    "database.port": "'"$DB_PORT"'", 
+    "database.user": "'"$DB_USERNAME"'", 
+    "database.password": "'"$DB_PASSWORD"'", 
+    "database.dbname" : "'"$DB_DATABASE"'", 
+    "database.server.name": "postgres", 
+    "schema.include.list": "public",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "TRUE",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite"
+  }
+}'
