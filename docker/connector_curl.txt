@@ -1,5 +1,11 @@
-./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Producers --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic wine.inventory --from-beginning  --property print.key=true --property value.deserializer=io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
 ./kafka-topics.sh --list --bootstrap-server=kafka:9092
+
+
+ bin/kafka-console-consumer --topic PageViewsByRegion --from-beginning \
+ *                              --bootstrap-server localhost:9092 \
+ *                              --property print.key=true \
+ *                              --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
 
 curl -X DELETE http://localhost:8083/connectors/elastic-sink
 curl -XDELETE http://localhost:9200/vinomio.vinomio_data.producers
@@ -15,14 +21,45 @@ curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
     "tasksMax": "1",
     "plugin.name": "pgoutput",
     "database.hostname": "postgres", 
-    "database.port": "5432", 
-    "database.user": "wino", 
-    "database.password": "w1ne14fun", 
-    "database.dbname" : "vino_db", 
+    "database.port": "'"$DB_PORT"'", 
+    "database.user": "'"$DB_USERNAME"'", 
+    "database.password": "'"$DB_PASSWORD"'", 
+    "database.dbname" : "'"$DB_DATABASE"'", 
     "database.server.name": "postgres", 
-    "schema.include.list": "public" 
+    "database.whitelist": "vino_db",
+    "database.history.kafka.bootstrap.servers": "kafka:9092",
+    "database.history.kafka.topic": "schema-changes.vino_db",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "TRUE",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "transforms": "unwrap,createkey",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.createkey.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.createkey.fields": "id",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.add.fields": "table,lsn",
   }
 }'
+
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+  "name": "vinomio-postgres-connector",  
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector", 
+    "tasksMax": "1",
+    "plugin.name": "pgoutput",
+    "database.hostname": "postgres", 
+    "database.port": "'"$DB_PORT"'", 
+    "database.user": "'"$DB_USERNAME"'", 
+    "database.password": "'"$DB_PASSWORD"'", 
+    "database.dbname" : "'"$DB_DATABASE"'", 
+    "database.server.name": "postgres", 
+    "schema.include.list": "public"
+  }
+}'
+
 
 curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
 {
