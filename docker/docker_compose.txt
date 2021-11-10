@@ -1,0 +1,14 @@
+docker compose up postgres --build -d
+docker compose up mongodb1 --build -d
+docker compose up mongodb2 --build -d
+docker compose up mongodb3 --build -d
+docker compose up mongosetup --build -d
+
+docker compose up vinomio --build -d
+
+docker compose up zookeeper --build -d
+docker compose up kafka --build -d
+docker compose up schema-registry --build -d
+docker compose up connect --build -d
+
+docker compose up vinomiostream --build -d

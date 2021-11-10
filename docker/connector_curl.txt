@@ -1,4 +1,6 @@
 ./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic wine.inventory --from-beginning  --property print.key=true --property value.deserializer=io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Producers --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Wines --from-beginning
 ./kafka-topics.sh --list --bootstrap-server=kafka:9092
 
 
