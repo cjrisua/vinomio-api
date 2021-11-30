@@ -8,3 +8,5 @@ scaffold.js
 /docker/kafka-connect-jdbc/*
 docker/kafka-connect-jdbc.tar
 /docker/debezium-jdbc-es/kafka-connect-jdbc/*
+docker/app.tar
+docker/vinomio.event

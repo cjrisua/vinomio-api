@@ -22,3 +22,24 @@ curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
     "transforms.unwrap.delete.handling.mode": "rewrite"
   }
 }'
+
+
+curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+{
+  "name": "elasticsearch-sink",  
+  "config": {
+    "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+    "tasks.max": "1",
+    "topics": "vinomio.model.topic.wine",
+    "key.ignore": "true",
+    "schema.ignore": "true",
+    "connection.url": "http://elastic:9200",
+    "type.name": "test-type",
+    "name": "elasticsearch-sink",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "schemas.enable" : "false"
+  }
+}'

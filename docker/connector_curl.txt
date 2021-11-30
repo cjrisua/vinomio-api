@@ -1,6 +1,15 @@
 ./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic wine.inventory --from-beginning  --property print.key=true --property value.deserializer=io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
 ./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Producers --from-beginning
-./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Wines --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.VarietyBlends --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.MasterVarietals --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Varieties --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Wine --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Countries --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Regions --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Vintages --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic vinomio.model.topic.mastervarietal --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic vinomio.model.topic.region --from-beginning
+
 ./kafka-topics.sh --list --bootstrap-server=kafka:9092
 
 
