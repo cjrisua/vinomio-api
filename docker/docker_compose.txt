@@ -12,3 +12,5 @@ docker compose up schema-registry --build -d
 docker compose up connect --build -d
 
 docker compose up vinomiostream --build -d
+
+docker compose up elastic --build -d

@@ -1,0 +1,47 @@
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic postgres.public.Wines
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic postgres.public.Producers
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic postgres.public.Vintages
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic postgres.public.Countries
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic postgres.public.Regions
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic postgres.public.VarietyBlends
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic  postgres.public.MasterVarietals
+
+bin/kafka-topics.sh --create \
+    --zookeeper zookeeper:2181 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic  postgres.public.Varieties

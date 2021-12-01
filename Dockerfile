@@ -15,4 +15,4 @@ RUN chown -R node /usr/src/app
 USER node
 CMD ["npm", "start"]
 WORKDIR /usr/src/app/dist/common/seeder 
-RUN node seeder.js
+#RUN node seeder.js

@@ -9,6 +9,8 @@
 ./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic postgres.public.Vintages --from-beginning
 ./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic vinomio.model.topic.mastervarietal --from-beginning
 ./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic vinomio.model.topic.region --from-beginning
+./kafka-console-consumer.sh --bootstrap-server=kafka:9092 --topic vinomio.model.topic.wine --from-beginning
+
 
 ./kafka-topics.sh --list --bootstrap-server=kafka:9092
 
