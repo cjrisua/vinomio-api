@@ -1,9 +1,10 @@
-import { dbConfig, MasterVarietal} from "../../common/models"
+import { dbConfig, MasterVarietal, Variety} from "../../common/models"
 import { MasterVarietalFactory } from "../../common/models/mastervarietals.model"
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
 import { number } from "yargs";
 import { IFilter } from "../../common/interface/filter.interface";
+import { required } from "joi";
 
 export class MasterVarietalDaos {
 
@@ -33,7 +34,17 @@ export class MasterVarietalDaos {
     }
 
     async listMastervarietals(limit: number = 25, page: number = 0, filter:IFilter){
-        const mastervarietals = await MasterVarietal.findAll({ where:filter.where, offset: page, limit: limit } )
+        const mastervarietals = await MasterVarietal.findAll(
+            {   where:filter.where, 
+                offset: page, 
+                limit: limit,
+                include:[
+                    {
+                        model:Variety, as:"varieties",
+                        required:false
+                    }
+                ]
+             } )
         return mastervarietals;
     }
     

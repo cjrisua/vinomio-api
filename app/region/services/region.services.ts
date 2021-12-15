@@ -25,6 +25,9 @@ export class RegionServices implements CRUD{
     list(limit: number, page: number, filter: any){
         return RegionDaos.getInstance().listRegions(limit, page, filter);
     }
+    customList(limit: number, page: number, filter: any){
+        return RegionDaos.getInstance().listRegionsWithParent(limit, page, filter)
+    }
     patchById(resource: any){
         return RegionDaos.getInstance().patchRegion(resource);
     }

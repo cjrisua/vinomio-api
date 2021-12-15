@@ -1,9 +1,12 @@
 
+import { debug } from 'console';
 import express from 'express';
-import { CommonMiddlewareConfig, MapQParams } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, MapQParams } from '../../common/common.middleware.config';
 import { Filter } from '../../common/interface/filter.interface';
+import Logger from '../../lib/logger';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { VintageServices } from '../services/vintage.services';
+import { VintageQueryAttributes } from '../types/vintage.qparam';
 import { VintageQParameterFilter } from '../types/vintage.type';
 
 
@@ -46,11 +49,19 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
     async validateVintageQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
     
         const vintageServices = VintageServices.getInstance();
-        const filter:Filter = VintageQParameterFilter(req)
-        if(Object.keys(filter.where).length == 0)
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(VintageQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+        //const filter:Filter = VintageQParameterFilter(req)
+
+        //Logger.debug(`validateVintageQueryParamExists: ${filterStatement}`)
+        Logger.debug(filterStatement)
+        //Logger.debug(Object.keys(filterStatement).length)
+
+        if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const vintage = await vintageServices.list(100,0,VintageQParameterFilter(req));
+            const vintage = await vintageServices.list(100,0,filterStatement);
             if (vintage && vintage.length > 0) {
                 next();
             } else {

@@ -34,8 +34,8 @@ export function VintageFactory (sequelize:Sequelize) : VintageStatic {
         source: ['name']
     });
 
-    Wine.hasOne(Vintage,{foreignKey:'wineId'})
-    Vintage.belongsTo(Wine, {foreignKey:'wineId'});
+    //Wine.hasOne(Vintage,{foreignKey:'wineId'})
+    //Vintage.belongsTo(Wine, {foreignKey:'wineId'});
 
     return Vintage;
 }

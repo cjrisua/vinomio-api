@@ -1,6 +1,7 @@
 import express from "express";
-import { filterByKeyFindAll } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
 import { VintageServices } from "../services/vintage.services";
+import { VintageQueryAttributes } from "../types/vintage.qparam";
 import { VintageQParameterFilter } from "../types/vintage.type";
 
 export class VintageControllers {
@@ -10,8 +11,13 @@ export class VintageControllers {
   }
 
   async listVintages(req: express.Request, res: express.Response) {
+
     const vintageServices = VintageServices.getInstance();
-    const vintages = await vintageServices.list(100,0,VintageQParameterFilter(req));
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(VintageQueryAttributes)
+    const filterStatement = filterByKey(req,filterConfig)
+    
+    const vintages = await vintageServices.list(100,0,filterStatement);
     res.status(200).send(vintages);
   }
 

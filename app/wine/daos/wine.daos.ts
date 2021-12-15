@@ -1,4 +1,4 @@
-import { dbConfig, Wine } from "../../common/models"
+import { dbConfig, MasterVarietal, Producer, Region, Vintage, Wine } from "../../common/models"
 import { WineFactory } from "../../common/models/wines.model"
 import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
@@ -24,7 +24,19 @@ export class WineDaos {
     }
 
     async listWines(limit: number = 25, page: number = 0, filter: IFilter){
-        const wines = await Wine.findAll({ where: filter.where, offset: page, limit: limit } )
+        const wines = await Wine.findAll(
+            { where: filter.where, attributes: ['id','slug','name'] ,offset: page, limit: limit, include: [{
+                 model: Producer, attributes:['id','name']
+                },
+                {
+                 model: Region, attributes:['id','name']
+                },
+                {
+                 model: MasterVarietal, attributes:['id','name']
+                },
+                {
+                 model: Vintage , attributes:['id','year']
+                }], } )
         return wines;
     }
     

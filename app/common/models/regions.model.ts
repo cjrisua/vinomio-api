@@ -3,7 +3,9 @@ import { RegionStatic } from "../../region/types/region.type";
 import { Country } from ".";
 import SequelizeSlugify from 'sequelize-slugify';
 
+
 export function RegionFactory (sequelize:Sequelize) : RegionStatic {
+
     const Regions = <RegionStatic>sequelize.define("Regions", {
         id: {
             type: DataTypes.INTEGER,
@@ -28,6 +30,13 @@ export function RegionFactory (sequelize:Sequelize) : RegionStatic {
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
+        terroir: {
+            type: DataTypes.VIRTUAL,
+           // get(){ return "this.terroir" },
+            set(value:string){ 
+                this.setDataValue('terroir', value);
+            }
+        }
     });
     
     SequelizeSlugify.slugifyModel(<any>Regions, {

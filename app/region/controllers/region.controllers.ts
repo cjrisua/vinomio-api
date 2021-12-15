@@ -1,16 +1,25 @@
 import express from "express";
-import { filterByKeyFindAll } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
 import { RegionServices } from "../services/region.services";
+import { RegionQueryAttributes } from "../types/region.qparam";
 
 export class RegionControllers {
-
+  
   constructor(){
-
   }
 
   async listRegions(req: express.Request, res: express.Response) {
+    
     const regionServices = RegionServices.getInstance();
-    const regions = await regionServices.list(100,0, filterByKeyFindAll(req));
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(RegionQueryAttributes)
+    const filterStatement = filterByKey(req,filterConfig)
+    
+    let regions : any
+    if(req.query.includeparent && req.query.includeparent == 'true')
+        regions  = await regionServices.customList(100,0,filterStatement);
+    else
+        regions = await regionServices.list(100,0,filterStatement);
     res.status(200).send(regions);
   }
 

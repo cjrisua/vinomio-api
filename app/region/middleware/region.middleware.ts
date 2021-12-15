@@ -1,9 +1,13 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { bool } from 'joi';
+import { isBooleanObject } from 'util/types';
+import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import { RegionSchemaFactory } from '../schema/region.schema';
 import { RegionServices } from '../services/region.services';
+import { RegionQueryAttributes } from '../types/region.qparam';
+import { Region } from '../types/region.type';
 
 export class RegionMiddleware extends CommonMiddlewareConfig {
     private static instance: RegionMiddleware;
@@ -51,9 +55,20 @@ export class RegionMiddleware extends CommonMiddlewareConfig {
         next();
     }
     async validateRegionQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
+        
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(RegionQueryAttributes);
         const regionServices = RegionServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
-        const region = await regionServices.list(100,0,filterStatement);
+        const filterStatement = filterByKey(req,filterConfig)
+        console.log(filterStatement)
+
+        //let region:any
+
+        //if(req.query.includeparent && req.query.includeparent == 'true')
+        //    region  = await regionServices.customList(100,0,filterStatement);
+        //else
+        const region  = await regionServices.list(100,0,filterStatement);
+
         if (region && region.length > 0) {
             next();
         } else {

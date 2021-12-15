@@ -1,6 +1,7 @@
 import { 
   BuildOptions, Model,
   BelongsToManyAddAssociationMixin,
+  HasOneGetAssociationMixin,
   Association
 
 } from "sequelize";

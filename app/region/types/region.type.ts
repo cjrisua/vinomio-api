@@ -7,11 +7,12 @@ import {
 export interface RegionAttributes {
     id?: number;
     slug?: string;
-    name: string;
+    name?: string;
     createdAt?: Date;
     updatedAt?: Date;
-    countryId: number;
+    countryId?: number;
     parentId?: number;
+    terroir?: string
   }
 
 export interface RegionModel extends Model<RegionAttributes>, RegionAttributes {}
@@ -25,6 +26,7 @@ export class Region extends Model<RegionModel, RegionAttributes>  implements Reg
   public readonly updatedAt?: Date;
   public countryId!: number;
   public parentId!: number;
+  public terroir!: string;
 
   public getRegions !: HasManyGetAssociationsMixin<Region>
   public addRegion!: HasManyAddAssociationMixin<Region, number>;

@@ -4,6 +4,14 @@ import slugify from 'slugify'
 import { Filter, IFilter } from "./interface/filter.interface";
 import { loggers } from "winston";
 
+
+
+export class FilterQueryParamFactory {
+    create<T>(type: (new () => T)): T {
+        return new type();
+    }
+}
+
 export class CommonMiddlewareConfig{
 
     public static slugify =  (name:string) => { return slugify(name, {lower: true, remove: /[\/*+~.()'"!:@]/g})}
@@ -22,6 +30,25 @@ export const filterByKeyFindAll2 = function(req: any) : IFilter{
     return filter_dic
 }
 
+
+
+export const filterByKey = function<T>(req:express.Request, filter_attributes:T) : IFilter{
+    let filter_dic : IFilter = {}
+
+    if(req.query.id && (Number(req.query.id) || req.query.id == '0'))
+        filter_dic.where = { id: req.query.id }
+    else if (req.query.slug)
+        filter_dic.where = { slug: req.query.slug }
+    
+    Object.keys(filter_attributes).map((p) =>{ 
+        if(req.query![p] != undefined){
+            if(filter_dic.where == undefined)
+                filter_dic.where = {}
+            filter_dic.where![p] = req.query![p];
+        }    
+    });
+    return filter_dic
+}
 
 export const filterByKeyFindAll = function(req:express.Request) : IFilter{
     let filter_dic : IFilter = {}
