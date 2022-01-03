@@ -77,9 +77,9 @@ export function WineFactory (sequelize:Sequelize) : WineStatic {
     MasterVarietalStatic.hasOne(Wine, {foreignKey:'mastervarietalId'})
     Wine.belongsTo(MasterVarietalStatic, {foreignKey:'mastervarietalId'})
 
-    const VintageStatic  = VintageFactory(dbConfig);
-    Wine.hasMany(VintageStatic, {foreignKey:'wineId'})
-    VintageStatic.belongsTo(Wine, {foreignKey:'wineId'})
+    //const VintageStatic  = VintageFactory(dbConfig);
+    //Wine.hasMany(VintageStatic, {foreignKey:'wineId'})
+    //VintageStatic.belongsTo(Wine, {foreignKey:'wineId'})
 
     return Wine;
 }

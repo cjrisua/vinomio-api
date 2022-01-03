@@ -18,6 +18,8 @@ import { RegionRoutes } from './region/region.routes.config';
 import { VarietalRoutes } from './variety/variety.routes.config';
 import { MasterVarietyRoutes } from './mastervarietal/mastervarietal.routes.config';
 import { VintageRoutes } from './vintage/vintage.routes.config';
+import { UserRoutes } from './user/user.routes.config';
+import { AuthRoutes } from './auth/auth.routes.config';
 
 
 const app: express.Application = express();
@@ -47,6 +49,8 @@ routes.push(new RegionRoutes(app));
 routes.push(new VarietalRoutes(app));
 routes.push(new MasterVarietyRoutes(app));
 routes.push(new VintageRoutes(app));
+routes.push(new UserRoutes(app));
+routes.push(new AuthRoutes(app));
 
 dbConfig
 .sync().then(() =>{

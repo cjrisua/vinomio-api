@@ -1,7 +1,8 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { VintageStatic } from "../../vintage/types/vintage.type";
 import SequelizeSlugify from 'sequelize-slugify';
-import { Wine } from ".";
+import { dbConfig, Wine } from ".";
+import { WineFactory } from "./wines.model";
 
 export function VintageFactory (sequelize:Sequelize) : VintageStatic {
     const Vintage = <VintageStatic>sequelize.define("Vintages", {
@@ -17,6 +18,10 @@ export function VintageFactory (sequelize:Sequelize) : VintageStatic {
         wineId:{
             type: DataTypes.INTEGER,
             allowNull: false,
+            //references: {
+            //    model: Wine, // 'Movies' would also work
+            //    key: 'id'
+            //}
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -34,8 +39,11 @@ export function VintageFactory (sequelize:Sequelize) : VintageStatic {
         source: ['name']
     });
 
-    //Wine.hasOne(Vintage,{foreignKey:'wineId'})
-    //Vintage.belongsTo(Wine, {foreignKey:'wineId'});
+    const WineStatic  = WineFactory(dbConfig);
+    //WineStatic.hasMany(Vintage,{foreignKey:'wineId'})
+    //Vintage.belongsTo(WineStatic, {foreignKey:'wineId'});
+    Wine.hasMany(Vintage,{foreignKey:'wineId'})
+    Vintage.belongsTo(Wine,{foreignKey:'wineId'});
 
     return Vintage;
 }

@@ -1,4 +1,4 @@
-import { dbConfig, Vintage } from "../../common/models"
+import { dbConfig, Vintage, Wine } from "../../common/models"
 import { VintageFactory } from "../../common/models/vintages.model"
 import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
@@ -28,7 +28,10 @@ export class VintageDaos {
             where:filter.where, 
             offset: page, 
             limit: limit,
-            include:{ all: true},
+            include:[{
+                model: Wine, attributes:['id','name']
+            }],
+            
         } )
         return vintages;
     }
