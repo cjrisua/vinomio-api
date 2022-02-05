@@ -20,8 +20,8 @@ export function CollectionFactory (sequelize:Sequelize) : CollectionStatic {
             allowNull: false,
         },
         statusId:{
-            type: DataTypes.ENUM('allocated','pending','allocated','drunk','deleted'),
-            defaultValue: 'attached',
+            type: DataTypes.ENUM('allocated','pending','drunk','deleted'),
+            defaultValue: 'allocated',
         },
         cellarId: {
             type: DataTypes.INTEGER,
