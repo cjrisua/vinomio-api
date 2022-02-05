@@ -20,6 +20,13 @@ import { MasterVarietyRoutes } from './mastervarietal/mastervarietal.routes.conf
 import { VintageRoutes } from './vintage/vintage.routes.config';
 import { UserRoutes } from './user/user.routes.config';
 import { AuthRoutes } from './auth/auth.routes.config';
+import { RoleRoutes } from './role/role.routes.config';
+import { CellarRoutes } from './cellar/cellar.routes.config';
+import { CollectionRoutes } from './collection/collection.routes.config';
+import { MerchantRoutes } from './merchant/merchant.routes.config';
+import { AllocationRoutes } from './allocation/allocation.routes.config';
+import { AllocationEventFactory } from './common/models/allocationevents.model';
+import { AllocationEventRoutes } from './allocationevent/allocationevent.routes.config';
 
 
 const app: express.Application = express();
@@ -50,8 +57,13 @@ routes.push(new VarietalRoutes(app));
 routes.push(new MasterVarietyRoutes(app));
 routes.push(new VintageRoutes(app));
 routes.push(new UserRoutes(app));
+routes.push(new RoleRoutes(app));
 routes.push(new AuthRoutes(app));
-
+routes.push(new CellarRoutes(app));
+routes.push(new CollectionRoutes(app));
+routes.push(new MerchantRoutes(app));
+routes.push(new AllocationRoutes(app));
+routes.push(new AllocationEventRoutes(app));
 dbConfig
 .sync().then(() =>{
 //.authenticate().then(() =>{

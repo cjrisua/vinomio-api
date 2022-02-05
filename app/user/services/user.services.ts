@@ -34,6 +34,9 @@ export class UserServices implements CRUD{
     readByEmail(resourceId: any){
         return UserDaos.getInstance().getUserByEmail(resourceId);
     }
+    readProfileByEmail(resourceId: any){
+        return UserDaos.getInstance().getProfileByEmail(resourceId);
+    }
     updateById(resource: any){
         return UserDaos.getInstance().patchUser(resource);
     }

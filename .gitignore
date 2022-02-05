@@ -10,3 +10,6 @@ docker/kafka-connect-jdbc.tar
 /docker/debezium-jdbc-es/kafka-connect-jdbc/*
 docker/app.tar
 docker/vinomio.event
+docker/postgres-data
+docker/logs/*.log
+.DS_Store

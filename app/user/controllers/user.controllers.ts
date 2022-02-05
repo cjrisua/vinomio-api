@@ -19,6 +19,12 @@ export class UserControllers {
     res.status(200).send(user);
   }
 
+  async getUserProfileByEmail(req: express.Request, res: express.Response) {
+    const userServices = UserServices.getInstance();
+    const profile = await userServices.readProfileByEmail(req.body.email);
+    res.status(200).send(profile);
+  }
+
   async createUser(req: express.Request, res: express.Response) {
     const userServices = UserServices.getInstance();
     const userId = await userServices.create(req.body);

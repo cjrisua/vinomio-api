@@ -15,8 +15,7 @@ services:
       - POSTGRES_DB=${DB_DATABASE}
       - PGPASSWORD=${DB_PASSWORD}
     volumes:
-      - ./scripts:/docker-entrypoint-initdb.d
-  
+      - ./postgres-data:/var/lib/postgresql/data 
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.0
     environment:

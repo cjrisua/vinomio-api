@@ -1,4 +1,4 @@
-curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+curl -H 'Content-Type: application/json' minikahda-nas.fios-router.home:8083/connectors --data '
 {
   "name": "vinomio-postgres-connector",  
   "config": {
@@ -24,7 +24,7 @@ curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
 }'
 
 
-curl -H 'Content-Type: application/json' localhost:8083/connectors --data '
+curl -H 'Content-Type: application/json' minikahda-nas.fios-router.home:8083/connectors --data '
 {
   "name": "elasticsearch-sink",  
   "config": {

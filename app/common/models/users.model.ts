@@ -2,6 +2,9 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 import { UserStatic } from "../../user/types/user.type";
 import SequelizeSlugify from 'sequelize-slugify';
 import bcrypt from "bcrypt"
+import { CellarFactory } from "./cellars.model";
+import { dbConfig } from ".";
+import { SubscriberFactory } from "./subscribers.model";
 
 export function Hash(password:string) {
     return new Promise((resolve, reject) => {
@@ -28,13 +31,21 @@ export function UserFactory (sequelize:Sequelize) : UserStatic {
             autoIncrement: true,
             primaryKey: true,
         },
-        name: {
+        firstname: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        lastname: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
+        },
+        handler: {
+            type: DataTypes.STRING,
             unique: true,
         },
         password:{
@@ -60,6 +71,11 @@ export function UserFactory (sequelize:Sequelize) : UserStatic {
             defaultValue: DataTypes.NOW,
         },
     });
+
+    //const Subscriber = SubscriberFactory(dbConfig)
+
+    //Subscriber.hasMany(Users,{foreignKey:'user_id'})
+    //Users.belongsTo(Subscriber,{foreignKey:'user_id'})
 
     /*
     SequelizeSlugify.slugifyModel(<any>Users, {
