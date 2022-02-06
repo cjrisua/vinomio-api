@@ -22,6 +22,9 @@ export class UserRoutes
     ]);
     this.app.post("/api/user/register", 
       body('email').isEmail(),
+      body('firstname').isString(),
+      body('lastname').isString(),
+      body('handler').isString(),
       body('password').isStrongPassword(),[
         userMiddleware.validateUserRegister,
         userControllers.createUser

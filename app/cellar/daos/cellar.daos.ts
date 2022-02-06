@@ -23,7 +23,7 @@ export class CellarDaos {
         if(cellarFields.owner){
             await cellar.addUsers(cellarFields.owner, {
                 through:{
-                    role_id: 1 //Collector default value
+                    role_id: cellarFields.role //Collector default value
                 }});
         }
         return cellar.id;

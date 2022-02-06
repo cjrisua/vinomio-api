@@ -21,6 +21,7 @@ export class CellarRoutes
     ]);
     this.app.post("/api/cellar", [
         cellarMiddleware.validateCellarPOST,
+        cellarMiddleware.extractRoleId,
         cellarControllers.createCellar
     ]);
     this.app.put(`/api/cellar/:cellarId`, [

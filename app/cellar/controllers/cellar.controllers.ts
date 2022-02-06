@@ -22,7 +22,7 @@ export class CellarControllers {
   async createCellar(req: express.Request, res: express.Response) {
     const cellarServices = CellarServices.getInstance();
     const cellarId = await cellarServices.create(req.body);
-    res.status(201).send({id: cellarId});
+    res.status(201).send({});
   }
   
   async patchCellar(req: express.Request, res: express.Response) {

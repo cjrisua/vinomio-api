@@ -5,8 +5,8 @@ export function CellarSchemaFactory ()  {
         CreatePOST: Joi.object().keys(
                 { 
                   owner: Joi.number().required(),
-                  role: Joi.number(),
-                  attributes: Joi.string().required()
+                  role: Joi.string(),
+                  attributes: Joi.object()
                 }) 
       };
       return schemas;

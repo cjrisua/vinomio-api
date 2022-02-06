@@ -62,7 +62,8 @@ export class UserDaos {
             "U"."lastname",
             "S"."cellar_id",
             "C"."vintageId",
-            "C"."statusId"
+            "C"."statusId",
+            "U"."handler"
             FROM "Users" as "U"
             LEFT OUTER JOIN "Subscribers" as "S" on "S"."user_id" = "U"."id" and "S"."role_id" = 1
             LEFT OUTER JOIN "Collections" as "C" on "C"."cellarId" = "S"."cellar_id"
@@ -77,7 +78,8 @@ export class UserDaos {
                   "firstname":m[0]?.firstname,
                   "lastname":m[0]?.lastname,
                   "cellar_id":m[0]?.cellar_id,
-                  "email":m[0]?.email
+                  "email":m[0]?.email,
+                  "handler":m[0]?.handler
                 } })
 
               return r 

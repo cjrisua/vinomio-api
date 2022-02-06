@@ -17,7 +17,7 @@ export class AuthDaos {
     }
 
     async get(user:any){
-        console.log(user.email)
+        //console.log(user.email)
         const users = await User.findOne({where: { email : user.email}});
         return users;
     }

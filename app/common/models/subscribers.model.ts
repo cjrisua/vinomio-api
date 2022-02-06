@@ -25,7 +25,7 @@ export function SubscriberFactory (sequelize:Sequelize) : SubscriberStatic {
         role_id: {
             type: DataTypes.INTEGER,
             references: {
-              model: User,
+              model: Role,
               key: 'id'
             },
             /*
