@@ -35,17 +35,19 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
         }
     }
     async validateAllocationExist(req: express.Request, res: express.Response, next: express.NextFunction) {
-        //Logger.info(req.body);
-        if( req.body.merchant?.allocationEvent?.name && 
-            req.body.merchant?.allocationEvent?.allocationId &&
-            !req.body.merchant?.allocationEvent?.eventId){
+        //Logger.info(req.body[0].merchant);
+        if( req.body[0].merchant?.allocationEvent?.name && 
+            req.body[0].merchant?.allocationEvent?.allocationId &&
+            !req.body[0].merchant?.allocationEvent?.eventId){
             //Logger.info("Add Event")
             const allocationEvent = AllocationEventServices.getInstance();
             const eventId = await allocationEvent.create({
-                name:req.body.merchant?.allocationEvent?.name, 
-                allocationId: req.body.merchant?.allocationEvent?.allocationId})
+                name:req.body[0].merchant?.allocationEvent?.name, 
+                allocationId: req.body[0].merchant?.allocationEvent?.allocationId})
             //Logger.info(eventId)
-            req.body.allocationEventId = eventId;
+            //req.body.allocationEventId = eventId;
+            //Array(req.body).forEach(x => )
+            req.body.forEach((x: any)  => x.allocationEventId = eventId);
         }
         next();
     }

@@ -33,65 +33,41 @@ export class CollectionDaos {
         return this.instance;
     }
 
-    async addCollection(collectionFields: any) {
-
+    async addCollection(collectionFields: any[])
+    {
         const collectionEvent = CollectionEventFactory(dbConfig)
-        //Logger.info(collectionFields)
+        let result:any[] = []
+        
+        collectionFields.forEach(async (wine:any) =>{
+            const bottles = 
+                Array(parseInt(wine.bottleCount)).fill(0)
+                .map(x =>  JSON.parse(JSON.stringify(wine)));
 
-        let datacollection:any[] = []
-        for(let i=0; i < collectionFields.bottleCount; i++)
-          datacollection.push(JSON.parse(JSON.stringify(collectionFields)))
-        
-        //Collection.
-        const collection = await this.Collection.bulkCreate(datacollection).then(async (items)=>{
-           const purchasedOn = items.map((p:any) => {return {
-                'action':'PurchasedOn', 
-                'actionDate': p.purchasedOn,
-                'collectionId':p.id
-           }})
-           await collectionEvent.bulkCreate(purchasedOn).then(async ()=>{
-                if(datacollection[0].statusId == "pending"){
-                    const deliverBy = items.map((p:any) => {return {
-                        'action':'DeliveredBy', 
-                        'actionDate': p.deliverBy,
+            const collection = await this.Collection.bulkCreate(bottles).then(async (items)=>{
+                const purchasedOn = items.map((p:any) => { return {
+                        'action':'PurchasedOn', 
+                        'actionDate': p.purchasedOn,
                         'collectionId':p.id
-                   }});
-                   await collectionEvent.bulkCreate(deliverBy)
-                }
-           })
-        })
-        
-          /*
-          const collection = await this.Collection.create(collectionFields)
-          .then(async (p) =>{
-             
-              await collectionEvent.create(
-                  {
-                  'action':'PurchasedOn', 
-                  'actionDate': collectionFields.purchasedOn,
-                  'collectionId':p.id
+                }})
+                await collectionEvent.bulkCreate(purchasedOn).then(async ()=>
+                {
+                    if(bottles[0].statusId == "pending")
+                    {
+                        const deliverBy = items.map((p:any) => {
+                            return {
+                            'action':'DeliveredBy', 
+                            'actionDate': p.deliverBy,
+                            'collectionId':p.id
+                            }
+                        });
+                        await collectionEvent.bulkCreate(deliverBy)
+                    }
                 })
+                //result.push(collection);
+            })
+        });
 
-                if(p.statusId == "pending"){
-                    await collectionEvent.create(
-                        {
-                        'action':'DeliveredBy', 
-                        'actionDate': collectionFields.deliverBy,
-                        'collectionId':p.id
-                      })
-                }
-
-                return p;
-          });*/
-         
-       // Logger.info(datacollection)
-
-        //const collection = await this.Collection.bulkCreate(datacollection,{
-        //    ignoreDuplicates: true,
-        //  });
-        //Logger.info(collection)
-        //await collection[0].addEvent()
-        return collection;
+        return {}
     }
 
     async listCollections(limit: number = 25, page: number = 0){
