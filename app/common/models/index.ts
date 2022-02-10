@@ -17,17 +17,17 @@ import { AllocationEventFactory } from './allocationevents.model';
 import { AllocationFactory } from './allocations.model';
 import { CollectionEventFactory } from './collectionevents.model';
 
-const env: string = process.env.NODE_ENV || "Local";
+export enum Environment{
+    Production = 'production',
+    Development = 'development'
+}
+
+const env: Environment = <Environment>process.env.NODE_ENV || Environment.Production;
+const server: string = env == Environment.Production ? process.env.DB_HOST  || "postgres" : "localhost"
+
 let sequelize_info = null;
+sequelize_info = new sequelize.Sequelize(`postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${server}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`)
 
-console.log(process.env.DB_USERNAME);
-
-//if(env == "Local"){
-//    sequelize_info = new sequelize.Sequelize(`postgres://winopstgrs:w!ne!$Fun@$tokalond.fios-router.home:5342/vino_db`)
-//}
-//else{
-    sequelize_info = new sequelize.Sequelize(`postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@localhost:5432/vino_db`)
-//}
 export const dbConfig = sequelize_info;
 export const Producer = ProducerFactory(dbConfig);
 export const Country = CountryFactory(dbConfig);
