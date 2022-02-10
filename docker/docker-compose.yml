@@ -124,7 +124,14 @@ services:
       dockerfile: Dockerfile
     container_name: "vinomioapi"
     environment:
-      NODE_ENV: development
+      - NODE_ENV=development
+      - JWTSECRET=${JWTSECRET}
+      - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
+      - PORT=${PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - 3000:3000
     links:

@@ -17,16 +17,8 @@ import { AllocationEventFactory } from './allocationevents.model';
 import { AllocationFactory } from './allocations.model';
 import { CollectionEventFactory } from './collectionevents.model';
 
-export enum Environment{
-    Production = 'production',
-    Development = 'development'
-}
-
-const env: Environment = <Environment>process.env.NODE_ENV || Environment.Production;
-const server: string = env == Environment.Production ? process.env.DB_HOST  || "postgres" : "localhost"
-
 let sequelize_info = null;
-sequelize_info = new sequelize.Sequelize(`postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${server}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`)
+sequelize_info = new sequelize.Sequelize(`postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`)
 
 export const dbConfig = sequelize_info;
 export const Producer = ProducerFactory(dbConfig);
