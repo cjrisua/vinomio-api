@@ -13,3 +13,12 @@ docker/vinomio.event
 docker/postgres-data
 docker/logs/*.log
 .DS_Store
+docker/init-letsencrypt.sh
+docker/data/certs/SSLcertificate.crt
+docker/data/certs/SSLprivatekey.key
+app/SSLcertificate.crt
+app/SSLprivatekey.key
+SSLcertificate.crt
+SSLprivatekey.key
+cert.pem
+key.pem
