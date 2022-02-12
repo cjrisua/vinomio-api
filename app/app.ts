@@ -2,7 +2,10 @@ import * as dotenv from 'dotenv';
 dotenv.config()
 
 import express from 'express';
-import * as http from 'http';
+//import * as http from 'http';
+// Import builtin NodeJS modules to instantiate the service
+import * as https from 'https'
+import * as fs from 'fs'
 import * as bodyparser from 'body-parser';
 
 import Logger from "./lib/logger";
@@ -44,8 +47,13 @@ if (process.env.NODE_ENV === "production") {
     app.use(require("compression")());
 }
 
-
-const server: http.Server = http.createServer(app);
+const options = {
+    key: fs.readFileSync('SSLprivatekey.key'),
+    cert: fs.readFileSync('SSLcertificate.crt'),
+    //rejectUnauthorized: false,
+  };
+  
+const server: https.Server = https.createServer(options,app);
 const PORT = 3000;
 const routes: any = [];
 
@@ -68,7 +76,7 @@ dbConfig
 .sync().then(() =>{
 //.authenticate().then(() =>{
     Logger.info("connected to db")
-    app.listen(PORT,() =>
+    server.listen(PORT,() =>
     {
         Logger.info(`Server running at port ${PORT}!`)
         routes.forEach((route: CommonRoutesConfig) => {
