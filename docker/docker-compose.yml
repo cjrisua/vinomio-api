@@ -1,5 +1,26 @@
 version: '2'
 services:
+  nginx:
+    image: nginx:latest
+    build: .
+    volumes:
+      #- /data/nginx:/etc/nginx/conf.d
+      - /data/certs:/etc/nginx/certs
+    ports:
+      - "8181:80"
+      - "1443:443"
+      
+  vinomioapp:
+    image: vinomioapp
+    build:
+      context: ./vinomio-app
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - "8181:80"
+      - "1443:443"
+
   postgres:
     image: debezium/postgres:13
     ports:
