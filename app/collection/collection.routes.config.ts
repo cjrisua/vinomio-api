@@ -17,6 +17,7 @@ export class CollectionRoutes
     const collectionMiddleware = CollectionMiddleware.getInstance();
 
     this.app.get("/api/collection", [
+        collectionMiddleware.validateCollectionQueryParamExists,
         collectionControllers.listCollections
     ]);
     this.app.post("/api/collection", [

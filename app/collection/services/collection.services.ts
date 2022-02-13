@@ -22,8 +22,8 @@ export class CollectionServices implements CRUD{
     deleteById(resourceId: any){
         return CollectionDaos.getInstance().removeCollectionById(resourceId);
     }
-    list(limit: number, page: number){
-        return CollectionDaos.getInstance().listCollections(limit, page);
+    list(limit: number, page: number, filter:any){
+        return CollectionDaos.getInstance().listCollections(limit, page, filter);
     }
     patchById(resource: any){
         return CollectionDaos.getInstance().patchCollection(resource);

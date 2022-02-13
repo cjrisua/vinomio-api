@@ -1,6 +1,7 @@
 import express from "express";
-import { filterByKeyFindAll } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
 import { MerchantServices } from "../services/merchant.services";
+import { MerchantQueryAttributes } from "../types/merchant.qparam";
 
 export class MerchantControllers {
 
@@ -10,7 +11,9 @@ export class MerchantControllers {
 
   async listMerchants(req: express.Request, res: express.Response) {
     const merchantServices = MerchantServices.getInstance();
-    const merchants = await merchantServices.list(100,0,filterByKeyFindAll(req));
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(MerchantQueryAttributes);
+    const merchants = await merchantServices.list(100,0, filterByKey(req,filterConfig));
     res.status(200).send(merchants);
   }
 

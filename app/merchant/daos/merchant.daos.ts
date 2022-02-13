@@ -25,7 +25,11 @@ export class MerchantDaos {
 
     async listMerchants(limit: number = 25, page: number = 0, filter: IFilter){
         console.log(filter)
-        const merchants = await Merchant.findAll({ where: filter.where, offset: page, limit: limit } )
+        const merchants = await Merchant.findAll(
+            { 
+                where: filter.where, 
+                offset: page, limit: limit 
+            })
         return merchants;
     }
     

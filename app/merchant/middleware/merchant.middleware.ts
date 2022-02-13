@@ -58,7 +58,6 @@ export class MerchantMiddleware extends CommonMiddlewareConfig{
         const factory = new FilterQueryParamFactory();
         const filterConfig = factory.create(MerchantQueryAttributes);
         const filterStatement = filterByKey(req,filterConfig)
-        Logger.debug(filterStatement)
 
         if(Object.keys(filterStatement).length == 0)
             next();

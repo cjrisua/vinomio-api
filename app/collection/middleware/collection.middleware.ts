@@ -1,10 +1,11 @@
 
 import express from 'express';
 import { AllocationEventServices } from '../../allocationevent/services/allocationevent.services';
-import { CommonMiddlewareConfig } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
 import { CollectionSchemaFactory } from '../schema/collection.schema';
 import { CollectionServices } from '../services/collection.services';
+import { CollectionQueryAttributes } from '../types/collection.qparam';
 
 export class CollectionMiddleware extends CommonMiddlewareConfig{
     private static instance: CollectionMiddleware;
@@ -14,6 +15,18 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
             CollectionMiddleware.instance = new CollectionMiddleware();
         }
         return CollectionMiddleware.instance;
+    }
+    async validateCollectionQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {       
+        const collectionServices = CollectionServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(CollectionQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+        const collection = await collectionServices.list(100,0,filterStatement);
+        if (collection && collection.length > 0) {
+            next();
+        } else {
+            res.status(404).send({error: `Collection not found`});
+        }
     }
     async validateCollectionPOST(req: express.Request, res: express.Response, next: express.NextFunction){
         const schema = CollectionSchemaFactory().CreatePOST;
@@ -34,6 +47,7 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
             res.status(404).send({error: `Collection ${req.params.collectionId} not found`});
         }
     }
+
     async validateAllocationExist(req: express.Request, res: express.Response, next: express.NextFunction) {
         //Logger.info(req.body[0].merchant);
         if( req.body[0].merchant?.allocationEvent?.name && 

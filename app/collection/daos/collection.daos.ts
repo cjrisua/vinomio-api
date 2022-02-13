@@ -5,6 +5,7 @@ import Logger from "../../lib/logger";
 import { AllocationFactory } from "../../common/models/allocations.model";
 import { CollectionEventFactory } from "../../common/models/collectionevents.model";
 import { CollectioneventAttributes } from "../../collectionevent/types/collectionevent.type";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export function groupBy (array: any[], key: string | number)  {
     // Return the end result
@@ -70,14 +71,20 @@ export class CollectionDaos {
         return {}
     }
 
-    async listCollections(limit: number = 25, page: number = 0){
-        const collections = await Collection.findAll({ offset: page, limit: limit,
-            include:[{model: CollectionEvent, attributes:['id','action']}]} )
+    async listCollections(limit: number = 25, page: number = 0, filter:IFilter){
+        const collections = await Collection.findAll(
+            { 
+                where:filter.where, 
+                offset: page, limit: limit,
+                include:[{model: CollectionEvent, attributes:['id','action']}]
+            });
         return collections;
     }
     
     async removeCollectionById(collectionId: string){
-        const collections = await Collection.destroy({where: {id: collectionId} })
+        const collections = await Collection.destroy({
+            where: {id: collectionId} 
+        })
         return collections;
     }
 

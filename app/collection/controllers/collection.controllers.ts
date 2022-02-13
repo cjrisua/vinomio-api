@@ -1,5 +1,7 @@
 import express from "express";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
 import { CollectionServices } from "../services/collection.services";
+import { CollectionQueryAttributes } from "../types/collection.qparam";
 
 export class CollectionControllers {
 
@@ -9,7 +11,9 @@ export class CollectionControllers {
 
   async listCollections(req: express.Request, res: express.Response) {
     const collectionServices = CollectionServices.getInstance();
-    const collections = await collectionServices.list(100,0);
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(CollectionQueryAttributes);
+    const collections = await collectionServices.list(100,0,  filterByKey(req,filterConfig));
     res.status(200).send(collections);
   }
 
