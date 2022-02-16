@@ -30,6 +30,7 @@ import { MerchantRoutes } from './merchant/merchant.routes.config';
 import { AllocationRoutes } from './allocation/allocation.routes.config';
 import { AllocationEventFactory } from './common/models/allocationevents.model';
 import { AllocationEventRoutes } from './allocationevent/allocationevent.routes.config';
+import { AllocationEventOfferRoutes } from './allocationeventoffer/AllocationEventOffer.routes.config';
 
 
 const app: express.Application = express();
@@ -72,6 +73,8 @@ routes.push(new CollectionRoutes(app));
 routes.push(new MerchantRoutes(app));
 routes.push(new AllocationRoutes(app));
 routes.push(new AllocationEventRoutes(app));
+routes.push(new AllocationEventOfferRoutes(app));
+
 dbConfig
 .sync().then(() =>{
 //.authenticate().then(() =>{

@@ -16,6 +16,7 @@ import { MerchantFactory } from './merchants.model';
 import { AllocationEventFactory } from './allocationevents.model';
 import { AllocationFactory } from './allocations.model';
 import { CollectionEventFactory } from './collectionevents.model';
+import { AllocationEventOfferFactory } from './allocationeventoffers.model';
 
 let sequelize_info = null;
 sequelize_info = new sequelize.Sequelize(`postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`)
@@ -36,3 +37,4 @@ export const Merchant = MerchantFactory(dbConfig);
 export const Allocation =  AllocationFactory(dbConfig);
 export const AllocationEvent = AllocationEventFactory(dbConfig)
 export const CollectionEvent = CollectionEventFactory(dbConfig);
+export const AllocationEventOffer = AllocationEventOfferFactory(dbConfig)

@@ -26,6 +26,10 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
                 key: 'id'
             }
         },
+        month: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
