@@ -30,7 +30,7 @@ import { MerchantRoutes } from './merchant/merchant.routes.config';
 import { AllocationRoutes } from './allocation/allocation.routes.config';
 import { AllocationEventFactory } from './common/models/allocationevents.model';
 import { AllocationEventRoutes } from './allocationevent/allocationevent.routes.config';
-import { AllocationEventOfferRoutes } from './allocationeventoffer/AllocationEventOffer.routes.config';
+import { AllocationEventOfferRoutes } from './allocationeventoffer/allocationeventoffer.routes.config';
 
 
 const app: express.Application = express();
