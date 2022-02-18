@@ -1,4 +1,4 @@
-import { dbConfig, Allocation } from "../../common/models"
+import { dbConfig, Allocation, Merchant } from "../../common/models"
 import { AllocationFactory } from "../../common/models/allocations.model"
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
@@ -25,7 +25,15 @@ export class AllocationDaos {
     }
 
     async listAllocations(limit: number = 25, page: number = 0){
-        const allocations = await Allocation.findAll({ offset: page, limit: limit } )
+        const allocations = await Allocation.findAll(
+            { 
+                offset: page, 
+                limit: limit,
+                include: [{
+                    model: Merchant, as:"merchant", attributes:['id','name','userId']
+                }]
+            
+            } )
         return allocations;
     }
     

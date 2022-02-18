@@ -1,8 +1,10 @@
 
 import express from 'express';
+import { filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
 import { MerchantServices } from '../../merchant/services/merchant.services';
 import { AllocationEventServices } from '../services/allocationevent.services';
+import { AllocationEventQueryAttributes } from '../types/allocationevent.qparam';
 
 export class AllocationEventMiddleware {
     private static instance: AllocationEventMiddleware;
@@ -12,6 +14,18 @@ export class AllocationEventMiddleware {
             AllocationEventMiddleware.instance = new AllocationEventMiddleware();
         }
         return AllocationEventMiddleware.instance;
+    }
+    async validateAllocationEventParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {       
+        const services = AllocationEventServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(AllocationEventQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+        const collection = await services.list(100,0,filterStatement);
+        if (collection && collection.length > 0) {
+            next();
+        } else {
+            res.status(404).send({error: `Allocation not found`});
+        }
     }
     async validateAllocationEventExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const allocationeventServices = AllocationEventServices.getInstance();

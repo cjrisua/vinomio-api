@@ -17,6 +17,7 @@ export class AllocationEventRoutes
     const allocationeventMiddleware = AllocationEventMiddleware.getInstance();
 
     this.app.get("/api/allocationevent", [
+       allocationeventMiddleware.validateAllocationEventParamExists,
         allocationeventControllers.listAllocationEvents
     ]);
     this.app.get("/api/allocationevent/merchant/:merchantId", [

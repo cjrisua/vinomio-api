@@ -4,6 +4,7 @@ import * as shortUUID from "short-uuid";
 import { QueryTypes } from "sequelize";
 import Logger from "../../lib/logger";
 import { string } from "joi";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class AllocationEventDaos {
 
@@ -25,8 +26,11 @@ export class AllocationEventDaos {
         return allocationevent.id;
     }
 
-    async listAllocationEvents(limit: number = 25, page: number = 0){
-        const allocationevents = await AllocationEvent.findAll({ offset: page, limit: limit } )
+    async listAllocationEvents(limit: number = 25, page: number = 0,  filter:IFilter){
+        const allocationevents = await AllocationEvent.findAll({ 
+            where:filter.where, 
+            offset: page, 
+            limit: limit } )
         return allocationevents;
     }
     
@@ -41,7 +45,7 @@ export class AllocationEventDaos {
     async getAllocationEventByMerchant(merchantId: number){
 
         const merchant_query:string = `
-        SELECT "AE"."id" as "eventId", "M"."id" as "merchantId", "A"."id" as "allocationId","AE"."slug", "AE"."name" FROM "Merchants" AS "M" LEFT JOIN "Allocations" AS "A" on "M"."id" = "A"."merchantId" LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId" WHERE "M"."id" = :merchantId GROUP by  "AE"."id" ,"M"."id", "A"."id","AE"."slug", "AE"."name"`
+        SELECT "AE"."id" as "eventId", "M"."id" as "merchantId", "A"."id" as "allocationId","AE"."slug", "AE"."name" , "AE"."month" FROM "Merchants" AS "M" LEFT JOIN "Allocations" AS "A" on "M"."id" = "A"."merchantId" LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId" WHERE "M"."id" = :merchantId GROUP by  "AE"."id" ,"M"."id", "A"."id","AE"."slug", "AE"."name", "AE"."month"`
         const r:any =  await dbConfig.query(merchant_query, {
             replacements: { merchantId: merchantId },
             raw: true,
@@ -53,13 +57,15 @@ export class AllocationEventDaos {
                     slug: string; 
                     name: string; 
                     eventId:number;
+                    month:string;
                 }[] = []
                 m.forEach((i) => {results.push({
                     merchantId:i.merchantId, 
                     allocationId:i.allocationId,
                     slug:i.slug,
                     name:i.name,
-                    eventId:i.eventId
+                    eventId:i.eventId,
+                    month:i.month
                 })});
                 return results
              })

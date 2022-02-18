@@ -22,8 +22,8 @@ export class AllocationEventServices implements CRUD{
     deleteById(resourceId: any){
         return AllocationEventDaos.getInstance().removeAllocationEventById(resourceId);
     }
-    list(limit: number, page: number){
-        return AllocationEventDaos.getInstance().listAllocationEvents(limit, page);
+    list(limit: number, page: number, filter:any){
+        return AllocationEventDaos.getInstance().listAllocationEvents(limit, page,filter);
     }
     patchById(resource: any){
         return AllocationEventDaos.getInstance().patchAllocationEvent(resource);

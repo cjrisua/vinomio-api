@@ -38,7 +38,8 @@ export function AllocationFactory (sequelize:Sequelize) : AllocationStatic {
         },
     });
 
-    
+    Merchant.hasOne(Allocations, { foreignKey: "merchantId"})
+    Allocations.belongsTo(Merchant, {as: "merchant", foreignKey: "merchantId"})
 
     return Allocations;
 }
