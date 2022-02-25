@@ -45,27 +45,45 @@ export class AllocationEventDaos {
     async getAllocationEventByMerchant(merchantId: number){
 
         const merchant_query:string = `
-        SELECT "AE"."id" as "eventId", "M"."id" as "merchantId", "A"."id" as "allocationId","AE"."slug", "AE"."name" , "AE"."month" FROM "Merchants" AS "M" LEFT JOIN "Allocations" AS "A" on "M"."id" = "A"."merchantId" LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId" WHERE "M"."id" = :merchantId GROUP by  "AE"."id" ,"M"."id", "A"."id","AE"."slug", "AE"."name", "AE"."month"`
+        SELECT "AE"."id" as "eventId", "M"."id" as "merchantId", 
+        "A"."id" as "allocationId","AE"."slug", "AE"."name" , 
+        "AE"."month","A"."status", "A"."memberSince", "A"."lastPurchase" 
+        FROM "Merchants" AS "M" 
+        LEFT JOIN "Allocations" AS "A" on "M"."id" = "A"."merchantId" 
+        LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId" 
+        WHERE "M"."id" = :merchantId 
+        GROUP by  "AE"."id" ,"M"."id", "A"."id","AE"."slug", "AE"."name", "AE"."month", "A"."status", "A"."memberSince", "A"."lastPurchase"`
+
         const r:any =  await dbConfig.query(merchant_query, {
             replacements: { merchantId: merchantId },
             raw: true,
             type: QueryTypes.SELECT,
             }).then((m:any[]) =>  { 
                 let results: { 
-                    merchantId: number;
                     allocationId: number; 
                     slug: string; 
                     name: string; 
                     eventId:number;
                     month:string;
+                    allocation:{
+                        merchantId: number;
+                        status:string,
+                        memberSince:Date,
+                        lastPurchase:Date
+                    }
                 }[] = []
                 m.forEach((i) => {results.push({
-                    merchantId:i.merchantId, 
                     allocationId:i.allocationId,
                     slug:i.slug,
                     name:i.name,
                     eventId:i.eventId,
-                    month:i.month
+                    month:i.month,
+                    allocation:{
+                        merchantId:i.merchantId, 
+                        status:i.status,
+                        memberSince:i.memberSince,
+                        lastPurchase:i.lastPurchase
+                    }
                 })});
                 return results
              })

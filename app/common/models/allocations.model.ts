@@ -23,8 +23,7 @@ export function AllocationFactory (sequelize:Sequelize) : AllocationStatic {
             allowNull: false,
         },
         lastPurchase:{
-            type: DataTypes.DATE,
-            allowNull: false,
+            type: DataTypes.DATE
         },
         createdAt: {
             type: DataTypes.DATE,

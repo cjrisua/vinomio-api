@@ -1,9 +1,11 @@
 import { BuildOptions, Model } from "sequelize";
 
 export interface AllocationEventAttributes {
-    id: number;
-    slug: string;
-    name: string;
+    id?: number;
+    slug?: string;
+    name?: string;
+    allocationId?:number,
+    month?:string,
     createdAt?: Date;
     updatedAt?: Date;
   }
