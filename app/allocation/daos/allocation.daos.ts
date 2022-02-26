@@ -58,10 +58,9 @@ export class AllocationDaos {
             { 
                 offset: page, 
                 limit: limit,
-                include: [{
-                    model: Merchant, as:"merchant", attributes:['id','name','userId']
-                }]
-            
+                include: [
+                    {model: Merchant, as:"merchant", attributes:['id','name','userId']},
+                    {model: AllocationEvent, as:"events", attributes:['id','name','month']}]
             } )
         return allocations;
     }
