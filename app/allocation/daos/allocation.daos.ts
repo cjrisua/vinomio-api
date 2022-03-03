@@ -3,6 +3,10 @@ import { AllocationFactory } from "../../common/models/allocations.model"
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
 import { AllocationEventFactory } from "../../common/models/allocationevents.model";
+import { IFilter } from "../../common/interface/filter.interface";
+import { Op } from 'sequelize';
+import { AllocationEventAttributes } from "../../allocationevent/types/allocationevent.type";
+import { AllocationAttributes } from "../types/allocation.type";
 
 export function groupBy (array: any[], key: string | number)  {
     // Return the end result
@@ -53,7 +57,50 @@ export class AllocationDaos {
         return allocationId;
     }
 
-    async listAllocations(limit: number = 25, page: number = 0){
+    async listAllocationsByUserId(userId:any,limit: number = 25, page: number = 0,  filter:IFilter){
+        const currentDate = new Date(Date.now())
+        const futureDate = new Date(new Date().setDate(currentDate.getDate()+90));
+        let allocation = AllocationFactory(dbConfig);
+
+        let allocations = await Allocation.findAll(
+            { 
+                offset: page, 
+                limit: limit,
+                include: [
+                    { 
+                      model: Merchant, 
+                       as:"merchant", 
+                       attributes:['id','name','userId'],
+                       where: { userId: userId}
+                    },
+                    { 
+                      model: AllocationEvent, 
+                      as:"events", 
+                      attributes:['id','name','month']
+                    }]
+            })
+         let results:AllocationAttributes[] = []
+         let index:number = 0
+         allocations.forEach(async (allocation:AllocationAttributes) => {
+            const upcomingEvents = 
+                allocation.events?.filter((e:AllocationEventAttributes) =>{
+                    let eventDate = new Date(currentDate.getFullYear(), this.getMonthFromString(e.month || "").getMonth(),1);
+                    let endDate = new Date(eventDate.setMonth(eventDate.getMonth()+1))
+                    endDate = new Date(endDate.setDate(eventDate.getDate()-1))
+                    return endDate > currentDate && endDate < futureDate
+                }) || []
+                if(upcomingEvents.length >0){
+                    allocations[index].setDataValue('events',upcomingEvents)
+                    results.push(allocations[index])
+                }
+                //else
+                //    await allocations.at(index)?.destroy()
+                index++
+         })
+        return results;
+    }
+
+    async listAllocations(limit: number = 25, page: number = 0,  filter:IFilter){
         const allocations = await Allocation.findAll(
             { 
                 offset: page, 
@@ -77,7 +124,14 @@ export class AllocationDaos {
     async getAllocationById(allocationId: string) {
         return Allocation.findOne({where: {id: allocationId} });
     }
-
+    private getMonthFromString(mon:string){
+        //Logger.info(mon)
+        var d = Date.parse(mon + `1, ${(new Date()).getFullYear()}`);
+        if(!isNaN(d)){
+            return new Date(d)
+        }
+        return new Date();
+    }
     async patchAllocation(allocationFields: any) {
         const AllocationEvent = AllocationEventFactory(dbConfig);
         let allocation: any = await Allocation.findOne({where: {id: allocationFields.id}});

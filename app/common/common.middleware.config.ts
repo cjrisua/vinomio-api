@@ -47,6 +47,9 @@ export const filterByKey = function<T>(req:express.Request, filter_attributes:T)
             filter_dic.where![p] = req.query![p];
         }    
     });
+    //filter
+    req.body.filter = filter_dic
+    
     return filter_dic
 }
 

@@ -27,6 +27,7 @@ export class AllocationEventDaos {
     }
 
     async listAllocationEvents(limit: number = 25, page: number = 0,  filter:IFilter){
+        Logger.info(filter);
         const allocationevents = await AllocationEvent.findAll({ 
             where:filter.where, 
             offset: page, 

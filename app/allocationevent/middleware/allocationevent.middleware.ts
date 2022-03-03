@@ -45,14 +45,6 @@ export class AllocationEventMiddleware {
         }else{
             res.status(404).send({error: `Merchant ${req.params.merchantId} not found`});
         }
-        /*
-        const allocationeventServices = AllocationEventServices.getInstance();
-        const allocationevent = await allocationeventServices.readById(req.params.allocationeventId);
-        if (allocationevent) {
-            next();
-        } else {
-            res.status(404).send({error: `AllocationEvent ${req.params.allocationeventId} not found`});
-        }*/
     }
     async extractAllocationEventId(req: express.Request, res: express.Response, next: express.NextFunction) {
         req.body.id = req.params.allocationeventId;

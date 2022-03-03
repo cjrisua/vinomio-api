@@ -12,9 +12,7 @@ export class AllocationEventControllers {
 
   async listAllocationEvents(req: express.Request, res: express.Response) {
     const allocationeventServices = AllocationEventServices.getInstance();
-    const factory = new FilterQueryParamFactory();
-    const filterConfig = factory.create(AllocationEventQueryAttributes);
-    const allocationevents = await allocationeventServices.list(100,0,filterByKey(req,filterConfig));
+    const allocationevents = await allocationeventServices.list(100,0,req.body.filter);
     res.status(200).send(allocationevents);
   }
 

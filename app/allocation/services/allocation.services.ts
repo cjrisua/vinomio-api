@@ -22,8 +22,11 @@ export class AllocationServices implements CRUD{
     deleteById(resourceId: any){
         return AllocationDaos.getInstance().removeAllocationById(resourceId);
     }
-    list(limit: number, page: number){
-        return AllocationDaos.getInstance().listAllocations(limit, page);
+    list(limit: number, page: number,filter:any){
+        return AllocationDaos.getInstance().listAllocations(limit, page,filter);
+    }
+    listByUserId(userId:any, limit: number, page: number,filter:any){
+        return AllocationDaos.getInstance().listAllocationsByUserId(userId,limit, page,filter);
     }
     patchById(resource: any){
         return AllocationDaos.getInstance().patchAllocation(resource);

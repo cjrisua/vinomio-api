@@ -17,10 +17,16 @@ export class AllocationRoutes
     const allocationMiddleware = AllocationMiddleware.getInstance();
 
     this.app.get("/api/allocation", [
+        allocationMiddleware.validateAllocationParamExists,
         allocationControllers.listAllocations
+    ]);
+    this.app.get("/api/allocation/events/:userId", [
+        allocationMiddleware.validateAllocationParamExists,
+        allocationControllers.listAllocationsByUserId
     ]);
     this.app.post("/api/allocation", [
         allocationControllers.createAllocation
+        
     ]);
     this.app.put(`/api/allocation/:allocationId`, [
         allocationMiddleware.validateAllocationExists,

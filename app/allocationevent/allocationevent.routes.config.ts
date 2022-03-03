@@ -23,7 +23,7 @@ export class AllocationEventRoutes
     this.app.get("/api/allocationevent/merchant/:merchantId", [
       allocationeventMiddleware.validateMerchantHasAllocationEventExists,
       allocationeventControllers.getAllocationEventByMerchant
-  ]);
+    ]);
     this.app.post("/api/allocationevent", [
         allocationeventControllers.createAllocationEvent
     ]);
