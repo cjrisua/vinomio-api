@@ -3,7 +3,7 @@ import Logger from "../lib/logger";
 import slugify from 'slugify'
 import { Filter, IFilter } from "./interface/filter.interface";
 import { loggers } from "winston";
-
+import { Op } from "sequelize"
 
 
 export class FilterQueryParamFactory {
@@ -33,6 +33,7 @@ export const filterByKeyFindAll2 = function(req: any) : IFilter{
 
 
 export const filterByKey = function<T>(req:express.Request, filter_attributes:T) : IFilter{
+
     let filter_dic : IFilter = {}
 
     if(req.query.id && (Number(req.query.id) || req.query.id == '0'))
@@ -40,16 +41,38 @@ export const filterByKey = function<T>(req:express.Request, filter_attributes:T)
     else if (req.query.slug)
         filter_dic.where = { slug: req.query.slug }
     
-    Object.keys(filter_attributes).map((p) =>{ 
-        if(req.query![p] != undefined){
-            if(filter_dic.where == undefined)
-                filter_dic.where = {}
-            filter_dic.where![p] = req.query![p];
-        }    
-    });
+    Object.keys(filter_attributes)
+        .map((p) =>{ 
+            //operator
+            //const regex = `^${p}__(like|ilike)`
+            const regexp = new RegExp(`^(${p})__(like|iLike)`);
+            const match = Object.keys(req.query).filter(param => regexp.test(param))
+            if(match.length>0){
+                const results = regexp.exec(match[0]) || []
+                let whereOption!:any
+                switch(results[2]){
+                    case 'like':
+                        filter_dic.where![p] = { [Op.like]:  "%" + req.query![match[0]] +"%"} 
+                        break;
+                    case 'iLike':
+                        filter_dic.where![p] = { [Op.iLike]: "%" + req.query![match[0]] +"%"} 
+                        break;
+                }
+                //Logger.info(name)
+                //Logger.info(operator)
+            }
+            else{
+                if(req.query![p] != undefined){
+                    if(filter_dic.where == undefined)
+                        filter_dic.where = {}
+                    filter_dic.where![p] = req.query![p];
+                } 
+            }   
+        });
+    //const test = {[Op.iLike]:'%sh%'}
     //filter
     req.body.filter = filter_dic
-    
+    Logger.debug(filter_attributes)
     return filter_dic
 }
 
