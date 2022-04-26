@@ -2,6 +2,7 @@ import { dbConfig, Producer } from "../../common/models"
 import { ProducerFactory } from "../../common/models/producers.model"
 import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
+import Logger from "../../lib/logger";
 
 export class ProducerDaos {
 
@@ -24,6 +25,7 @@ export class ProducerDaos {
     }
 
     async listProducers(limit: number = 25, page: number = 0, filter:IFilter){
+        Logger.debug(filter)
         const producers = await Producer.findAll({ where:filter.where, offset: page, limit: limit } )
         return producers;
     }

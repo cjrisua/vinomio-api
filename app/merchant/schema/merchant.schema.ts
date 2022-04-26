@@ -10,6 +10,7 @@ export function MerchantSchemaFactory ()  {
             { 
               userId: Joi.number().required(),
               name: Joi.string().required(),
+              producerId:Joi.number()
             }) 
   };
   return schemas;

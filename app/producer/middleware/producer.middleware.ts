@@ -1,9 +1,10 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import { ProducerSchemaFactory } from '../schema/producer.schema';
 import {ProducerServices} from '../services/producer.services';
+import { ProducerQueryAttributes } from '../types/producer.qparam';
 
 export class ProducerMiddleware extends CommonMiddlewareConfig{
     private static instance: ProducerMiddleware;
@@ -48,13 +49,20 @@ export class ProducerMiddleware extends CommonMiddlewareConfig{
         });
     }
     async validateProducerQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const producerServices = ProducerServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
-        const producer = await producerServices.list(100,0,filterStatement);
-        if (producer && producer.length > 0) {
+        const services = ProducerServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(ProducerQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+
+        if(Object.keys(filterStatement).length == 0)
             next();
-        } else {
-            res.status(404).send({error: `Producer not found`});
+        else{
+            const result = await services.list(100,0,filterStatement);
+            if (result && result.length > 0) {
+                next();
+            } else {
+                res.status(404).send({error: `Query not found`});
+            }
         }
     }
     async extractProducerId(req: express.Request, res: express.Response, next: express.NextFunction) {

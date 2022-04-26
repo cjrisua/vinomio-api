@@ -43,23 +43,35 @@ export const filterByKey = function<T>(req:express.Request, filter_attributes:T)
     
     Object.keys(filter_attributes)
         .map((p) =>{ 
+            if(!filter_dic.where) filter_dic.where = {}
+
             //operator
             //const regex = `^${p}__(like|ilike)`
             const regexp = new RegExp(`^(${p})__(like|iLike)`);
             const match = Object.keys(req.query).filter(param => regexp.test(param))
             if(match.length>0){
+                
+                //filter_dic.where = {}
+
+                //Logger.debug(`p: ${p}`)
+                //Logger.debug(`match: ${match}`)
                 const results = regexp.exec(match[0]) || []
-                let whereOption!:any
+                //Logger.debug(results)
+
+                //if(!filter_dic.where) Logger.debug(filter_dic.where)
+                //else Logger.debug(filter_dic.where)
+                let operation = {}
                 switch(results[2]){
                     case 'like':
-                        filter_dic.where![p] = { [Op.like]:  "%" + req.query![match[0]] +"%"} 
+                        operation = { [Op.like]:  "%" + req.query![match[0]] +"%"} 
                         break;
                     case 'iLike':
-                        filter_dic.where![p] = { [Op.iLike]: "%" + req.query![match[0]] +"%"} 
+                         operation = { [Op.iLike]: "%" + req.query![match[0]]  +"%"} 
                         break;
                 }
-                //Logger.info(name)
-                //Logger.info(operator)
+                //set filter operator
+                filter_dic.where![p] = operation
+                //Logger.debug(filter_dic)
             }
             else{
                 if(req.query![p] != undefined){

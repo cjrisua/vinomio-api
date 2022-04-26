@@ -4,6 +4,7 @@ export interface MerchantAttributes {
     id: number;
     slug: string;
     name: string;
+    producerId:number;
     userId:number;
     createdAt?: Date;
     updatedAt?: Date;

@@ -69,21 +69,7 @@ export class MerchantMiddleware extends CommonMiddlewareConfig{
                 res.status(404).send({error: `Query not found`});
             }
         }
-    }/*
-    async validateProducerExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const producerServices = ProducerServices.getInstance()
-        if(isNaN(Number(req.body.producerId)))
-            next();
-        else{
-            const producer = await producerServices.readById(req.body.producerId);
-            if (producer) {
-                req.body.name = producer.name;
-                next();
-            } else {
-                res.status(404).send({error: `Producer ${req.body.producerId} not found`});
-            }
-        }
-    }*/
+    }
     async extractMerchantId(req: express.Request, res: express.Response, next: express.NextFunction) {
         req.body.id = req.params.merchantId;
         next();

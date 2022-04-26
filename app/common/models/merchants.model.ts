@@ -27,6 +27,14 @@ export function MerchantFactory (sequelize:Sequelize) : MerchantStatic {
                 key: 'id'
             }
         },
+        producerId:{
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: Producer, 
+                key: 'id'
+            }
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,

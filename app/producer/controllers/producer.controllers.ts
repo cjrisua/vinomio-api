@@ -1,6 +1,7 @@
 import express from "express";
-import { filterByKeyFindAll } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
 import { ProducerServices } from "../services/producer.services";
+import { ProducerQueryAttributes } from "../types/producer.qparam";
 
 export class ProducerControllers {
 
@@ -10,7 +11,9 @@ export class ProducerControllers {
 
   async listProducers(req: express.Request, res: express.Response) {
     const producerServices = ProducerServices.getInstance();
-    const producers = await producerServices.list(100,0,filterByKeyFindAll(req));
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(ProducerQueryAttributes);
+    const producers = await producerServices.list(100,0, filterByKey(req,filterConfig));
     res.status(200).send(producers);
   }
 
