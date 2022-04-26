@@ -1,10 +1,11 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import Logger from '../../lib/logger';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { WineServices } from '../services/wine.services';
+import { WineQueryAttributes } from '../types/wine.qparam';
 
 export class WineMiddleware extends CommonMiddlewareConfig {
     private static instance: WineMiddleware;
@@ -43,13 +44,20 @@ export class WineMiddleware extends CommonMiddlewareConfig {
         next();
     }
     async validateWineQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const wineServices = WineServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req);
-        const wine = await wineServices.list(100,0,filterStatement);
-        if (wine && wine.length > 0 || Object.keys(filterStatement).length == 0) {
+
+        const services = WineServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(WineQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+
+        if(Object.keys(filterStatement).length == 0)
             next();
-        } else {
-            res.status(404).send({error: `Wine not found`});
+        else{
+            const result = await services.list(100,0,filterStatement);
+            if (result && result.length > 0)
+                next();
+            else
+                res.status(404).send({error: `Wine not found`});
         }
     }
     async validateWineIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {

@@ -24,6 +24,7 @@ export class WineDaos {
     }
 
     async listWines(limit: number = 25, page: number = 0, filter: IFilter){
+        console.log(filter);
         const wines = await Wine.findAll(
             { where: filter.where, attributes: ['id','slug','name'] ,offset: page, limit: limit, include: [{
                  model: Producer, attributes:['id','name']
