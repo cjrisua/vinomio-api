@@ -10,10 +10,10 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
             autoIncrement: true,
             primaryKey: true,
         },
-        slug: {
-            type: DataTypes.STRING,
-            unique: true
-        },
+        //slug: {
+        //    type: DataTypes.STRING,
+        //    unique: true
+        //},
         name: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -42,9 +42,9 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
         },
     });
 
-    SequelizeSlugify.slugifyModel(<any>AllocationEvents, {
-        source: ['name']
-    });
+    //SequelizeSlugify.slugifyModel(<any>AllocationEvents, {
+    //    source: ['name']
+    //});
 
     return AllocationEvents;
 }

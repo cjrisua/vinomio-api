@@ -2,7 +2,7 @@ import { BuildOptions, Model } from "sequelize";
 
 export interface AllocationEventAttributes {
     id?: number;
-    slug?: string;
+    //slug?: string;
     name?: string;
     allocationId?:number,
     month?:string,
@@ -14,7 +14,7 @@ export interface AllocationEventModel extends Model<AllocationEventAttributes>, 
 
 export class AllocationEvent extends Model<AllocationEventModel, AllocationEventAttributes> implements AllocationEventAttributes{
   public id?: number;
-  slug?: string;
+  //slug?: string;
   name?: string;
   allocationId?:number;
   public month?:string;

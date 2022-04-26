@@ -40,20 +40,20 @@ export class AllocationEventDaos {
         return allocationevents;
     }
 
-    async getAllocationEventBySlug(slug: string){
-        return AllocationEvent.findOne({where: {slug: slug}});
-    }
+    //async getAllocationEventBySlug(slug: string){
+    //    return AllocationEvent.findOne({where: {slug: slug}});
+    //}
     async getAllocationEventByMerchant(merchantId: number){
 
         const merchant_query:string = `
         SELECT "AE"."id" as "eventId", "M"."id" as "merchantId", 
-        "A"."id" as "allocationId","AE"."slug", "AE"."name" , 
+        "A"."id" as "allocationId", "AE"."name" , 
         "AE"."month","A"."status", "A"."memberSince", "A"."lastPurchase" 
         FROM "Merchants" AS "M" 
         LEFT JOIN "Allocations" AS "A" on "M"."id" = "A"."merchantId" 
         LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId" 
         WHERE "M"."id" = :merchantId 
-        GROUP by  "AE"."id" ,"M"."id", "A"."id","AE"."slug", "AE"."name", "AE"."month", "A"."status", "A"."memberSince", "A"."lastPurchase"`
+        GROUP by  "AE"."id" ,"M"."id", "A"."id", "AE"."name", "AE"."month", "A"."status", "A"."memberSince", "A"."lastPurchase"`
 
         const r:any =  await dbConfig.query(merchant_query, {
             replacements: { merchantId: merchantId },
@@ -62,7 +62,7 @@ export class AllocationEventDaos {
             }).then((m:any[]) =>  { 
                 let results: { 
                     allocationId: number; 
-                    slug: string; 
+                    //slug: string; 
                     name: string; 
                     eventId:number;
                     month:string;
@@ -75,7 +75,7 @@ export class AllocationEventDaos {
                 }[] = []
                 m.forEach((i) => {results.push({
                     allocationId:i.allocationId,
-                    slug:i.slug,
+                    //slug:i.slug,
                     name:i.name,
                     eventId:i.eventId,
                     month:i.month,
