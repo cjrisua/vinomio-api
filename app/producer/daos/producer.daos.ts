@@ -26,7 +26,11 @@ export class ProducerDaos {
 
     async listProducers(limit: number = 25, page: number = 0, filter:IFilter){
         Logger.debug(filter)
-        const producers = await Producer.findAll({ where:filter.where, offset: page, limit: limit } )
+        const producers = await Producer.findAll({ 
+            where:filter.where, 
+            offset: page, 
+            limit: limit, 
+            order: [['name', 'ASC']] } )
         return producers;
     }
     

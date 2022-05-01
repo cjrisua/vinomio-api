@@ -31,6 +31,10 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
             type: DataTypes.STRING,
             allowNull: true,
         },
+        lastPurchase:{
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,

@@ -28,6 +28,10 @@ export function AllocationEventOfferFactory (sequelize:Sequelize) : AllocationEv
                 key: 'id'
             }
         },
+        lastPurchase:{
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
         releasePrice:{
             type: DataTypes.DECIMAL(11,2),
             defaultValue:0.00
