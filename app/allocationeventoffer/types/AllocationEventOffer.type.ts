@@ -1,4 +1,5 @@
 import { BuildOptions, Model } from "sequelize";
+import { Wine } from "../../wine/types/wine.type";
 
 export interface AllocationEventOfferAttributes {
     id: number;
@@ -6,6 +7,7 @@ export interface AllocationEventOfferAttributes {
     name: string;
     createdAt?: Date;
     updatedAt?: Date;
+    wine?: Wine
   }
 
 export interface AllocationEventOfferModel extends Model<AllocationEventOfferAttributes>, AllocationEventOfferAttributes {}

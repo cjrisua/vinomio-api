@@ -70,7 +70,7 @@ export class AllocationDaos {
                     { 
                       model: Merchant, 
                        as:"merchant", 
-                       attributes:['id','name','userId'],
+                       attributes:['id','name','userId','producerId'],
                        where: { userId: userId}
                     },
                     { 
@@ -106,7 +106,7 @@ export class AllocationDaos {
                 offset: page, 
                 limit: limit,
                 include: [
-                    {model: Merchant, as:"merchant", attributes:['id','name','userId']},
+                    {model: Merchant, as:"merchant", attributes:['id','name','userId','producerId']},
                     {model: AllocationEvent, as:"events", attributes:['id','name','month']}]
             } )
         return allocations;

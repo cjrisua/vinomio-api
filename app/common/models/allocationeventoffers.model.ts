@@ -38,5 +38,8 @@ export function AllocationEventOfferFactory (sequelize:Sequelize) : AllocationEv
         },
     });
 
+    Wine.hasOne(AllocationEventOffers, {  foreignKey: "wineId"})
+    AllocationEventOffers.belongsTo(Wine,  { as: "wine", foreignKey: "wineId"})
+
     return AllocationEventOffers;
 }

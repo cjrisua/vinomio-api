@@ -19,11 +19,14 @@ export class AllocationEventOfferServices implements CRUD{
     create(resource: any){
         return AllocationEventOfferDaos.getInstance().addAllocationEventOffer(resource);
     }
+    bulkCreate(resource: any[]){
+        return AllocationEventOfferDaos.getInstance().bulkAllocationEventOffers(resource);
+    }
     deleteById(resourceId: any){
         return AllocationEventOfferDaos.getInstance().removeAllocationEventOfferById(resourceId);
     }
-    list(limit: number, page: number){
-        return AllocationEventOfferDaos.getInstance().listAllocationEventOffers(limit, page);
+    list(limit: number, page: number, filter:any){
+        return AllocationEventOfferDaos.getInstance().listAllocationEventOffers(limit, page, filter);
     }
     patchById(resource: any){
         return AllocationEventOfferDaos.getInstance().patchAllocationEventOffer(resource);

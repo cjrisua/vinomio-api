@@ -51,7 +51,8 @@ export class AllocationEventDaos {
         "AE"."month","A"."status", "A"."memberSince", "A"."lastPurchase" 
         FROM "Merchants" AS "M" 
         LEFT JOIN "Allocations" AS "A" on "M"."id" = "A"."merchantId" 
-        LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId" 
+        LEFT JOIN "AllocationEvents" as "AE" on "A"."id" = "AE"."allocationId"
+        LEFT JOIN "AllocationEventOffers" as "AEO" on "AE"."id" = "AEO"."allocationEventId"
         WHERE "M"."id" = :merchantId 
         GROUP by  "AE"."id" ,"M"."id", "A"."id", "AE"."name", "AE"."month", "A"."status", "A"."memberSince", "A"."lastPurchase"`
 

@@ -1,5 +1,8 @@
 import express from "express";
+import { filterByKey, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import Logger from "../../lib/logger";
 import { AllocationEventOfferServices } from "../services/AllocationEventOffer.services";
+import { AllocationEventOfferQueryAttributes } from "../types/AllocationEventOffer.qparam";
 
 export class AllocationEventOfferControllers {
 
@@ -9,7 +12,9 @@ export class AllocationEventOfferControllers {
 
   async listAllocationEventOffers(req: express.Request, res: express.Response) {
     const allocationEventOfferServices = AllocationEventOfferServices.getInstance();
-    const allocationEventOffers = await allocationEventOfferServices.list(100,0);
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(AllocationEventOfferQueryAttributes);
+    const allocationEventOffers = await allocationEventOfferServices.list(100,0, filterByKey(req,filterConfig));
     res.status(200).send(allocationEventOffers);
   }
 
@@ -21,7 +26,21 @@ export class AllocationEventOfferControllers {
 
   async createAllocationEventOffer(req: express.Request, res: express.Response) {
     const allocationEventOfferServices = AllocationEventOfferServices.getInstance();
-    const allocationEventOfferId = await allocationEventOfferServices.create(req.body);
+    Logger.debug(req.body)
+    if(Array.isArray(req.body)){
+      const allocationEventOfferId = await allocationEventOfferServices.bulkCreate(req.body);
+      res.status(201).send(``);
+    }else{
+      const allocationEventOfferId = await allocationEventOfferServices.create(req.body);
+      //res.status(201).send({id: allocationEventOfferId});
+      res.status(201).send(``);
+    }
+   
+  }
+
+  async bulkAllocationEventOffer(req: express.Request, res: express.Response) {
+    const allocationEventOfferServices = AllocationEventOfferServices.getInstance();
+    const allocationEventOfferId = await allocationEventOfferServices.bulkCreate(req.body);
     res.status(201).send({id: allocationEventOfferId});
   }
   

@@ -1,6 +1,7 @@
-import { dbConfig, AllocationEventOffer } from "../../common/models"
+import { dbConfig, AllocationEventOffer, Wine } from "../../common/models"
 import { AllocationEventOfferFactory } from "../../common/models/allocationeventoffers.model"
 import * as shortUUID from "short-uuid";
+import { IFilter } from "../../common/interface/filter.interface";
 
 export class AllocationEventOfferDaos {
 
@@ -16,14 +17,25 @@ export class AllocationEventOfferDaos {
         }
         return this.instance;
     }
-
+    async bulkAllocationEventOffers(AllocationEventOfferFields: any[]){
+        return await AllocationEventOffer.bulkCreate(AllocationEventOfferFields, {
+            ignoreDuplicates: true,
+          }); 
+    }
     async addAllocationEventOffer(AllocationEventOfferFields: any) {
         const allocationEventOffer = await AllocationEventOffer.create(AllocationEventOfferFields);
         return allocationEventOffer.id;
     }
 
-    async listAllocationEventOffers(limit: number = 25, page: number = 0){
-        const AllocationEventOffers = await AllocationEventOffer.findAll({ offset: page, limit: limit } )
+    async listAllocationEventOffers(limit: number = 25, page: number = 0, filter: IFilter){
+        const AllocationEventOffers = await AllocationEventOffer.findAll(
+            { 
+                where: filter.where, 
+                include:[{
+                    model:Wine,  as:"wine", 
+                }],
+                offset: page, limit: limit 
+            })
         return AllocationEventOffers;
     }
     

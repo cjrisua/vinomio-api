@@ -17,6 +17,7 @@ export class AllocationEventOfferRoutes
     const allocationEventOfferMiddleware = AllocationEventOfferMiddleware.getInstance();
 
     this.app.get("/api/AllocationEventOffer", [
+        allocationEventOfferMiddleware.validateParamExists,
         allocationEventOfferControllers.listAllocationEventOffers
     ]);
     this.app.post("/api/AllocationEventOffer", [
