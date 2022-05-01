@@ -2,6 +2,7 @@ import { dbConfig, MasterVarietal, Producer, Region, Vintage, Wine } from "../..
 import { WineFactory } from "../../common/models/wines.model"
 import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
+import Logger from "../../lib/logger";
 
 export class WineDaos {
 
@@ -42,7 +43,7 @@ export class WineDaos {
     }
     
     async removeWineById(wineId: string){
-        const wines = await Wine.destroy({where: {id: wineId} })
+        const wines = await Wine.destroy({where: {id: wineId} }).catch((ex) => {Logger.error(ex); return {}})
         return wines;
     }
 
