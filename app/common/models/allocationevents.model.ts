@@ -1,7 +1,8 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { AllocationEventStatic } from "../../allocationevent/types/allocationevent.type";
 import SequelizeSlugify from 'sequelize-slugify';
-import { Collection, Allocation } from ".";
+import { Collection, Allocation, AllocationEventOffer, AllocationEvent, dbConfig } from ".";
+import { AllocationEventOfferFactory } from "./allocationeventoffers.model";
 
 export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventStatic {
     const AllocationEvents = <AllocationEventStatic>sequelize.define("AllocationEvents", {
@@ -41,7 +42,7 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
             defaultValue: DataTypes.NOW,
         },
     });
-
+    
     //SequelizeSlugify.slugifyModel(<any>AllocationEvents, {
     //    source: ['name']
     //});

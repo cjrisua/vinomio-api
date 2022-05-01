@@ -1,4 +1,5 @@
 import { BuildOptions, Model } from "sequelize";
+import { AllocationEventOffer } from "../../allocationeventoffer/types/allocationeventoffer.type";
 
 export interface AllocationEventAttributes {
     id?: number;
@@ -8,6 +9,7 @@ export interface AllocationEventAttributes {
     month?:string,
     createdAt?: Date;
     updatedAt?: Date;
+    offers?:AllocationEventOffer[]
   }
 
 export interface AllocationEventModel extends Model<AllocationEventAttributes>, AllocationEventAttributes {}

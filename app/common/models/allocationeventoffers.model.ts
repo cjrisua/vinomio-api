@@ -5,13 +5,14 @@ import { AllocationEvent, Wine } from ".";
 
 export function AllocationEventOfferFactory (sequelize:Sequelize) : AllocationEventOfferStatic {
     const AllocationEventOffers = <AllocationEventOfferStatic>sequelize.define("AllocationEventOffers", {
-        id: {
+        /*id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-        },
+        },*/
         allocationEventId:{
             type: DataTypes.INTEGER,
+            primaryKey: true,
             allowNull: false,
             references: {
                 model: AllocationEvent, 
@@ -20,11 +21,16 @@ export function AllocationEventOfferFactory (sequelize:Sequelize) : AllocationEv
         },
         wineId:{
             type: DataTypes.INTEGER,
+            primaryKey: true,
             allowNull: false,
             references: {
                 model: Wine, 
                 key: 'id'
             }
+        },
+        releasePrice:{
+            type: DataTypes.DECIMAL(11,2),
+            defaultValue:0.00
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -40,6 +46,9 @@ export function AllocationEventOfferFactory (sequelize:Sequelize) : AllocationEv
 
     Wine.hasOne(AllocationEventOffers, {  foreignKey: "wineId"})
     AllocationEventOffers.belongsTo(Wine,  { as: "wine", foreignKey: "wineId"})
+
+    AllocationEvent.hasMany(AllocationEventOffers,{ foreignKey: "allocationEventId"})
+    AllocationEventOffers.belongsTo(AllocationEvent,{as:"offers",foreignKey: "allocationEventId"})
 
     return AllocationEventOffers;
 }
