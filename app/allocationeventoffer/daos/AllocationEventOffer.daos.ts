@@ -19,12 +19,12 @@ export class AllocationEventOfferDaos {
     }
     async bulkAllocationEventOffers(AllocationEventOfferFields: any[]){
         return await AllocationEventOffer.bulkCreate(AllocationEventOfferFields, {
-            ignoreDuplicates: true,
+            updateOnDuplicate: ["releasePrice"],
           }); 
     }
     async addAllocationEventOffer(AllocationEventOfferFields: any) {
         const allocationEventOffer = await AllocationEventOffer.create(AllocationEventOfferFields);
-        return allocationEventOffer.id;
+        return allocationEventOffer;
     }
 
     async listAllocationEventOffers(limit: number = 25, page: number = 0, filter: IFilter){
