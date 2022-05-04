@@ -126,7 +126,14 @@ export class AllocationDaos {
     }
 
     async getAllocationById(allocationId: string) {
-        return Allocation.findOne({where: {id: allocationId} });
+        return Allocation.findOne({
+            where: {id: allocationId},
+            include: [
+                {model: Merchant, as:"merchant", attributes:['id','name','userId','producerId']},
+                {model: AllocationEvent, as:"events", include:[{
+                    model: AllocationEventOffer
+                }]}]
+        });
     }
     private getMonthFromString(mon:string){
         //Logger.info(mon)
