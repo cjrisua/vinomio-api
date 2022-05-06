@@ -3,6 +3,7 @@ import { AllocationEventStatic } from "../../allocationevent/types/allocationeve
 import SequelizeSlugify from 'sequelize-slugify';
 import { Collection, Allocation, AllocationEventOffer, AllocationEvent, dbConfig } from ".";
 import { AllocationEventOfferFactory } from "./allocationeventoffers.model";
+import { AllocationFactory } from "./allocations.model";
 
 export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventStatic {
     const AllocationEvents = <AllocationEventStatic>sequelize.define("AllocationEvents", {
@@ -22,6 +23,7 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
         allocationId:{
             type: DataTypes.INTEGER,
             allowNull: false,
+            onDelete:'CASCADE',
             references: {
                 model: Allocation, 
                 key: 'id'
@@ -47,6 +49,10 @@ export function AllocationEventFactory (sequelize:Sequelize) : AllocationEventSt
         },
     });
     
+    //AllocationEvent.belongsTo(Allocation,{as:"events"})
+    //const allocation = AllocationFactory(dbConfig);
+    //allocation.hasMany(AllocationEvent)
+    //AllocationEvent.belongsTo(allocation)
     //SequelizeSlugify.slugifyModel(<any>AllocationEvents, {
     //    source: ['name']
     //});
