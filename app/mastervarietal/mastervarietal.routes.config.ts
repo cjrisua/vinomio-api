@@ -39,6 +39,10 @@ export class MasterVarietyRoutes
       masterVarietyMiddleware.validateMasterVarietalExists,
       masterVarietyControllers.removeMastervarietal,
     ]);
+    this.app.delete(`/api/mastervarietal/:slug/:varietyId`, [
+      masterVarietyMiddleware.validateMasterVarietalVarietyCombo,
+      masterVarietyControllers.removeVarietyFromMastervarietal,
+    ]);
     this.app.get(`/api/mastervarietal/:masterVarietalId`, [
       masterVarietyMiddleware.validateMasterVarietalExists,
       masterVarietyControllers.getMastervarietalById,

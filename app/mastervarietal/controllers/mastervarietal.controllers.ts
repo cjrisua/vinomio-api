@@ -43,4 +43,9 @@ export class MasterVarietalControllers {
     const masterVarietal = await masterVarietalServices.deleteById(req.params.masterVarietalId);
     res.status(204).send(``);
   }
+  async removeVarietyFromMastervarietal(req: express.Request, res: express.Response) {
+    const masterVarietalServices = MasterVarietalServices.getInstance();
+    const masterVarietal = await masterVarietalServices.deleteBlendVarietyBySlug(req.params);
+    res.status(204).send(``);
+  }
 }

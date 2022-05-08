@@ -52,6 +52,21 @@ export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
         req.body.id = req.params.masterVarietalId;
         next();
     }
+    async validateMasterVarietalVarietyCombo(req: express.Request, res: express.Response, next: express.NextFunction) {
+        //req.body.id = req.params.masterVarietalId;
+        const service = MasterVarietalServices.getInstance();
+        const filter : IFilter = { where: {slug: req.params.slug}}
+        const response = await service.list(1,0,filter);
+        if(response.length != 0){
+            const variety = response[0].varieties.filter((i:any) => i.id == req.params.varietyId);
+            if(variety.length != 0)
+                next();
+            else
+            res.status(404).send({error: `Variety id ${req.params.varietyId} not found for ${req.params.slug}`});
+        }
+        else
+            res.status(404).send({error: `MasterVarietal ${req.params.slug} not found`});
+    }
     async validateMastervarietalQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const masterVarietalServices = MasterVarietalServices.getInstance();
         const filterStatement = filterByKeyFindAll(req)

@@ -34,4 +34,7 @@ export class MasterVarietalServices implements CRUD{
     updateById(resource: any){
         return MasterVarietalDaos.getInstance().patchMastervarietal(resource);
     }
+    deleteBlendVarietyBySlug(resource: any){
+        return MasterVarietalDaos.getInstance().removeVariety(resource);
+    }
 }

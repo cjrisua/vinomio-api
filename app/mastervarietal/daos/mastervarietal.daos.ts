@@ -32,7 +32,13 @@ export class MasterVarietalDaos {
         }
         return masterVarietal.id;
     }
-
+    async removeVariety(masterVarietalFields: any){
+        await MasterVarietal.findOne({where: {slug: masterVarietalFields.slug}})
+            .then(p => {
+                p?.removeVariety(masterVarietalFields.varietyId)
+            })
+        return
+    }
     async listMastervarietals(limit: number = 25, page: number = 0, filter:IFilter){
         const mastervarietals = await MasterVarietal.findAll(
             {   where:filter.where, 
@@ -62,11 +68,15 @@ export class MasterVarietalDaos {
     }
 
     async patchMastervarietal(masterVarietalFields: any) {
-        console.log(JSON.stringify(masterVarietalFields))
+       
         let masterVarietal: any = await MasterVarietal.findOne({where: {id: masterVarietalFields.id}});
+        Logger.info(masterVarietalFields)
         if(masterVarietal){
             for (let i in masterVarietalFields) {
-                masterVarietal[i] = masterVarietalFields[i];
+                if(i === 'varieties')
+                    masterVarietalFields[i].forEach((p:any)=>masterVarietal.addVariety(p))
+                else
+                    masterVarietal[i] = masterVarietalFields[i];
             }
             return await masterVarietal.save()
         }

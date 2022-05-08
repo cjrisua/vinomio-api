@@ -1,6 +1,7 @@
 import { 
   BuildOptions, Model,
   BelongsToManyAddAssociationMixin,
+  BelongsToManyRemoveAssociationMixin,
   HasOneGetAssociationMixin,
   Association
 
@@ -28,6 +29,7 @@ export class MasterVarietal extends Model<MasterVarietyModel, MasterVarietalAttr
   public readonly updatedAt?: Date;
 
   public addVariety!: BelongsToManyAddAssociationMixin<Variety, number>;
+  public removeVariety!: BelongsToManyRemoveAssociationMixin<Variety, number>;
 
   public static associations: {
     varieties: Association<Variety>;
