@@ -43,5 +43,9 @@ export class VintageRoutes
       vintageMiddleware.validateVintageExists,
       vintageControllers.getVintageById,
     ]);
+    //this.app.delete(`/api/vintage/:slug/:vintageId`, [
+    //  vintageMiddleware.validateWineVintageCombo,
+    //  vintageControllers.removeVintageFromWine,
+    //]);
   }
 }

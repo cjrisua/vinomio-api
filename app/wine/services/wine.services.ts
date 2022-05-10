@@ -31,6 +31,9 @@ export class WineServices implements CRUD{
     readById(resourceId: any){
         return WineDaos.getInstance().getWineById(resourceId);
     }
+    readBySlug(resourceId: any){
+        return WineDaos.getInstance().getWineBySlug(resourceId);
+    }
     updateById(resource: any){
         return WineDaos.getInstance().patchWine(resource);
     }

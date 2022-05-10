@@ -2,6 +2,7 @@ import { dbConfig, Vintage, Wine } from "../../common/models"
 import { VintageFactory } from "../../common/models/vintages.model"
 import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
+import Logger from "../../lib/logger";
 
 export class VintageDaos {
 
@@ -29,7 +30,7 @@ export class VintageDaos {
             offset: page, 
             limit: limit,
             include:[{
-                model: Wine, attributes:['id','name']
+                model: Wine, attributes:['id','name','slug']
             }],
             
         } )
@@ -50,7 +51,6 @@ export class VintageDaos {
     }
 
     async patchVintage(vintageFields: any) {
-        console.log(JSON.stringify(vintageFields))
         let vintage: any = await Vintage.findOne({where: {id: vintageFields.id}});
         if(vintage){
             for (let i in vintageFields) {
@@ -58,6 +58,9 @@ export class VintageDaos {
             }
             return await vintage.save()
         }
+    }
+    async removeVintageByWineSlug(vintageFields: any) {
+        await Vintage.findOne({where: { wineId : vintageFields.wineId}})
     }
 }
  

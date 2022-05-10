@@ -34,4 +34,7 @@ export class VintageServices implements CRUD{
     updateById(resource: any){
         return VintageDaos.getInstance().patchVintage(resource);
     }
+    deleteBlendVarietyBySlug(resource: any){
+        return VintageDaos.getInstance().removeVintageByWineSlug(resource);
+    }
 }

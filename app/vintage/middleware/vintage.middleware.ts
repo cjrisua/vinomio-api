@@ -2,8 +2,10 @@
 import { debug } from 'console';
 import express from 'express';
 import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, MapQParams } from '../../common/common.middleware.config';
-import { Filter } from '../../common/interface/filter.interface';
+import { Filter, IFilter } from '../../common/interface/filter.interface';
 import Logger from '../../lib/logger';
+import { WineServices } from '../../wine/services/wine.services';
+import { Wine } from '../../wine/types/wine.type';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { VintageServices } from '../services/vintage.services';
 import { VintageQueryAttributes } from '../types/vintage.qparam';
@@ -77,5 +79,39 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
             res.status(409).send({error: `Vintage ${req.body.name} exists`});
         else
             next();
+    }
+
+    async validateWineVintageCombo(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const service = VintageServices.getInstance();
+        const wineService = WineServices.getInstance();
+
+        const wine = await wineService.readBySlug(req.params.slug)
+            .then((data:any) => {
+                if(data)
+                    req.body.wineId = data.id
+                else
+                    res.status(404).send({error: `Wine ${req.params.slug} not found`});
+            })
+            .then(async ()=>{
+                Logger.info(`? ${req.body.wineId}`)
+                const filter : IFilter = { where: {wineId: req.body.wineId}}
+                const response = await service.list(1,0,filter);
+                if(response.some(p => p.id.toString() === req.params.vintageId))
+                    res.status(404).send({error: `  found for ${req.params.slug}`});  
+                else
+                    res.status(404).send({error: ` not found for ${req.params.slug}`});           
+            })
+        //const filter : IFilter = { where: {slug: req.params.slug}}
+        //const response = await service.list(1,0,filter);
+        //if(response.length != 0){
+        //    const variety = response[0].varieties.filter((i:any) => i.id == req.params.varietyId);
+        //    if(variety.length != 0)
+        //        next();
+        //    else
+        //    res.status(404).send({error: `Variety id ${req.params.varietyId} not found for ${req.params.slug}`});
+        //}
+        //else
+        //    res.status(404).send({error: `MasterVarietal ${req.params.slug} not found`});
+        //next()
     }
 }

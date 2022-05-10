@@ -50,4 +50,10 @@ export class VintageControllers {
     const vintage = await vintageServices.deleteById(req.params.vintageId);
     res.status(204).send(``);
   }
+
+  async removeVintageFromWine(req: express.Request, res: express.Response) {
+    const services = VintageServices.getInstance();
+    const masterVarietal = await services.deleteBlendVarietyBySlug(req.params);
+    res.status(204).send(``);
+  }
 }

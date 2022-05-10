@@ -1,7 +1,8 @@
 import express from "express";
-import { BuildOptions, Model } from "sequelize";
+import { Association, BuildOptions, Model, BelongsToGetAssociationMixin } from "sequelize";
 import { MapQParams } from "../../common/common.middleware.config";
 import Logger from "../../lib/logger";
+import { Wine } from "../../wine/types/wine.type";
 
 export interface VintageApiQPrams{
   id: number;
@@ -25,7 +26,13 @@ export class Vintage extends Model<VintageModel, VintageAttributes> implements V
   public wineId!: number;
   public createdAt?: Date;
   public updatedAt?: Date;
+  public wine?: Wine;
 
+  public getWine!:BelongsToGetAssociationMixin<Wine>
+
+  public static associations: {
+    wine: Association<Wine>;
+  };
 }
 
 export type VintageStatic = typeof Model & { new (values ?: object, options?: BuildOptions) : Vintage;
