@@ -78,6 +78,7 @@ routes.push(new AllocationEventOfferRoutes(app));
 dbConfig
 .sync().then(() =>{
 //.authenticate().then(() =>{
+    Logger.info("build_2022_05_09_22_24")
     Logger.info("connected to db")
     server.listen(PORT,() =>
     {
