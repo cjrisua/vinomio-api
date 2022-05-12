@@ -26,7 +26,8 @@ export class VarietyDaos {
     }
 
     async listVarieties(limit: number = 25, page: number = 0, filter: IFilter){
-        return await Variety.findAll({ where: filter.where, offset: page, limit: limit } )
+        return await Variety.findAll({ where: filter.where, offset: page, limit: limit,
+            order:[['id','DESC']] } )
     }
     
     async removeVarietyById(varietalId: string){

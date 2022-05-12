@@ -44,6 +44,7 @@ export class MasterVarietalDaos {
             {   where:filter.where, 
                 offset: page, 
                 limit: limit,
+                order:[['id','DESC']],
                 include:[
                     {
                         model:Variety, as:"varieties",

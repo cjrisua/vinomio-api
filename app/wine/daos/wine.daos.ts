@@ -38,7 +38,9 @@ export class WineDaos {
                 },
                 {
                  model: Vintage , attributes:['id','year']
-                }], } )
+                }],
+                order:[['id','DESC']]
+            } )
         return wines;
     }
     

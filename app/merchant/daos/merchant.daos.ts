@@ -28,7 +28,8 @@ export class MerchantDaos {
         const merchants = await Merchant.findAll(
             { 
                 where: filter.where, 
-                offset: page, limit: limit 
+                offset: page, limit: limit,
+                order:[['id','DESC']] 
             })
         return merchants;
     }
