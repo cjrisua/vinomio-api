@@ -1,9 +1,10 @@
 
 import express from 'express';
-import { filterByKeyFindAll } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import { VarietyServices } from '../services/variety.services';
+import { VarietyQueryAttributes } from '../types/variety.qparam';
 
-export class VarietyMiddleware {
+export class VarietyMiddleware  extends CommonMiddlewareConfig{
     private static instance: VarietyMiddleware;
 
     static getInstance() {
@@ -30,13 +31,19 @@ export class VarietyMiddleware {
         next();
     }
     async validateVarietyQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const varietyServices = VarietyServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
-        const variety = await varietyServices.list(100,0,filterStatement);
-        if (variety && variety.length > 0) {
+        const services = VarietyServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(VarietyQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+        
+        if(Object.keys(filterStatement).length == 0)
             next();
-        } else {
-            res.status(404).send({error: `Variety not found`});
+        else{
+            const result = await services.list(100,0,filterStatement);
+            if (result && result.length > 0)
+                next();
+            else
+                res.status(404).send({error: `Variety not found`});
         }
     }
 }

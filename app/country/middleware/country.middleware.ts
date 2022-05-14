@@ -1,10 +1,11 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, MapQParams } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, MapQParams } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import { CountrySchemaFactory } from '../schema/country.schema';
 import { CountryServices } from '../services/country.services';
 import { CountryApiQPrams } from '../types/country.type';
+import { CountryQueryAttributes } from '../types/country.qparam';
 
 export class CountryMiddleware extends CommonMiddlewareConfig{
     private static instance: CountryMiddleware;
@@ -52,19 +53,19 @@ export class CountryMiddleware extends CommonMiddlewareConfig{
         next();
     }
     async validateCountryQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const countryServices = CountryServices.getInstance();
-        const countryQueryPrams : CountryApiQPrams = {
-            id : Number(req.query.id),
-            slug: <string><unknown>req.query.slug
-        }
-
-        const filter = MapQParams(countryQueryPrams);
-        const country = await countryServices.list(100,0,filter);
+        const services = CountryServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(CountryQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
         
-        if (country && country.length > 0) {
+        if(Object.keys(filterStatement).length == 0)
             next();
-        } else {
-            res.status(404).send({error: `Country not found`});
+        else{
+            const result = await services.list(100,0,filterStatement);
+            if (result && result.length > 0)
+                next();
+            else
+                res.status(404).send({error: `Country not found`});
         }
     }
 }

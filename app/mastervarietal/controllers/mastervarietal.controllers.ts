@@ -1,5 +1,6 @@
 import express from "express";
-import { filterByKeyFindAll } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { VarietyQueryAttributes } from "../../variety/types/variety.qparam";
 import { MasterVarietalServices } from "../services/mastervarietal.services";
 
 export class MasterVarietalControllers {
@@ -9,9 +10,11 @@ export class MasterVarietalControllers {
   }
 
   async listMastervarietals(req: express.Request, res: express.Response) {
-    const masterVarietalServices = MasterVarietalServices.getInstance();
-    const mastervarietals = await masterVarietalServices.list(100,0, filterByKeyFindAll(req));
-    res.status(200).send(mastervarietals);
+    const services = MasterVarietalServices.getInstance();
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(VarietyQueryAttributes);
+    const result = await services.list(100,0, filterByKey(req,filterConfig));
+    res.status(200).send(result);
   }
 
   async getMastervarietalById(req: express.Request, res: express.Response) {

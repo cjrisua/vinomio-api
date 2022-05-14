@@ -1,10 +1,10 @@
 import express from 'express';
 import { MasterVarietalServices } from '../services/mastervarietal.services';
-import { MasterVarietalSchema, MasterVarietalSchemaFactory } from '../schema/mastervarietal.schema';
-import Logger from '../../lib/logger';
-import { MasterVarietalFactory } from '../../common/models/mastervarietals.model';
-import { CommonMiddlewareConfig, filterByKeyFindAll } from '../../common/common.middleware.config';
+import { MasterVarietalSchemaFactory } from '../schema/mastervarietal.schema';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
+import { MasterVarietalQueryAttributes } from '../types/mastervarietal.qparam';
+
 const Joi = require('joi'); 
 export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
     private static instance: MasterVarietalMiddleware;
@@ -68,13 +68,19 @@ export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
             res.status(404).send({error: `MasterVarietal ${req.params.slug} not found`});
     }
     async validateMastervarietalQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const masterVarietalServices = MasterVarietalServices.getInstance();
-        const filterStatement = filterByKeyFindAll(req)
-        const masterVarietal = await masterVarietalServices.list(100,0,filterStatement);
-        if (masterVarietal && masterVarietal.length > 0) {
+       
+        const services = MasterVarietalServices.getInstance();
+        const factory = new FilterQueryParamFactory();
+        const filterConfig = factory.create(MasterVarietalQueryAttributes);
+        const filterStatement = filterByKey(req,filterConfig)
+        if(Object.keys(filterStatement).length == 0)
             next();
-        } else {
-            res.status(404).send({error: `MasterVarietal not found`});
+        else{
+            const result = await services.list(100,0,filterStatement);
+            if (result && result.length > 0)
+                next();
+            else
+                res.status(404).send({error: `MasterVarietal not found`});
         }
     }
 }
