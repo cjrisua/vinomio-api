@@ -22,3 +22,4 @@ SSLcertificate.crt
 SSLprivatekey.key
 cert.pem
 key.pem
+docker/postgres-backup.*.sql
