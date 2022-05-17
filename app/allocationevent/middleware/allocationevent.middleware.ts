@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
 import { MerchantServices } from '../../merchant/services/merchant.services';
 import { AllocationEventServices } from '../services/allocationevent.services';
@@ -20,7 +20,7 @@ export class AllocationEventMiddleware {
         const factory = new FilterQueryParamFactory();
         const filterConfig = factory.create(AllocationEventQueryAttributes);
         const filterStatement = filterByKey(req,filterConfig)
-        const collection = await services.list(100,0,filterStatement);
+        const collection = await services.list(RECORD_LIMIT,0,filterStatement);
         if (collection && collection.length > 0) {
             next();
         } else {

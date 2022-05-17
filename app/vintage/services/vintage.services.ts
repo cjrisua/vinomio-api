@@ -15,7 +15,9 @@ export class VintageServices implements CRUD{
         }
         return VintageServices.instance;
     }
-
+    count(){
+        return VintageDaos.getInstance().vintageCount();
+    }
     create(resource: any){
         return VintageDaos.getInstance().addVintage(resource);
     }

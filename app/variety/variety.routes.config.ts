@@ -18,6 +18,7 @@ export class VarietalRoutes
 
     this.app.get("/api/variety", [
         varietalMiddleware.validateVarietyQueryParamExists,
+        varietalMiddleware.calculatePages,
         varietalControllers.listVarieties
     ]);
     this.app.post("/api/variety", [

@@ -10,11 +10,16 @@ export class WineControllers {
 
   }
   async listWines(req: express.Request, res: express.Response) {
+    //Logger.info(next)
     const services = WineServices.getInstance();
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(WineQueryAttributes);
     const result = await services.list(RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig));
-    res.status(200).send({count:+req.body.count,pages:+req.body.pages,rows:result});
+    res.status(200).send({
+        count:+req.body.count,
+        pages:+req.body.pages,
+        rows:result
+      });
   }
 
   async getWineById(req: express.Request, res: express.Response) {

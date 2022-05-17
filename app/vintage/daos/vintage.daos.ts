@@ -1,8 +1,7 @@
 import { dbConfig, Vintage, Wine } from "../../common/models"
 import { VintageFactory } from "../../common/models/vintages.model"
-import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
-import Logger from "../../lib/logger";
+import { QueryTypes } from "sequelize";
 
 export class VintageDaos {
 
@@ -18,7 +17,11 @@ export class VintageDaos {
         }
         return this.instance;
     }
-
+    async vintageCount(){
+        const query:string = 'SELECT COUNT("Vintages"."id") FROM "Vintages"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addVintage(vintageFields: any) {
         const vintage = await Vintage.create(vintageFields);
         return vintage.id;

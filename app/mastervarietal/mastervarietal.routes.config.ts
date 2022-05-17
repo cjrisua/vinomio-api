@@ -18,6 +18,7 @@ export class MasterVarietyRoutes
 
     this.app.get("/api/mastervarietal", [
         masterVarietyMiddleware.validateMastervarietalQueryParamExists,
+        masterVarietyMiddleware.calculatePages,
         masterVarietyControllers.listMastervarietals
     ]);
     this.app.post("/api/mastervarietal", [

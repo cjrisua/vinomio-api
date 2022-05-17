@@ -15,7 +15,9 @@ export class VarietyServices implements CRUD{
         }
         return VarietyServices.instance;
     }
-
+    count(){
+        return VarietyDaos.getInstance().varietyCount();
+    }
     create(resource: any){
         return VarietyDaos.getInstance().addVariety(resource);
     }

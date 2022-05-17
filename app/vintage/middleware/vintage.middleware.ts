@@ -1,15 +1,13 @@
 
 import { debug } from 'console';
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, MapQParams } from '../../common/common.middleware.config';
-import { Filter, IFilter } from '../../common/interface/filter.interface';
+import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
+import { IFilter } from '../../common/interface/filter.interface';
 import Logger from '../../lib/logger';
 import { WineServices } from '../../wine/services/wine.services';
-import { Wine } from '../../wine/types/wine.type';
 import { WineSchemaFactory } from '../schema/wine.schema';
 import { VintageServices } from '../services/vintage.services';
 import { VintageQueryAttributes } from '../types/vintage.qparam';
-import { VintageQParameterFilter } from '../types/vintage.type';
 
 
 export class VintageMiddleware extends CommonMiddlewareConfig {
@@ -63,7 +61,7 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const vintage = await vintageServices.list(100,0,filterStatement);
+            const vintage = await vintageServices.list(RECORD_LIMIT,0,filterStatement);
             if (vintage && vintage.length > 0) {
                 next();
             } else {
@@ -80,7 +78,13 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
         else
             next();
     }
-
+    async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
+        const services = VintageServices.getInstance();
+        await services.count()
+            .then((count) => calculatePageInfo(count,req))
+            .catch((e)=>Logger.error(e))
+        next();
+    }
     async validateWineVintageCombo(req: express.Request, res: express.Response, next: express.NextFunction) {
         const service = VintageServices.getInstance();
         const wineService = WineServices.getInstance();

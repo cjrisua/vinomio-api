@@ -1,6 +1,7 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
+import Logger from '../../lib/logger';
 import { VarietyServices } from '../services/variety.services';
 import { VarietyQueryAttributes } from '../types/variety.qparam';
 
@@ -30,6 +31,13 @@ export class VarietyMiddleware  extends CommonMiddlewareConfig{
         req.body.id = req.params.varietyId;
         next();
     }
+    async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
+        const services = VarietyServices.getInstance();
+        await services.count()
+            .then((count) => calculatePageInfo(count,req))
+            .catch((e)=>Logger.error(e))
+        next();
+    }
     async validateVarietyQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const services = VarietyServices.getInstance();
         const factory = new FilterQueryParamFactory();
@@ -39,7 +47,7 @@ export class VarietyMiddleware  extends CommonMiddlewareConfig{
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const result = await services.list(100,0,filterStatement);
+            const result = await services.list(RECORD_LIMIT,0,filterStatement);
             if (result && result.length > 0)
                 next();
             else

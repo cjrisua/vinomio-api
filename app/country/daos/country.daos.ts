@@ -1,6 +1,6 @@
 import { dbConfig, Country } from "../../common/models"
 import { CountryFactory } from "../../common/models/countries.model"
-import * as shortUUID from "short-uuid";
+import { QueryTypes } from "sequelize";
 
 export class CountryDaos {
 
@@ -16,7 +16,11 @@ export class CountryDaos {
         }
         return this.instance;
     }
-
+    async countryCount(){
+        const query:string = 'SELECT COUNT("Countries"."id") FROM "Countries"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addCountry(countryFields: any) {
         const country = await Country.create(countryFields);
         return country.id;

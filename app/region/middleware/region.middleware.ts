@@ -1,13 +1,11 @@
 
 import express from 'express';
-import { bool } from 'joi';
-import { isBooleanObject } from 'util/types';
-import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
+import Logger from '../../lib/logger';
 import { RegionSchemaFactory } from '../schema/region.schema';
 import { RegionServices } from '../services/region.services';
 import { RegionQueryAttributes } from '../types/region.qparam';
-import { Region } from '../types/region.type';
 
 export class RegionMiddleware extends CommonMiddlewareConfig {
     private static instance: RegionMiddleware;
@@ -54,6 +52,13 @@ export class RegionMiddleware extends CommonMiddlewareConfig {
         req.body.id = req.params.regionId;
         next();
     }
+    async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
+        const services = RegionServices.getInstance();
+        await services.count()
+            .then((count) => calculatePageInfo(count,req))
+            .catch((e)=>Logger.error(e))
+        next();
+    }
     async validateRegionQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         
         const factory = new FilterQueryParamFactory();
@@ -65,9 +70,9 @@ export class RegionMiddleware extends CommonMiddlewareConfig {
         //let region:any
 
         //if(req.query.includeparent && req.query.includeparent == 'true')
-        //    region  = await regionServices.customList(100,0,filterStatement);
+        //    region  = await regionServices.customList(RECORD_LIMIT,0,filterStatement);
         //else
-        const region  = await regionServices.list(100,0,filterStatement);
+        const region  = await regionServices.list(RECORD_LIMIT,0,filterStatement);
 
         if (region && region.length > 0) {
             next();

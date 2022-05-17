@@ -1,11 +1,11 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, MapQParams } from '../../common/common.middleware.config';
+import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import { CountrySchemaFactory } from '../schema/country.schema';
 import { CountryServices } from '../services/country.services';
-import { CountryApiQPrams } from '../types/country.type';
 import { CountryQueryAttributes } from '../types/country.qparam';
+import Logger from '../../lib/logger';
 
 export class CountryMiddleware extends CommonMiddlewareConfig{
     private static instance: CountryMiddleware;
@@ -52,6 +52,13 @@ export class CountryMiddleware extends CommonMiddlewareConfig{
         req.body.id = req.params.countryId;
         next();
     }
+    async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
+        const services = CountryServices.getInstance();
+        await services.count()
+            .then((count) => calculatePageInfo(count,req))
+            .catch((e)=>Logger.error(e))
+        next();
+    }
     async validateCountryQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const services = CountryServices.getInstance();
         const factory = new FilterQueryParamFactory();
@@ -61,7 +68,7 @@ export class CountryMiddleware extends CommonMiddlewareConfig{
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const result = await services.list(100,0,filterStatement);
+            const result = await services.list(RECORD_LIMIT,0,filterStatement);
             if (result && result.length > 0)
                 next();
             else

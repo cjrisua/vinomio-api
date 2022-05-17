@@ -18,6 +18,7 @@ export class RegionRoutes
 
     this.app.get("/api/region", [
         regionMiddleware.validateRegionQueryParamExists,
+        regionMiddleware.calculatePages,
         regionControllers.listRegions
     ]);
     this.app.post("/api/region", [

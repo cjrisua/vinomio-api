@@ -15,7 +15,9 @@ export class RegionServices implements CRUD{
         }
         return RegionServices.instance;
     }
-
+    count(){
+        return RegionDaos.getInstance().regionCount();
+    }
     create(resource: any){
         return RegionDaos.getInstance().addRegion(resource);
     }

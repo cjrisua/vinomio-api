@@ -1,4 +1,5 @@
 import express from "express";
+import { RECORD_LIMIT } from "../../common/common.middleware.config";
 import { UserServices } from "../services/user.services";
 
 export class UserControllers {
@@ -9,7 +10,7 @@ export class UserControllers {
 
   async listUsers(req: express.Request, res: express.Response) {
     const userServices = UserServices.getInstance();
-    const users = await userServices.list(100,0);
+    const users = await userServices.list(RECORD_LIMIT,0);
     res.status(200).send(users);
   }
 

@@ -27,6 +27,15 @@ export class CommonMiddlewareConfig{
     
 }
 
+export const calculatePageInfo = function(count: number, req: express.Request){
+    const page:number = req.query?.page && Number.isInteger(+req.query.page) ? Math.abs(+req.query.page) : 1
+    const pages = Math.ceil(count / RECORD_LIMIT);
+    const offset =  RECORD_LIMIT * (page - 1);
+    req.body.count=count
+    req.body.pages=pages
+    req.body.offset=offset
+}
+
 export const filterByKeyFindAll2 = function(req: any) : IFilter{
     let filter_dic : IFilter = {};
     return filter_dic

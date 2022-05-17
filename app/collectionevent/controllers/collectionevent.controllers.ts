@@ -1,4 +1,5 @@
 import express from "express";
+import { RECORD_LIMIT } from "../../common/common.middleware.config";
 import { CollectioneventServices } from "../services/collectionevent.services";
 
 export class CollectioneventControllers {
@@ -9,7 +10,7 @@ export class CollectioneventControllers {
 
   async listCollectionevents(req: express.Request, res: express.Response) {
     const collectioneventServices = CollectioneventServices.getInstance();
-    const collectionevents = await collectioneventServices.list(100,0);
+    const collectionevents = await collectioneventServices.list(RECORD_LIMIT,0);
     res.status(200).send(collectionevents);
   }
 

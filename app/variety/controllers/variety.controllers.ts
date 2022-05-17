@@ -1,5 +1,5 @@
 import express from "express";
-import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import { VarietyServices } from "../services/variety.services";
 import { VarietyQueryAttributes } from "../types/variety.qparam";
 
@@ -13,8 +13,12 @@ export class VarietyControllers {
     const services = VarietyServices.getInstance();
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(VarietyQueryAttributes);
-    const result = await services.list(100,0, filterByKey(req,filterConfig));
-    res.status(200).send(result);
+    const result = await services.list(RECORD_LIMIT,0, filterByKey(req,filterConfig));
+    res.status(200).send({
+      count:+req.body.count,
+      pages:+req.body.pages,
+      rows:result
+    });
   }
 
   async getVarietyById(req: express.Request, res: express.Response) {

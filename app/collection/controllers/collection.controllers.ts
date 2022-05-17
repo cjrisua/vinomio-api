@@ -1,5 +1,5 @@
 import express from "express";
-import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import { CollectionServices } from "../services/collection.services";
 import { CollectionQueryAttributes } from "../types/collection.qparam";
 
@@ -13,7 +13,7 @@ export class CollectionControllers {
     const collectionServices = CollectionServices.getInstance();
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(CollectionQueryAttributes);
-    const collections = await collectionServices.list(100,0,  filterByKey(req,filterConfig));
+    const collections = await collectionServices.list(RECORD_LIMIT,0,  filterByKey(req,filterConfig));
     res.status(200).send(collections);
   }
 

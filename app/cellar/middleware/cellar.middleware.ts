@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, RECORD_LIMIT } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
 import { RoleServices } from '../../role/services/role.services';
 import { CellarSchemaFactory } from '../schema/cellar.schema';
@@ -42,7 +42,7 @@ export class CellarMiddleware extends CommonMiddlewareConfig {
         console.log(req.body)
         const cellarServices  = RoleServices.getInstance()
         if(req.body.role){
-            const roles = await cellarServices.list(100,0).then((r) => { 
+            const roles = await cellarServices.list(RECORD_LIMIT,0).then((r) => { 
                     return r.filter( item => item.name == req.body.role)});
             if(roles.length >0){
                 req.body.role = roles[0].id

@@ -5,6 +5,7 @@ import Logger from "../../lib/logger";
 import { number } from "yargs";
 import { IFilter } from "../../common/interface/filter.interface";
 import { required } from "joi";
+import { QueryTypes } from "sequelize";
 
 export class MasterVarietalDaos {
 
@@ -20,7 +21,11 @@ export class MasterVarietalDaos {
         }
         return this.instance;
     }
-
+    async mastervarietalCount(){
+        const query:string = 'SELECT COUNT("MasterVarietals"."id") FROM "MasterVarietals"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addMastervarietal(masterVarietalFields: any) {
         const masterVarietal = await this.MasterVarietal.create(masterVarietalFields);
         if(masterVarietalFields.varieties){

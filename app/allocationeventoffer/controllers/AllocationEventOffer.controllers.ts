@@ -1,5 +1,5 @@
 import express from "express";
-import { filterByKey, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import Logger from "../../lib/logger";
 import { AllocationEventOfferServices } from "../services/AllocationEventOffer.services";
 import { AllocationEventOfferQueryAttributes } from "../types/AllocationEventOffer.qparam";
@@ -14,7 +14,7 @@ export class AllocationEventOfferControllers {
     const allocationEventOfferServices = AllocationEventOfferServices.getInstance();
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(AllocationEventOfferQueryAttributes);
-    const allocationEventOffers = await allocationEventOfferServices.list(100,0, filterByKey(req,filterConfig));
+    const allocationEventOffers = await allocationEventOfferServices.list(RECORD_LIMIT,0, filterByKey(req,filterConfig));
     res.status(200).send(allocationEventOffers);
   }
 

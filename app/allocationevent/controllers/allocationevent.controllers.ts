@@ -1,8 +1,7 @@
 import express from "express";
-import { filterByKey, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { RECORD_LIMIT } from "../../common/common.middleware.config";
 import Logger from "../../lib/logger";
 import { AllocationEventServices } from "../services/allocationevent.services";
-import { AllocationEventQueryAttributes } from "../types/allocationevent.qparam";
 
 export class AllocationEventControllers {
 
@@ -12,7 +11,7 @@ export class AllocationEventControllers {
 
   async listAllocationEvents(req: express.Request, res: express.Response) {
     const allocationeventServices = AllocationEventServices.getInstance();
-    const allocationevents = await allocationeventServices.list(100,0,req.body.filter);
+    const allocationevents = await allocationeventServices.list(RECORD_LIMIT,0,req.body.filter);
     res.status(200).send(allocationevents);
   }
 

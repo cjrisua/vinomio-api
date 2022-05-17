@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
 import { ProducerServices } from '../../producer/services/producer.services';
 import { UserServices } from '../../user/services/user.services';
@@ -62,7 +62,7 @@ export class MerchantMiddleware extends CommonMiddlewareConfig{
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const result = await services.list(100,0,filterStatement);
+            const result = await services.list(RECORD_LIMIT,0,filterStatement);
             if (result && result.length > 0) {
                 next();
             } else {

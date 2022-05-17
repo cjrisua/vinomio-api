@@ -1,8 +1,6 @@
-import * as sequelize from "sequelize";
 import { QueryTypes } from "sequelize";
 import { IFilter } from "../../common/interface/filter.interface";
 import { dbConfig, Region } from "../../common/models";
-import { RegionModel } from "../types/region.type";
 
 export class RegionDaos {
   //Region = RegionFactory(dbConfig)
@@ -19,7 +17,11 @@ export class RegionDaos {
     }
     return this.instance;
   }
-
+  async regionCount(){
+    const query:string = 'SELECT COUNT("Regions"."id") FROM "Regions"';
+    const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+    return +result[0].count;
+}
   async addRegion(regionFields: any) {
     const region = await Region.create(regionFields);
     return region;

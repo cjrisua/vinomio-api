@@ -1,8 +1,7 @@
 import { dbConfig, Producer } from "../../common/models"
-import { ProducerFactory } from "../../common/models/producers.model"
-import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
 import Logger from "../../lib/logger";
+import { QueryTypes } from "sequelize";
 
 export class ProducerDaos {
 
@@ -18,7 +17,11 @@ export class ProducerDaos {
         }
         return this.instance;
     }
-
+    async producerCount(){
+        const query:string = 'SELECT COUNT("Producers"."id") FROM "Producers"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addProducer(producerFields: any) {
         const producer = await Producer.create(producerFields);
         return producer.id;

@@ -19,6 +19,7 @@ export class CountryRoutes
 
     this.app.get("/api/country", [
         countryMiddleware.validateCountryQueryParamExists,
+        countryMiddleware.calculatePages,
         countryControllers.listCountries
     ]);
     this.app.post("/api/country", [

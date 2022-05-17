@@ -1,5 +1,5 @@
 import express from "express";
-import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import { RegionServices } from "../services/region.services";
 import { RegionQueryAttributes } from "../types/region.qparam";
 
@@ -17,10 +17,14 @@ export class RegionControllers {
     
     let regions : any
     if(req.query.includeparent && req.query.includeparent == 'true')
-        regions  = await regionServices.customList(100,0,filterStatement);
+        regions  = await regionServices.customList(RECORD_LIMIT,0,filterStatement);
     else
-        regions = await regionServices.list(100,0,filterStatement);
-    res.status(200).send(regions);
+        regions = await regionServices.list(RECORD_LIMIT,0,filterStatement);
+    res.status(200).send({
+      count:+req.body.count,
+      pages:+req.body.pages,
+      rows:regions
+    });
   }
 
   async getRegionById(req: express.Request, res: express.Response) {

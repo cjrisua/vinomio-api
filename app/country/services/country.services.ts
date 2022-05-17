@@ -16,7 +16,9 @@ export class CountryServices implements CRUD{
         }
         return CountryServices.instance;
     }
-
+    count(){
+        return CountryDaos.getInstance().countryCount();
+    }
     create(resource: any){
         return CountryDaos.getInstance().addCountry(resource);
     }

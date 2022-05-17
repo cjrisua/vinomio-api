@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { AllocationEventServices } from '../../allocationevent/services/allocationevent.services';
-import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
 import { CollectionSchemaFactory } from '../schema/collection.schema';
 import { CollectionServices } from '../services/collection.services';
@@ -21,7 +21,7 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
         const factory = new FilterQueryParamFactory();
         const filterConfig = factory.create(CollectionQueryAttributes);
         const filterStatement = filterByKey(req,filterConfig)
-        const collection = await collectionServices.list(100,0,filterStatement);
+        const collection = await collectionServices.list(RECORD_LIMIT,0,filterStatement);
         if (collection && collection.length > 0) {
             next();
         } else {

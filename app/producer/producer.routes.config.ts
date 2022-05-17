@@ -18,6 +18,7 @@ export class ProducerRoutes
 
     this.app.get("/api/producer", [
         producerMiddleware.validateProducerQueryParamExists,
+        producerMiddleware.calculatePages,
         producerControllers.listProducers
     ]);
     this.app.post("/api/producer", [

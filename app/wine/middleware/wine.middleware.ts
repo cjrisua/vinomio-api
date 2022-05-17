@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
+import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import Logger from '../../lib/logger';
 import { WineSchemaFactory } from '../schema/wine.schema';
@@ -45,14 +45,9 @@ export class WineMiddleware extends CommonMiddlewareConfig {
     }
     async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
         const services = WineServices.getInstance();
-        const count = await services.count();
-        const page:number = req.query?.page && Number.isInteger(+req.query.page) ? Math.abs(+req.query.page) : 1
-        const pages = Math.ceil(count / RECORD_LIMIT);
-        const offset =  RECORD_LIMIT * (page - 1);
-        req.body.count=count
-        req.body.pages=pages
-        req.body.offset=offset
-        //Logger.info(`page: ${page}, pages:${req.body.pages}, offset: ${req.body.offset}`)
+        const count = await services.count()
+        .then((count) => calculatePageInfo(count,req))
+        .catch((e)=>Logger.error(e))
         next();
     }
     async validateWineQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {

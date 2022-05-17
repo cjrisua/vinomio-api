@@ -1,4 +1,5 @@
 import express from "express";
+import { RECORD_LIMIT } from "../../common/common.middleware.config";
 import { RoleServices } from "../services/role.services";
 
 export class RoleControllers {
@@ -9,7 +10,7 @@ export class RoleControllers {
 
   async listRoles(req: express.Request, res: express.Response) {
     const roleServices = RoleServices.getInstance();
-    const roles = await roleServices.list(100,0);
+    const roles = await roleServices.list(RECORD_LIMIT,0);
     res.status(200).send(roles);
   }
 

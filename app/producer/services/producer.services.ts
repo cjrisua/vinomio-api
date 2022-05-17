@@ -16,7 +16,9 @@ export class ProducerServices implements CRUD{
         }
         return ProducerServices.instance;
     }
-
+    count(){
+        return ProducerDaos.getInstance().producerCount();
+    }
     create(resource: any){
         return ProducerDaos.getInstance().addProducer(resource);
     }

@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { AllocationEventQueryAttributes } from '../../allocationevent/types/allocationevent.qparam';
-import { filterByKey, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import { AllocationEventOfferServices } from '../services/AllocationEventOffer.services';
 
 export class AllocationEventOfferMiddleware {
@@ -27,7 +27,7 @@ export class AllocationEventOfferMiddleware {
         const factory = new FilterQueryParamFactory();
         const filterConfig = factory.create(AllocationEventQueryAttributes);
         const filterStatement = filterByKey(req,filterConfig)
-        const collection = await services.list(100,0,filterStatement);
+        const collection = await services.list(RECORD_LIMIT,0,filterStatement);
         if (collection && collection.length > 0) {
             next();
         } else {

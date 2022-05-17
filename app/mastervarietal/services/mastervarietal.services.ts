@@ -15,7 +15,9 @@ export class MasterVarietalServices implements CRUD{
         }
         return MasterVarietalServices.instance;
     }
-
+    count(){
+        return MasterVarietalDaos.getInstance().mastervarietalCount();
+    }
     create(resource: any){
         return MasterVarietalDaos.getInstance().addMastervarietal(resource);
     }

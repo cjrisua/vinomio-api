@@ -1,9 +1,10 @@
 import express from 'express';
 import { MasterVarietalServices } from '../services/mastervarietal.services';
 import { MasterVarietalSchemaFactory } from '../schema/mastervarietal.schema';
-import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import { MasterVarietalQueryAttributes } from '../types/mastervarietal.qparam';
+import Logger from '../../lib/logger';
 
 const Joi = require('joi'); 
 export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
@@ -67,6 +68,13 @@ export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
         else
             res.status(404).send({error: `MasterVarietal ${req.params.slug} not found`});
     }
+    async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
+        const services = MasterVarietalServices.getInstance();
+        await services.count()
+            .then((count) => calculatePageInfo(count,req))
+            .catch((e)=>Logger.error(e))
+        next();
+    }
     async validateMastervarietalQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
        
         const services = MasterVarietalServices.getInstance();
@@ -76,7 +84,7 @@ export class MasterVarietalMiddleware extends CommonMiddlewareConfig {
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const result = await services.list(100,0,filterStatement);
+            const result = await services.list(RECORD_LIMIT,0,filterStatement);
             if (result && result.length > 0)
                 next();
             else

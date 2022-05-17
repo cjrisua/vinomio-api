@@ -1,4 +1,5 @@
 import express from "express";
+import { RECORD_LIMIT } from "../../common/common.middleware.config";
 import { CellarServices } from "../services/cellar.services";
 
 export class CellarControllers {
@@ -9,7 +10,7 @@ export class CellarControllers {
 
   async listCellars(req: express.Request, res: express.Response) {
     const cellarServices = CellarServices.getInstance();
-    const cellars = await cellarServices.list(100,0);
+    const cellars = await cellarServices.list(RECORD_LIMIT,0);
     res.status(200).send(cellars);
   }
 

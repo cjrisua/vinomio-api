@@ -1,7 +1,6 @@
 import { dbConfig, Variety } from "../../common/models"
-import { VarietyFactory } from "../../common/models/varieties.model"
-import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
+import { QueryTypes } from "sequelize";
 
 export class VarietyDaos {
 
@@ -17,7 +16,11 @@ export class VarietyDaos {
         }
         return this.instance;
     }
-
+    async varietyCount(){
+        const query:string = 'SELECT COUNT("Varieties"."id") FROM "Varieties"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addVariety(varietyFields: any) {
         return await Variety.create(varietyFields)
         .then((v)=>{return v.id})

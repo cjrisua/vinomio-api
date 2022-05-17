@@ -18,6 +18,7 @@ export class VintageRoutes
 
     this.app.get("/api/vintage", [
         vintageMiddleware.validateVintageQueryParamExists,
+        vintageMiddleware.calculatePages,
         vintageControllers.listVintages
     ]);
     this.app.post("/api/vintage", [
