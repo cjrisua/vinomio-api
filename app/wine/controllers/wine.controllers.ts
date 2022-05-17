@@ -1,5 +1,5 @@
 import express from "express";
-import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from "../../common/common.middleware.config";
+import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import Logger from "../../lib/logger";
 import { WineServices } from "../services/wine.services";
 import { WineQueryAttributes } from "../types/wine.qparam";
@@ -9,13 +9,12 @@ export class WineControllers {
   constructor(){
 
   }
-
   async listWines(req: express.Request, res: express.Response) {
     const services = WineServices.getInstance();
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(WineQueryAttributes);
-    const result = await services.list(100,0, filterByKey(req,filterConfig));
-    res.status(200).send(result);
+    const result = await services.list(RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig));
+    res.status(200).send({count:+req.body.count,pages:+req.body.pages,rows:result});
   }
 
   async getWineById(req: express.Request, res: express.Response) {

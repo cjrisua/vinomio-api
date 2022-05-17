@@ -4,7 +4,7 @@ import { WineDaos } from "../daos/wine.daos";
 
 export class WineServices implements CRUD{
     private static instance: WineServices;
-
+    
     constructor() {
         
     }
@@ -15,7 +15,9 @@ export class WineServices implements CRUD{
         }
         return WineServices.instance;
     }
-
+    count(){
+        return WineDaos.getInstance().wineCount();
+    }
     create(resource: any){
         return WineDaos.getInstance().addWine(resource);
     }

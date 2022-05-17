@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory } from '../../common/common.middleware.config';
+import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import { IFilter } from '../../common/interface/filter.interface';
 import Logger from '../../lib/logger';
 import { WineSchemaFactory } from '../schema/wine.schema';
@@ -43,8 +43,19 @@ export class WineMiddleware extends CommonMiddlewareConfig {
         req.body.id = req.params.wineId;
         next();
     }
+    async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
+        const services = WineServices.getInstance();
+        const count = await services.count();
+        const page:number = req.query?.page && Number.isInteger(+req.query.page) ? Math.abs(+req.query.page) : 1
+        const pages = Math.ceil(count / RECORD_LIMIT);
+        const offset =  RECORD_LIMIT * (page - 1);
+        req.body.count=count
+        req.body.pages=pages
+        req.body.offset=offset
+        //Logger.info(`page: ${page}, pages:${req.body.pages}, offset: ${req.body.offset}`)
+        next();
+    }
     async validateWineQueryParamExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-
         const services = WineServices.getInstance();
         const factory = new FilterQueryParamFactory();
         const filterConfig = factory.create(WineQueryAttributes);
@@ -53,7 +64,7 @@ export class WineMiddleware extends CommonMiddlewareConfig {
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const result = await services.list(100,0,filterStatement);
+            const result = await services.list( RECORD_LIMIT,0,filterStatement);
             if (result && result.length > 0)
                 next();
             else
@@ -63,8 +74,8 @@ export class WineMiddleware extends CommonMiddlewareConfig {
     async validateWineIsUnique(req: express.Request, res: express.Response, next: express.NextFunction) {
         const wineServices = WineServices.getInstance();
         const filter : IFilter = { where: {slug: CommonMiddlewareConfig.slugify(req.body.name)}}
-        const producer = await wineServices.list(1,0,filter);
-        if (producer && producer.length > 0)
+        const result = await wineServices.list(1,0,filter);
+        if (result && result.length > 0)
             res.status(409).send({error: `Wine ${req.body.name} exists`});
         else
             next();

@@ -1,14 +1,15 @@
 import { dbConfig, MasterVarietal, Producer, Region, Vintage, Wine } from "../../common/models"
 import { WineFactory } from "../../common/models/wines.model"
-import * as shortUUID from "short-uuid";
 import { IFilter } from "../../common/interface/filter.interface";
 import Logger from "../../lib/logger";
+import { QueryTypes } from "sequelize";
+import { WineStatic } from "../types/wine.type";
 
 export class WineDaos {
 
     private static Wine = WineFactory(dbConfig)
     private static instance: WineDaos;
-
+    //private static LIMIT:number = 1;
 
     constructor(){}
     
@@ -23,9 +24,13 @@ export class WineDaos {
         const wine = await Wine.create(wineFields);
         return wine.id;
     }
-
+    async wineCount(){
+        const query:string = 'SELECT COUNT("Wines"."id") FROM "Wines"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async listWines(limit: number = 25, page: number = 0, filter: IFilter){
-        console.log(filter);
+        //Logger.info(page)
         const wines = await Wine.findAll(
             { where: filter.where, attributes: ['id','slug','name'] ,offset: page, limit: limit, include: [{
                  model: Producer, attributes:['id','name']

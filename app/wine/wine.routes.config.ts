@@ -18,6 +18,7 @@ export class WineRoutes
 
     this.app.get("/api/wine", [
         wineMiddleware.validateWineQueryParamExists,
+        wineMiddleware.calculatePages,
         wineControllers.listWines
     ]);
     this.app.post("/api/wine", [

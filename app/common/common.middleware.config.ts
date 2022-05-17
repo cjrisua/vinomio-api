@@ -12,6 +12,8 @@ export class FilterQueryParamFactory {
     }
 }
 
+export const RECORD_LIMIT = 100
+
 export class CommonMiddlewareConfig{
 
     public static slugify =  (name:string) => { return slugify(name, {lower: true, remove: /[\/*+~.()'"!:@]/g})}
