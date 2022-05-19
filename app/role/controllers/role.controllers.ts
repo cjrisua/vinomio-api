@@ -1,6 +1,7 @@
 import express from "express";
-import { RECORD_LIMIT } from "../../common/common.middleware.config";
+import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import { RoleServices } from "../services/role.services";
+import { RoleQueryAttributes } from "../types/role.qparam";
 
 export class RoleControllers {
 
@@ -9,9 +10,15 @@ export class RoleControllers {
   }
 
   async listRoles(req: express.Request, res: express.Response) {
-    const roleServices = RoleServices.getInstance();
-    const roles = await roleServices.list(RECORD_LIMIT,0);
-    res.status(200).send(roles);
+    const service = RoleServices.getInstance();
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(RoleQueryAttributes);
+    const result = await service.list(RECORD_LIMIT,req.body.offset, filterByKey(req,filterConfig));
+    res.status(200).send({
+      count:+req.body.count,
+      pages:+req.body.pages,
+      rows:result
+    });
   }
 
   async getRoleById(req: express.Request, res: express.Response) {

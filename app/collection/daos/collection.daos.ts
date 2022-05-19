@@ -77,7 +77,7 @@ export class CollectionDaos {
                 where:filter.where, 
                 offset: page, limit: limit,
                 include:[{model: CollectionEvent, attributes:['id','action']}]
-            });
+            }).catch((message) => Logger.warn(message));
         return collections;
     }
     

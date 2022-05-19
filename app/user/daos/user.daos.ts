@@ -4,6 +4,7 @@ import * as shortUUID from "short-uuid";
 import bcrypt from "bcrypt"
 import { Subscriber } from "../../subscriber/types/subscriber.type";
 import { QueryTypes } from "sequelize";
+import Logger from "../../lib/logger";
 
 export class UserDaos {
 
@@ -54,7 +55,6 @@ export class UserDaos {
         return User.findOne({where: {email: email} });
     }
     async getProfileByEmail(email: string) {
-
         const profile_query:string = `SELECT 
             "U"."id",
             "U"."email",
@@ -65,7 +65,7 @@ export class UserDaos {
             "C"."statusId",
             "U"."handler"
             FROM "Users" as "U"
-            LEFT OUTER JOIN "Subscribers" as "S" on "S"."user_id" = "U"."id" and "S"."role_id" = 1
+            LEFT OUTER JOIN "Subscribers" as "S" on "S"."user_id" = "U"."id" and "S"."role_id" = (SELECT "Roles"."id" FROM "Roles" WHERE "Roles"."name" = 'admin' OR "Roles"."name" ='collector' LIMIT 1)
             LEFT OUTER JOIN "Collections" as "C" on "C"."cellarId" = "S"."cellar_id"
             WHERE email = :email
             `;
@@ -80,7 +80,8 @@ export class UserDaos {
                   "cellar_id":m[0]?.cellar_id,
                   "email":m[0]?.email,
                   "handler":m[0]?.handler
-                } })
+                } }).catch(
+                    (message) => Logger.info(message));
 
               return r 
     }

@@ -15,15 +15,17 @@ export class RoleServices implements CRUD{
         }
         return RoleServices.instance;
     }
-
+    count(){
+        return RoleDaos.getInstance().roleCount();
+    }
     create(resource: any){
         return RoleDaos.getInstance().addRole(resource);
     }
     deleteById(resourceId: any){
         return RoleDaos.getInstance().removeRoleById(resourceId);
     }
-    list(limit: number, page: number){
-        return RoleDaos.getInstance().listRoles(limit, page);
+    list(limit: number, page: number, filter?: any){
+        return RoleDaos.getInstance().listRoles(limit, page,filter);
     }
     patchById(resource: any){
         return RoleDaos.getInstance().patchRole(resource);
