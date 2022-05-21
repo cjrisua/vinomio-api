@@ -36,6 +36,11 @@ export function AllocationEventOfferFactory (sequelize:Sequelize) : AllocationEv
             type: DataTypes.DECIMAL(11,2),
             defaultValue:0.00
         },
+        minimum: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue:1,
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,

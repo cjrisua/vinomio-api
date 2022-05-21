@@ -19,7 +19,7 @@ export class AllocationEventOfferDaos {
     }
     async bulkAllocationEventOffers(AllocationEventOfferFields: any[]){
         return await AllocationEventOffer.bulkCreate(AllocationEventOfferFields, {
-            updateOnDuplicate: ["releasePrice"],
+            updateOnDuplicate: ["releasePrice","minimum"],
           }); 
     }
     async addAllocationEventOffer(AllocationEventOfferFields: any) {

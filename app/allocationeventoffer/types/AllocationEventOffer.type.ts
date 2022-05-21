@@ -9,6 +9,7 @@ export interface AllocationEventOfferAttributes {
     updatedAt?: Date;
     wine?: Wine;
     releasePrice?:number
+    minimum?:number
   }
 
 export interface AllocationEventOfferModel extends Model<AllocationEventOfferAttributes>, AllocationEventOfferAttributes {}
