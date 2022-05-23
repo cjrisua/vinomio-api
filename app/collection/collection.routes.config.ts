@@ -21,8 +21,8 @@ export class CollectionRoutes
         collectionControllers.listCollections
     ]);
     this.app.post("/api/collection", [
-        //collectionMiddleware.validateCollectionPOST,
-        collectionMiddleware.validateAllocationExist,
+        collectionMiddleware.validateCollectionPOST,
+        collectionMiddleware.validateWineVintageExists,
         collectionControllers.createCollection,
     ]);
     this.app.put(`/api/collection/:collectionId`, [

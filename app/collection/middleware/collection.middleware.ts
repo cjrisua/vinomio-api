@@ -3,6 +3,7 @@ import express from 'express';
 import { AllocationEventServices } from '../../allocationevent/services/allocationevent.services';
 import { CommonMiddlewareConfig, filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
+import { WineServices } from '../../wine/services/wine.services';
 import { CollectionSchemaFactory } from '../schema/collection.schema';
 import { CollectionServices } from '../services/collection.services';
 import { CollectionQueryAttributes } from '../types/collection.qparam';
@@ -30,6 +31,7 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
     }
     async validateCollectionPOST(req: express.Request, res: express.Response, next: express.NextFunction){
         const schema = CollectionSchemaFactory().CreatePOST;
+        Logger.info(req.body)
         await schema.validateAsync(req.body)
         .then(()=>{
             next();
@@ -47,7 +49,17 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
             res.status(404).send({error: `Collection ${req.params.collectionId} not found`});
         }
     }
-
+    async validateWineVintageExists(req: express.Request, res: express.Response, next: express.NextFunction){
+        const service = WineServices.getInstance();
+        const wines:any[] = req.body
+        wines.filter((req) => Object.keys(req).some(i => i == "wineId" &&  !Object.keys(req).includes("vintageId"))).forEach(async (request) =>{
+            await service.readById(request.id)
+            .then((wine) => Logger.info("then"))
+            .catch(()=> res.status(404).send({error: `Wine not found`}))
+        })
+        res.status(404).send({error: `OK`});
+        //next();
+    }
     async validateAllocationExist(req: express.Request, res: express.Response, next: express.NextFunction) {
         //Logger.info(req.body[0].merchant);
         if( req.body[0].merchant?.allocationEvent?.name && 
