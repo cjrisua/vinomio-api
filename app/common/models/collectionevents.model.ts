@@ -29,6 +29,7 @@ export function CollectionEventFactory (sequelize:Sequelize) : CollectionEventSt
         },
         collectionId:{
             type: DataTypes.INTEGER,
+            onDelete:'CASCADE',
             references: {
               model: Collection,
               key: 'id'

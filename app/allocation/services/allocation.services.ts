@@ -15,7 +15,9 @@ export class AllocationServices implements CRUD{
         }
         return AllocationServices.instance;
     }
-
+    count(){
+        return AllocationDaos.getInstance().allocationCount();
+    }
     create(resource: any){
         return AllocationDaos.getInstance().addAllocation(resource);
     }
@@ -27,6 +29,9 @@ export class AllocationServices implements CRUD{
     }
     listByUserId(userId:any, limit: number, page: number,filter:any){
         return AllocationDaos.getInstance().listAllocationsByUserId(userId,limit, page,filter);
+    }
+    listLastPurchases(cellarId:any, limit: number, page: number,filter:any){
+        return AllocationDaos.getInstance().listAllocationLastPurchases(cellarId, limit, page, filter)
     }
     patchById(resource: any){
         return AllocationDaos.getInstance().patchAllocation(resource);

@@ -17,8 +17,14 @@ export class AllocationRoutes
     const allocationMiddleware = AllocationMiddleware.getInstance();
 
     this.app.get("/api/allocation", [
-        allocationMiddleware.validateAllocationParamExists,
+        allocationMiddleware.validateAllocationQueryParamExists,
+        allocationMiddleware.calculatePages,
         allocationControllers.listAllocations
+    ]);
+    this.app.get("/api/allocation/cellar/:cellarId", [
+      allocationMiddleware.validateAllocationQueryParamExists,
+      allocationMiddleware.calculatePages,
+      allocationControllers.listAllocationLastPurchases
     ]);
     this.app.get("/api/allocation/events/:userId", [
         allocationMiddleware.validateAllocationParamExists,

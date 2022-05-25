@@ -17,12 +17,27 @@ export class AllocationControllers {
     const allocations = await allocationServices.listByUserId(req.params.userId, RECORD_LIMIT,0,filter);
     res.status(200).send(allocations);
   }
+  async listAllocationLastPurchases(req: express.Request, res: express.Response){
+    const services = AllocationServices.getInstance();
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(AllocationQueryAttributes);
+    const result = await services.listLastPurchases(req.params.cellarId, RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig));
+    res.status(200).send({
+        count:+req.body.count,
+        pages:+req.body.pages,
+        rows:result
+      });
+  }
   async listAllocations(req: express.Request, res: express.Response) {
-    const allocationServices = AllocationServices.getInstance();
-    const filter:IFilter = req.body.filter
-    Logger.info(req.body.filter)
-    const allocations = await allocationServices.list(RECORD_LIMIT,0,filter);
-    res.status(200).send(allocations);
+    const services = AllocationServices.getInstance();
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(AllocationQueryAttributes);
+    const result = await services.list(RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig));
+    res.status(200).send({
+        count:+req.body.count,
+        pages:+req.body.pages,
+        rows:result
+      });
   }
 
   async getAllocationById(req: express.Request, res: express.Response) {

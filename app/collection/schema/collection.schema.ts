@@ -16,7 +16,7 @@ export function CollectionSchemaFactory ()  {
                   locationId: Joi.number() ,
                   acquiringSourceId: Joi.number(),
                   allocationEventId: Joi.number(),
-                  bottleCount: Joi.number(),
+                  bottleCount: Joi.number().required(),
                   merchant: Joi.object()
                 })) 
       };

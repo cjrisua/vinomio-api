@@ -32,7 +32,12 @@ export class WineDaos {
     async listWines(limit: number = 25, page: number = 0, filter: IFilter){
         //Logger.info(page)
         const wines = await Wine.findAll(
-            { where: filter.where, attributes: ['id','slug','name'] ,offset: page, limit: limit, include: [{
+            { 
+                where: filter.where, 
+                attributes: ['id','slug','name'] ,
+                offset: page, 
+                limit: limit, 
+                include: [{
                  model: Producer, attributes:['id','name']
                 },
                 {
@@ -50,7 +55,10 @@ export class WineDaos {
     }
     
     async removeWineById(wineId: string){
-        const wines = await Wine.destroy({where: {id: wineId} }).catch((ex) => {Logger.error(ex); return {}})
+        const wines = await Wine.destroy(
+            {
+                where: {id: wineId}
+            }).catch((ex) => {Logger.error(ex); return {}})
         return wines;
     }
 
@@ -59,7 +67,10 @@ export class WineDaos {
     }
 
     async getWineById(wineId: string) {
-        return Wine.findOne({where: {id: wineId} });
+        return Wine.findOne({
+            where: {id: wineId},
+            include:[{model: Vintage , attributes:['id','year']}]
+        });
     }
 
     async patchWine(wineFields: any) {

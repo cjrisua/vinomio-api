@@ -36,6 +36,7 @@ export class CollectionDaos {
 
     async addCollection(collectionFields: any[])
     {
+        //Logger.info(collectionFields)
         const collectionEvent = CollectionEventFactory(dbConfig)
         let result:any[] = []
         
@@ -76,7 +77,7 @@ export class CollectionDaos {
             { 
                 where:filter.where, 
                 offset: page, limit: limit,
-                include:[{model: CollectionEvent, attributes:['id','action']}]
+                include:[{model: CollectionEvent, attributes:['id','action','createdAt']}]
             }).catch((message) => Logger.warn(message));
         return collections;
     }
@@ -91,7 +92,7 @@ export class CollectionDaos {
     async getCollectionById(collectionId: string) {
         return Collection.findOne({where: {id: collectionId} });
     }
-
+    
     async patchCollection(collectionFields: any) {
         console.log(JSON.stringify(collectionFields))
         let collection: any = await Collection.findOne({where: {id: collectionFields.id}});

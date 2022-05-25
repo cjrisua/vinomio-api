@@ -4,7 +4,7 @@ import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
 import { AllocationEventFactory } from "../../common/models/allocationevents.model";
 import { IFilter } from "../../common/interface/filter.interface";
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { AllocationEventAttributes } from "../../allocationevent/types/allocationevent.type";
 import { AllocationAttributes } from "../types/allocation.type";
 
@@ -35,7 +35,11 @@ export class AllocationDaos {
         }
         return this.instance;
     }
-
+    async allocationCount(){
+        const query:string = 'SELECT COUNT("Allocations"."id") FROM "Allocations"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addAllocation(allocationFields: any) {
         Logger.info(allocationFields)
         const AllocationEvent = AllocationEventFactory(dbConfig);
@@ -101,7 +105,16 @@ export class AllocationDaos {
          })
         return results;
     }
+    async listAllocationLastPurchases(cellarId:number, limit: number = 25, page: number = 0,  filter:IFilter){
 
+        const query:string = `SELECT "AllocationEvents"."allocationId", "Collections"."allocationEventId", "Collections"."vintageId", MAX("Collections"."createdAt") AS "lastPurchased" FROM "Collections"  INNER JOIN "CollectionEvents" on "Collections"."id" = "CollectionEvents"."collectionId"  INNER JOIN "AllocationEvents" on "AllocationEvents"."id" = "Collections"."allocationEventId" INNER JOIN "Allocations" on "Allocations"."id" = "AllocationEvents"."allocationId" INNER JOIN "Merchants" on "Merchants"."id" = "Allocations"."merchantId" WHERE "CollectionEvents"."action" = 'PurchasedOn' AND "Merchants"."userId" =  :userId GROUP BY "AllocationEvents"."allocationId", "Collections"."allocationEventId", "Collections"."vintageId"`
+        const result:any =  await dbConfig.query(query,{ 
+                raw: true,
+                replacements: { userId: cellarId },
+                type: QueryTypes.SELECT,
+            })
+        return result;
+    }
     async listAllocations(limit: number = 25, page: number = 0,  filter:IFilter){
         const allocations = await Allocation.findAll(
             { 

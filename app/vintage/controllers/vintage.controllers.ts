@@ -51,8 +51,9 @@ export class VintageControllers {
 
   async removeVintage(req: express.Request, res: express.Response) {
     const vintageServices = VintageServices.getInstance();
-    const vintage = await vintageServices.deleteById(req.params.vintageId);
-    res.status(204).send(``);
+    await vintageServices.deleteById(req.params.vintageId)
+    .then((result) => res.status(204).send(``))
+    .catch((error) => res.status(404).send(error));
   }
 
   async removeVintageFromWine(req: express.Request, res: express.Response) {
