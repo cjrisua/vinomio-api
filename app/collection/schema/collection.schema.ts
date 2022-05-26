@@ -17,7 +17,10 @@ export function CollectionSchemaFactory ()  {
                   acquiringSourceId: Joi.number(),
                   allocationEventId: Joi.number(),
                   bottleCount: Joi.number().required(),
-                  merchant: Joi.object()
+                  merchant: Joi.object(),
+                  purchasedOn: Joi.date().default(Date.now),
+                  deliverBy: Joi.date().default(Date.now)
+
                 })) 
       };
       return schemas;

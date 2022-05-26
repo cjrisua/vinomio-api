@@ -48,7 +48,7 @@ export class CollectionDaos {
             const collection = await this.Collection.bulkCreate(bottles).then(async (items)=>{
                 const purchasedOn = items.map((p:any) => { return {
                         'action':'PurchasedOn', 
-                        'actionDate': p.purchasedOn,
+                        'actionDate': wine.purchasedOn,
                         'collectionId':p.id
                 }})
                 await collectionEvent.bulkCreate(purchasedOn).then(async ()=>
@@ -58,7 +58,7 @@ export class CollectionDaos {
                         const deliverBy = items.map((p:any) => {
                             return {
                             'action':'DeliveredBy', 
-                            'actionDate': p.deliverBy,
+                            'actionDate': wine.deliverBy,
                             'collectionId':p.id
                             }
                         });
