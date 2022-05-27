@@ -53,11 +53,11 @@ export class CollectionDaos {
                 }})
                 await collectionEvent.bulkCreate(purchasedOn).then(async ()=>
                 {
-                    if(bottles[0].statusId == "pending")
+                    if(bottles[0].statusId == "pending" || bottles[0].statusId == "allocated")
                     {
                         const deliverBy = items.map((p:any) => {
                             return {
-                            'action':'DeliveredBy', 
+                            'action': bottles[0].statusId == "pending" ? 'DeliveredBy' : 'DeliveredOn', 
                             'actionDate': wine.deliverBy,
                             'collectionId':p.id
                             }
