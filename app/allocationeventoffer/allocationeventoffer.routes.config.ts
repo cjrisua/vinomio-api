@@ -21,6 +21,8 @@ export class AllocationEventOfferRoutes
         allocationEventOfferControllers.listAllocationEventOffers
     ]);
     this.app.post("/api/AllocationEventOffer", [
+        allocationEventOfferMiddleware.minimumAllocationOffer,
+        allocationEventOfferMiddleware.validatePOST,
         allocationEventOfferControllers.createAllocationEventOffer
     ]);
     this.app.put(`/api/AllocationEventOffer/:AllocationEventOfferId`, [

@@ -1,10 +1,13 @@
 
 import express from 'express';
 import { AllocationEventQueryAttributes } from '../../allocationevent/types/allocationevent.qparam';
-import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
+import { CollectionMiddleware } from '../../collection/middleware/collection.middleware';
+import { CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
+import Logger from '../../lib/logger';
+import { AllocationEventOfferSchemaFactory } from '../schema/allocationeventoffer.schema';
 import { AllocationEventOfferServices } from '../services/AllocationEventOffer.services';
 
-export class AllocationEventOfferMiddleware {
+export class AllocationEventOfferMiddleware  extends CommonMiddlewareConfig{
     private static instance: AllocationEventOfferMiddleware;
 
     static getInstance() {
@@ -34,8 +37,29 @@ export class AllocationEventOfferMiddleware {
             res.status(404).send({error: `Allocation not found`});
         }
     }
+    async validatePOST(req: express.Request, res: express.Response, next: express.NextFunction){
+        Logger.info(req.body)
+        const schema = AllocationEventOfferSchemaFactory().CreatePOST;
+        await schema.validateAsync(req.body)
+        .then(()=>{
+            next();
+        })
+        .catch((error:any) => {
+            CollectionMiddleware.processValidationError(error,res);
+        });
+    }
     async extractAllocationEventOfferId(req: express.Request, res: express.Response, next: express.NextFunction) {
         req.body.id = req.params.AllocationEventOfferId;
+        next();
+    }
+    async minimumAllocationOffer(req: express.Request, res: express.Response, next: express.NextFunction) {
+        if(Array.isArray(req.body)){
+            req.body
+            .filter((offer:any) => !offer.minimum || offer.minimum == 0 )
+            .map((offer:any) => {
+                Logger.info("minimum is 1")
+                offer.minimum = 1})
+        }
         next();
     }
 }
