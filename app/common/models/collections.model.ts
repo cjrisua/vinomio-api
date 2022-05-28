@@ -3,6 +3,7 @@ import { CollectionStatic } from "../../collection/types/collection.type";
 import { AllocationEvent, Cellar, CollectionEvent, dbConfig, Merchant, Vintage } from ".";
 import { CellarFactory } from "./cellars.model";
 import { CollectionEventFactory } from "./collectionevents.model";
+import { VintageFactory } from "./vintages.model";
 
 export function CollectionFactory (sequelize:Sequelize) : CollectionStatic {
     const Collections = <CollectionStatic>sequelize.define("Collections", {
@@ -61,11 +62,16 @@ export function CollectionFactory (sequelize:Sequelize) : CollectionStatic {
     });
     const Cellars = CellarFactory(dbConfig)
     const CollectionEvents = CollectionEventFactory(dbConfig)
+    const Vintages = VintageFactory(dbConfig)
+
     Cellars.hasMany(Collections,{foreignKey: 'cellarId'})
     Collections.belongsTo(Cellars,{foreignKey: 'cellarId'})
 
     Collections.hasMany(CollectionEvents,{ foreignKey: 'collectionId'})
     CollectionEvents.belongsTo(Collections,{foreignKey: 'collectionId'})
+
+    Vintage.hasMany(Collections, {foreignKey: 'vintageId'})
+    Collections.belongsTo(Vintage, {foreignKey: 'vintageId'})
 
     return Collections;
 }

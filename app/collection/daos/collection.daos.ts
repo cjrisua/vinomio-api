@@ -1,4 +1,4 @@
-import { dbConfig, Collection, CollectionEvent } from "../../common/models"
+import { dbConfig, Collection, CollectionEvent, Wine, Vintage, Producer, Region, MasterVarietal } from "../../common/models"
 import { CollectionFactory } from "../../common/models/collections.model"
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
@@ -77,7 +77,19 @@ export class CollectionDaos {
             { 
                 where:filter.where, 
                 offset: page, limit: limit,
-                include:[{model: CollectionEvent, attributes:['id','action','createdAt']}]
+                include:[
+                    {model: CollectionEvent, attributes:['id','action','createdAt']},
+                    //{model: Wine, attributes:['id','name']},
+                    {model: Vintage, attributes:['id','year'], 
+                        include: [
+                            {model: Wine, attributes:['name'],
+                        include:[
+                            {model: Producer, attributes:['name']},
+                            {model: Region, attributes:['name']},
+                            {model: MasterVarietal, attributes:['name']}
+                        ]}
+                        ]},
+                ]
             }).catch((message) => Logger.warn(message));
         return collections;
     }
