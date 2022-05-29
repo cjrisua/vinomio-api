@@ -23,3 +23,4 @@ SSLprivatekey.key
 cert.pem
 key.pem
 docker/postgres-backup.*.sql
+docker/postgres-data.tar

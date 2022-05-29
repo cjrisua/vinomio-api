@@ -82,7 +82,7 @@ export class CollectionDaos {
                     //{model: Wine, attributes:['id','name']},
                     {model: Vintage, attributes:['id','year'], 
                         include: [
-                            {model: Wine, attributes:['name'],
+                            {model: Wine, attributes:['id','name'],
                         include:[
                             {model: Producer, attributes:['name']},
                             {model: Region, attributes:['name']},

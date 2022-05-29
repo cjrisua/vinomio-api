@@ -5,6 +5,15 @@ import { VarietyFactory } from "./varieties.model";
 import { dbConfig } from ".";
 import { VarietyBlendFactory } from "./varietyblend.model";
 
+/*
+CREATE TYPE enum_MasterVarietal_color AS ENUM ('Red','White','Rose');
+CREATE TYPE enum_MasterVarietal_type AS ENUM('Red','White','Rose','Sparkling','Dessert','Fortified');
+
+ALTER TABLE "MasterVarietals" ADD COLUMN color enum_MasterVarietal_color;
+ALTER TABLE "MasterVarietals" ADD COLUMN type enum_MasterVarietal_type;
+
+*/
+
 export function MasterVarietalFactory (sequelize:Sequelize) : MasterVarietyStatic {
     const MasterVarietal = <MasterVarietyStatic>sequelize.define("MasterVarietals", {
         id: {
@@ -18,6 +27,14 @@ export function MasterVarietalFactory (sequelize:Sequelize) : MasterVarietyStati
         },
         name: {
             type: DataTypes.STRING,
+            allowNull: false,
+        },
+        color: {
+            type: DataTypes.ENUM('Red','White','Rosé'),
+            allowNull: false,
+        },
+        type: {
+            type: DataTypes.ENUM('Red','White','Rosé','Sparkling','Dessert','Fortified'),
             allowNull: false,
         },
         createdAt: {
