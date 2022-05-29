@@ -34,7 +34,7 @@ export class WineDaos {
         const wines = await Wine.findAll(
             { 
                 where: filter.where, 
-                attributes: ['id','slug','name'] ,
+                attributes: ['id','slug','name','color','type'] ,
                 offset: page, 
                 limit: limit, 
                 include: [{
