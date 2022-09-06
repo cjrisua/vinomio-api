@@ -9,7 +9,24 @@ services:
     ports:
       - "8181:80"
       - "1443:443"
-      
+
+  vinomiohc:
+    image: vinomiohc
+    build:
+      context: ./vinomioHC
+      dockerfile: ./Dockerfile
+    depends_on:
+      - postgres
+    volumes:
+      - vinomio_backup:/mnt/data/db
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+      - PGPASSWORD=${DB_PASSWORD}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+
   vinomioapp:
     image: vinomioapp
     build:
@@ -174,3 +191,4 @@ volumes:
     mongodata2:
     mongodata3:
     mongostatus:
+    vinomio_backup:
