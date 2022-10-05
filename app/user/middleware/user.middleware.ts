@@ -3,8 +3,10 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { UserServices } from '../services/user.services';
 import bcrypt from "bcrypt"
+import { UserSchemaFactory } from '../schema/user.schema';
+import { CommonMiddlewareConfig } from '../../common/common.middleware.config';
 
-export class UserMiddleware {
+export class UserMiddleware extends CommonMiddlewareConfig {
     private static instance: UserMiddleware;
 
     static getInstance() {
@@ -12,6 +14,16 @@ export class UserMiddleware {
             UserMiddleware.instance = new UserMiddleware();
         }
         return UserMiddleware.instance;
+    }
+    async validateUserProfileSchema(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const schema = UserSchemaFactory().email;
+        await schema.validateAsync(req.body)
+        .then(()=>{
+            next();
+        })
+        .catch((error:any) => {
+            UserMiddleware.processValidationError(error,res);
+        });
     }
     async validateUserExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const userServices = UserServices.getInstance();

@@ -30,7 +30,8 @@ export class UserRoutes
         userControllers.createUser
     ]);
     this.app.post("/api/user/profile", 
-      body('email').isEmail(),[
+      body('email').notEmpty().isEmail(),[
+        userMiddleware.validateUserProfileSchema,
         userControllers.getUserProfileByEmail
     ]);
     this.app.put(`/api/user/:userId`, param("userId").isNumeric(), [

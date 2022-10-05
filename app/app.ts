@@ -12,7 +12,7 @@ import Logger from "./lib/logger";
 import morganMiddleware from './config/morganMiddleware'
 import helmet from 'helmet';
 
-import { dbConfig } from "./common/models";
+import { dbConfig, People } from "./common/models";
 import { CommonRoutesConfig } from './common/common.routes.config';
 import { ProducerRoutes } from './producer/producer.routes.config';
 import { WineRoutes } from './wine/wine.routes.config';
@@ -31,6 +31,7 @@ import { AllocationRoutes } from './allocation/allocation.routes.config';
 import { AllocationEventFactory } from './common/models/allocationevents.model';
 import { AllocationEventRoutes } from './allocationevent/allocationevent.routes.config';
 import { AllocationEventOfferRoutes } from './allocationeventoffer/allocationeventoffer.routes.config';
+import { PeopleRoutes } from './people/people.routes.config';
 
 
 const app: express.Application = express();
@@ -74,6 +75,7 @@ routes.push(new MerchantRoutes(app));
 routes.push(new AllocationRoutes(app));
 routes.push(new AllocationEventRoutes(app));
 routes.push(new AllocationEventOfferRoutes(app));
+routes.push(new PeopleRoutes(app));
 
 dbConfig
 .sync().then(() =>{

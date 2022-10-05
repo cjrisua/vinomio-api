@@ -3,6 +3,7 @@ import { AuthServices } from "../services/auth.services";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Logger from "../../lib/logger";
+import { UserServices } from "../../user/services/user.services";
 
 export class AuthControllers {
   constructor() {}
@@ -10,6 +11,7 @@ export class AuthControllers {
   async login(req: express.Request, res: express.Response) {
     const secret: any = process.env.JWTSECRET;
     const authServices = AuthServices.getInstance();
+    const userServices = UserServices.getInstance();
     await authServices.getUsername(req.body)
     .then((user) =>{
       if(!user){
@@ -19,15 +21,26 @@ export class AuthControllers {
       if (pwdcheck) return user;
       else return undefined;
     })
-    .then((auth_user) =>{
+    .then(async (auth_user:any) =>{
       if (!auth_user) {
         throw "Pwd Authentication failed";
       }
-      let jwtToken = jwt.sign({email: auth_user?.email,id: auth_user.id,},secret,{ expiresIn: "30m",});
-      res.status(200).json({token: jwtToken,expiresIn: 1800,id: auth_user.id});
-    })
-    .catch((err) =>{
-      return res.status(401).json({ message: err});
+      await userServices.readProfileByEmail(auth_user.email)
+      .then((profile) =>{
+        let jwtToken = jwt.sign(
+          {
+            email: auth_user.email, 
+            id:auth_user.id,
+            cellar: profile.cellar_id || undefined,
+            handler: profile.handler || undefined,
+            firstname: auth_user.firstname,
+            lastname: auth_user.lastname
+          },secret,{ expiresIn: "30m",});
+        res.status(200).json({token: jwtToken,expiresIn: 1800,id: auth_user.id});
+      })
+      .catch((err) =>{
+        return res.status(401).json({ message: err});
+      })
     })
   }
 }
