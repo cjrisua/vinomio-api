@@ -1,3 +1,3 @@
 export class AllocationQueryAttributes{ 
-    //outlook:number = 0;
+    id:string = "";
 }
