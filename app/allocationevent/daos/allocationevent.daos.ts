@@ -3,7 +3,7 @@ import { AllocationEventFactory } from "../../common/models/allocationevents.mod
 import * as shortUUID from "short-uuid";
 import { QueryTypes } from "sequelize";
 import Logger from "../../lib/logger";
-import { string } from "joi";
+import { number, string } from "joi";
 import { IFilter } from "../../common/interface/filter.interface";
 
 export class AllocationEventDaos {
@@ -96,7 +96,51 @@ export class AllocationEventDaos {
     }
 
     async getAllocationEventById(allocationeventId: string) {
-        return AllocationEvent.findOne({where: {id: allocationeventId} });
+        const AEventQuery:string = 'SELECT "AE"."id", "AE"."name","AE"."allocationId","AE"."month","AE"."lastPurchase","AE"."createdAt","AE"."updatedAt","A"."merchantId","A"."status","A"."memberSince","A"."lastPurchase" AS "allocations_lastPurchase","A"."createdAt" AS "allocations_createdAt","A"."updatedAt" AS "allocations_updatedAt", "M"."name" AS "merchant_name","M"."producerId" AS "merchant_producerId" FROM "AllocationEvents" AS "AE" JOIN "Allocations" AS "A" on "A"."id" = "AE"."allocationId" JOIN "Merchants" AS "M" on "A"."merchantId" = "M"."id" WHERE "AE"."id" = :AEId '
+        const result:any =  await dbConfig.query(AEventQuery,{ 
+            replacements: { AEId: allocationeventId },
+            raw: true,
+            type: QueryTypes.SELECT,
+        }).then((rows:any[])=>{
+            let dataset:{
+                id:number,
+                name:string,
+                month:string,
+                lastPurchase:string,
+                createdAt:string,
+                updatedAt:string
+                allocation:{
+                    id:number
+                    merchant:{id:number,name:string,producer:{id:number}},
+                    status:string,
+                    memberSince:string,
+                    lastPurchase:string
+                    createdAt:string,
+                    updatedAt:string
+                }}[]=[]
+            rows.forEach((row:any)=>{
+                dataset.push(
+                {
+                    id:row.id,
+                    name:row.name,
+                    month:row.month,
+                    lastPurchase:row.lastPurchase,
+                    createdAt:row.createdAt,
+                    updatedAt:row.updatedAt,
+                    allocation:{
+                        id:row.allocationId,
+                        merchant:{id:row.merchantId,name:row.merchant_name,producer:{id:row.merchant_producerId}},
+                        status:row.status,
+                        memberSince:row.memberSince,
+                        lastPurchase:row.allocations_lastPurchase,
+                        createdAt:row.allocations_createdAt,
+                        updatedAt:row.allocations_updatedAt
+                    }
+                })})
+            return dataset[0]
+        })
+        return result
+        //return AllocationEvent.findOne({where: {id: allocationeventId} });
     }
 
     async patchAllocationEvent(allocationeventFields: any) {

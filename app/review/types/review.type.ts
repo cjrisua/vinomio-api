@@ -1,4 +1,5 @@
-import { BuildOptions, Model } from "sequelize";
+import { BelongsToManyAddAssociationMixin, BuildOptions, Model } from "sequelize";
+import { Tag } from "../../tag/types/tag.type";
 
 export interface ReviewAttributes {
     id: number;
@@ -8,9 +9,19 @@ export interface ReviewAttributes {
     updatedAt?: Date;
   }
 
+  
 export interface ReviewModel extends Model<ReviewAttributes>, ReviewAttributes {}
 
-export class Review extends Model<ReviewModel, ReviewAttributes> {}
+export class Review extends Model<ReviewModel, ReviewAttributes>  implements ReviewAttributes {
+  id!: number;
+  slug!: string;
+  name!: string;
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
 
-export type ReviewStatic = typeof Model & { new (values ?: object, options?: BuildOptions) : ReviewModel;
+  public addTags!: BelongsToManyAddAssociationMixin<Tag, number>;
+
+}
+
+export type ReviewStatic = typeof Model & { new (values ?: object, options?: BuildOptions) : Review;
 };

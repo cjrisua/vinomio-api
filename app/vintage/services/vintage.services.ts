@@ -25,13 +25,19 @@ export class VintageServices implements CRUD{
         return VintageDaos.getInstance().removeVintageById(resourceId);
     }
     list(limit: number, page: number, filter: any){
-        return VintageDaos.getInstance().listVintages(limit, page, filter);
+        if(filter?.where?.wine__name)
+            return VintageDaos.getInstance().getVintageByWineName(limit,page,filter.where.wine__name)
+        else
+            return VintageDaos.getInstance().listVintages(limit, page, filter);
     }
     patchById(resource: any){
         return VintageDaos.getInstance().patchVintage(resource);
     }
     readById(resourceId: any){
         return VintageDaos.getInstance().getVintageById(resourceId);
+    }
+    readByWineName(limit: number, page: number, winename: any){
+        return VintageDaos.getInstance().getVintageByWineName(limit, page, winename)
     }
     updateById(resource: any){
         return VintageDaos.getInstance().patchVintage(resource);

@@ -9,13 +9,9 @@ export function TagFactory (sequelize:Sequelize) : TagStatic {
             autoIncrement: true,
             primaryKey: true,
         },
-        slug: {
-            type: DataTypes.STRING,
-            unique: true
-        },
         name: {
             type: DataTypes.STRING,
-            allowNull: false,
+            unique: true
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -27,10 +23,6 @@ export function TagFactory (sequelize:Sequelize) : TagStatic {
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
-    });
-
-    SequelizeSlugify.slugifyModel(<any>Tags, {
-        source: ['name']
     });
 
     return Tags;

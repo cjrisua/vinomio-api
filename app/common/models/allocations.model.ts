@@ -45,5 +45,6 @@ export function AllocationFactory (sequelize:Sequelize) : AllocationStatic {
     const AllocationEvents = AllocationEventFactory(dbConfig);
     Allocations.hasMany(AllocationEvents, {as:"events", foreignKey: "allocationId"})
     AllocationEvents.belongsTo(Allocations, { as:"events", foreignKey: "allocationId"})
+
     return Allocations;
 }

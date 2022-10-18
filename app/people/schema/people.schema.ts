@@ -10,7 +10,7 @@ export function PeopleSchemaFactory ()  {
             { 
               name: Joi.string().required(),
               role: Joi.string().required(),
-              handler: Joi.string()
+              email: Joi.string().email().required(),
             }) 
     
   };

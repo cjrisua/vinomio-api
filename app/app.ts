@@ -32,6 +32,8 @@ import { AllocationEventFactory } from './common/models/allocationevents.model';
 import { AllocationEventRoutes } from './allocationevent/allocationevent.routes.config';
 import { AllocationEventOfferRoutes } from './allocationeventoffer/allocationeventoffer.routes.config';
 import { PeopleRoutes } from './people/people.routes.config';
+import { ReviewRoutes } from './review/review.routes.config';
+import { TagRoutes } from './tag/tag.routes.config';
 
 
 const app: express.Application = express();
@@ -76,6 +78,8 @@ routes.push(new AllocationRoutes(app));
 routes.push(new AllocationEventRoutes(app));
 routes.push(new AllocationEventOfferRoutes(app));
 routes.push(new PeopleRoutes(app));
+routes.push(new ReviewRoutes(app));
+routes.push(new TagRoutes(app));
 
 dbConfig
 .sync().then(() =>{

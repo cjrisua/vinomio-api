@@ -30,7 +30,7 @@ export class WineDaos {
         return +result[0].count;
     }
     async listWines(limit: number = 25, page: number = 0, filter: IFilter){
-        //Logger.info(page)
+        Logger.info(filter)
         const wines = await Wine.findAll(
             { 
                 where: filter.where, 

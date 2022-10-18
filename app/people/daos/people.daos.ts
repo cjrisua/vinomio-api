@@ -1,6 +1,6 @@
 import { dbConfig, People } from "../../common/models"
 import { PeopleFactory } from "../../common/models/people.model"
-import * as shortUUID from "short-uuid";
+import { QueryTypes } from "sequelize";
 
 export class PeopleDaos {
 
@@ -16,14 +16,22 @@ export class PeopleDaos {
         }
         return this.instance;
     }
-
+    async peopleCount(){
+        const query:string = 'SELECT COUNT("People"."id") FROM "People"';
+        const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
+        return +result[0].count;
+    }
     async addPeople(peopleFields: any) {
         const people = await People.create(peopleFields);
         return people.id;
     }
 
-    async listPeople(limit: number = 25, page: number = 0){
-        const people = await People.findAll({ offset: page, limit: limit } )
+    async listPeople(limit: number = 25, page: number = 0, filter:any){
+        //page offser
+        filter.offset = page;
+        //page limit
+        filter.limit = limit;
+        const people = await People.findAll(filter)
         return people;
     }
     

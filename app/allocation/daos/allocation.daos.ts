@@ -1,4 +1,4 @@
-import { dbConfig, Allocation, Merchant, AllocationEvent, AllocationEventOffer } from "../../common/models"
+import { dbConfig, Allocation, Merchant, AllocationEvent, AllocationEventOffer, Wine } from "../../common/models"
 import { AllocationFactory } from "../../common/models/allocations.model"
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
@@ -146,7 +146,9 @@ export class AllocationDaos {
             include: [
                 {model: Merchant, as:"merchant", attributes:['id','name','userId','producerId']},
                 {model: AllocationEvent, as:"events", include:[{
-                    model: AllocationEventOffer
+                    model: AllocationEventOffer, include:[{
+                        model:Wine, as:"wine"
+                    }]
                 }]}]
         });
     }

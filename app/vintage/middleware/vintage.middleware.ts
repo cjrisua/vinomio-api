@@ -100,7 +100,7 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
                 Logger.info(`? ${req.body.wineId}`)
                 const filter : IFilter = { where: {wineId: req.body.wineId}}
                 const response = await service.list(1,0,filter);
-                if(response.some(p => p.id.toString() === req.params.vintageId))
+                if(response.some((p:any) => p.id.toString() === req.params.vintageId))
                     res.status(404).send({error: `  found for ${req.params.slug}`});  
                 else
                     res.status(404).send({error: ` not found for ${req.params.slug}`});           

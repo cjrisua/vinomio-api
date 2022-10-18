@@ -1,5 +1,7 @@
 import express from "express";
+import { filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
 import { PeopleServices } from "../services/people.services";
+import { PeopleQueryAttributes } from "../types/people.qparam";
 
 export class PeopleControllers {
 
@@ -8,9 +10,15 @@ export class PeopleControllers {
   }
 
   async listPeople(req: express.Request, res: express.Response) {
-    const peopleServices = PeopleServices.getInstance();
-    const people = await peopleServices.list(100,0);
-    res.status(200).send(people);
+    const services = PeopleServices.getInstance();
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(PeopleQueryAttributes);
+    const result = await services.list(RECORD_LIMIT,0, filterByKey(req,filterConfig));
+    res.status(200).send({
+      count:+req.body.count,
+      pages:+req.body.pages,
+      rows:result
+    });
   }
 
   async getPeopleById(req: express.Request, res: express.Response) {

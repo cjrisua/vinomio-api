@@ -16,7 +16,10 @@ export function ReviewFactory (sequelize:Sequelize) : ReviewStatic {
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        
+        score:{
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -37,7 +40,7 @@ export function ReviewFactory (sequelize:Sequelize) : ReviewStatic {
     Tags.belongsToMany(Reviews, {foreignKey:'tagId', through: 'ReviewTags'})
 
     Peoples.hasOne(Reviews, {foreignKey:"publisherId"})
-    Reviews.belongsTo(Peoples, {as: "wine", foreignKey:"publisherId"})
+    Reviews.belongsTo(Peoples, {as: "people", foreignKey:"publisherId"})
 
     Vintages.hasOne(Reviews,{foreignKey:"vintageId"} )
     Reviews.belongsTo(Vintages,{as: "vintage", foreignKey:"vintageId"})

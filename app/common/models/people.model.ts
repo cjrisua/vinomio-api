@@ -14,12 +14,12 @@ export function PeopleFactory (sequelize:Sequelize) : PeopleStatic {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        handler:{
+        email:{
             type: DataTypes.STRING,
             allowNull: false,
         },
         role: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull:false
             //type: DataTypes.INTEGER,
             //references: {

@@ -17,9 +17,12 @@ export class PeopleRoutes
     const peopleMiddleware = PeopleMiddleware.getInstance();
 
     this.app.get("/api/people", [
+        peopleMiddleware.validateCountryQueryParamExists,
+        peopleMiddleware.calculatePages,
         peopleControllers.listPeople
     ]);
     this.app.post("/api/people", [
+        peopleMiddleware.validateAddPeople,
         peopleControllers.createPeople
     ]);
     this.app.put(`/api/people/:peopleId`, [

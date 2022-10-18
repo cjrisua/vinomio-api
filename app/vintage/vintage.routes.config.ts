@@ -21,6 +21,11 @@ export class VintageRoutes
         vintageMiddleware.calculatePages,
         vintageControllers.listVintages
     ]);
+    /*this.app.get("/api/vintage", [
+      vintageMiddleware.validateVintageQueryParamExists,
+      vintageMiddleware.calculatePages,
+      vintageControllers.getVintageByWineName
+    ]);*/
     this.app.post("/api/vintage", [
         vintageMiddleware.validateWinePOST,
         vintageMiddleware.validateVintageIsUnique,

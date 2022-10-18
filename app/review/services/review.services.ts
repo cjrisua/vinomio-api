@@ -15,7 +15,9 @@ export class ReviewServices implements CRUD{
         }
         return ReviewServices.instance;
     }
-
+    count(){
+        return ReviewDaos.getInstance().reviewCount();
+    }
     create(resource: any){
         return ReviewDaos.getInstance().addReview(resource);
     }
@@ -30,6 +32,9 @@ export class ReviewServices implements CRUD{
     }
     readById(resourceId: any){
         return ReviewDaos.getInstance().getReviewById(resourceId);
+    }
+    listByWineId(limit: number, page: number, wineId:string, filter:any ){
+        return ReviewDaos.getInstance().getReviewByWineId(limit, page, wineId, filter);
     }
     updateById(resource: any){
         return ReviewDaos.getInstance().patchReview(resource);

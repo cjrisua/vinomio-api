@@ -19,6 +19,11 @@ export class ReviewRoutes
     this.app.get("/api/review", [
         reviewControllers.listReviews
     ]);
+    this.app.get("/api/review/wine/:wineId", [
+      reviewMiddleware.validateReviewQueryParamExists,
+      reviewMiddleware.calculatePages,
+      reviewControllers.listReviewsByWineId
+    ]);
     this.app.post("/api/review", [
         reviewControllers.createReview
     ]);
