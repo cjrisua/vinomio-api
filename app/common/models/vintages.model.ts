@@ -12,7 +12,7 @@ export function VintageFactory (sequelize:Sequelize) : VintageStatic {
             primaryKey: true,
         },
         year:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false,
         },
         wineId:{
