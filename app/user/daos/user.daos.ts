@@ -58,8 +58,8 @@ export class UserDaos {
         const profile_query:string = `SELECT 
             "U"."id",
             "U"."email",
-            "U"."firstname",
-            "U"."lastname",
+            "U"."firstName",
+            "U"."lastName",
             "S"."cellar_id",
             "C"."vintageId",
             "C"."statusId",
@@ -75,8 +75,8 @@ export class UserDaos {
                 type: QueryTypes.SELECT,
               }).then((m:any) =>  { return {
                   "id":m[0]?.id, 
-                  "firstname":m[0]?.firstname,
-                  "lastname":m[0]?.lastname,
+                  "firstName":m[0]?.firstName,
+                  "lastName":m[0]?.lastName,
                   "cellar_id":m[0]?.cellar_id,
                   "email":m[0]?.email,
                   "handler":m[0]?.handler

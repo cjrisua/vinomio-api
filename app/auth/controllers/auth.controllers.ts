@@ -33,8 +33,8 @@ export class AuthControllers {
             id:auth_user.id,
             cellar: profile.cellar_id || undefined,
             handler: profile.handler || undefined,
-            firstname: auth_user.firstname,
-            lastname: auth_user.lastname
+            firstName: auth_user.firstName,
+            lastName: auth_user.lastName
           },secret,{ expiresIn: "30m",});
         res.status(200).json({token: jwtToken,expiresIn: 1800,id: auth_user.id});
       })

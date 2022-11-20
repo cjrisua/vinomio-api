@@ -31,11 +31,11 @@ export function UserFactory (sequelize:Sequelize) : UserStatic {
             autoIncrement: true,
             primaryKey: true,
         },
-        firstname: {
+        firstName: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        lastname: {
+        lastName: {
             type: DataTypes.STRING,
             allowNull: false,
         },

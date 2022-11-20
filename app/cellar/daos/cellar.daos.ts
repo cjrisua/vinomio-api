@@ -34,7 +34,7 @@ export class CellarDaos {
             offset: page, 
             limit: limit,
             include: [{
-                model:User, attributes:['id','firstname','email', 'lastname','handler'],
+                model:User, attributes:['id','firstName','email', 'lastName','handler'],
             }]
         } )
         return cellars;
@@ -48,7 +48,7 @@ export class CellarDaos {
     async getCellarById(cellarId: string) {
         return Cellar.findOne({where: {id: cellarId},
             include: [{
-                model:User, attributes:['id','firstname','email', 'lastname','handler'],
+                model:User, attributes:['id','firstName','email', 'lastName','handler'],
             }] });
     }
 
