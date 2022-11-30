@@ -1,7 +1,6 @@
 import { Cellar, dbConfig, User } from "../../common/models"
 import { CellarFactory } from "../../common/models/cellars.model"
-import * as shortUUID from "short-uuid";
-import { Subscriber } from "../../subscriber/types/subscriber.type";
+import Logger from "../../lib/logger";
 
 export class CellarDaos {
 
@@ -53,12 +52,10 @@ export class CellarDaos {
     }
 
     async patchCellar(cellarFields: any) {
-        console.log(JSON.stringify(cellarFields))
         let cellar: any = await Cellar.findOne({where: {id: cellarFields.id}});
         if(cellar){
-            for (let i in cellarFields) {
+            for (let i in cellarFields)
                 cellar[i] = cellarFields[i];
-            }
             return await cellar.save()
         }
     }

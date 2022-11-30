@@ -29,13 +29,13 @@ export class CellarControllers {
   async patchCellar(req: express.Request, res: express.Response) {
     const cellarServices = CellarServices.getInstance();
     const cellar = await cellarServices.patchById(req.body);
-    res.status(204).send(``);
+    res.status(204).send({});
   }
 
   async putCellar(req: express.Request, res: express.Response) {
     const cellarServices = CellarServices.getInstance();
     const cellar = await cellarServices.updateById(req.body);
-    res.status(204).send(``);
+    res.status(204).send({});
   }
 
   async removeCellar(req: express.Request, res: express.Response) {
