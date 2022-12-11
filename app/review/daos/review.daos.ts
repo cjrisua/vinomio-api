@@ -4,6 +4,10 @@ import { TagFactory } from "../../common/models/tags.model";
 import { QueryTypes } from "sequelize";
 import Logger from "../../lib/logger";
 import { Filter, IFilter } from "../../common/interface/filter.interface";
+import sequelize from "sequelize";
+declare module 'sequelize' {
+  export function col(val: string): string;
+}
 
 export class ReviewDaos {
   private static Review = ReviewFactory(dbConfig);
@@ -21,6 +25,15 @@ export class ReviewDaos {
     const query:string = 'SELECT COUNT("Reviews"."id") FROM "Reviews"';
     const result:any =  await dbConfig.query(query,{ raw: true,type: QueryTypes.SELECT,})
     return +result[0].count;
+  }
+  async reviewTotalsByWine(wineId:any){
+    return Review.findAll({
+      attributes:['score','vintageId'],
+      raw: true,
+      include: [
+        { model: Vintage, as: "vintage", where: { wineId: wineId } }
+      ],
+    });
   }
   async addReview(reviewFields: any) {
     const review = await Review.create(reviewFields).then(async (response) => {

@@ -23,11 +23,13 @@ export class Wine extends Model<WineModel, WineAttributes> implements WineAttrib
   mastervarietalId?: number | undefined;
   regionId?: number | undefined;
   producerId?: number | undefined;
+  scoreAverage?: number | undefined;
 
   public static associations: {
     region: Association<Region>;
 
   }
+  //public scoreAverage()
 }
 
 export type WineStatic = typeof Model & { new (values ?: object, options?: BuildOptions) : Wine;

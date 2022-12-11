@@ -33,8 +33,8 @@ export function CollectionFactory (sequelize:Sequelize) : CollectionStatic {
             defaultValue:0.00
         },
         locationId:{
-            type: DataTypes.INTEGER,
-            defaultValue:0
+            type: DataTypes.STRING,
+            allowNull:true
         },
         acquiringSourceId:{
             type: DataTypes.INTEGER,

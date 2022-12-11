@@ -13,14 +13,17 @@ export function CollectionSchemaFactory ()  {
                   price :  Joi.string(),
                   purchaseNote :  Joi.string(),
                   bottleSize :  Joi.string(),
-                  locationId: Joi.number() ,
+                  bottleLocation: Joi.array().items(Joi.object().keys({
+                    id: Joi.string().guid({
+                      version: ['uuidv4','uuidv5']
+                      })
+                  })),
                   acquiringSourceId: Joi.number(),
                   allocationEventId: Joi.number(),
                   bottleCount: Joi.number().required(),
                   merchant: Joi.object(),
                   purchasedOn: Joi.date().default(Date.now),
                   deliverBy: Joi.date().default(Date.now)
-
                 })) 
       };
       return schemas;

@@ -36,6 +36,9 @@ export class ReviewServices implements CRUD{
     listByWineId(limit: number, page: number, wineId:string, filter:any ){
         return ReviewDaos.getInstance().getReviewByWineId(limit, page, wineId, filter);
     }
+    listScoresByWineId(resourceId: any){
+        return ReviewDaos.getInstance().reviewTotalsByWine(resourceId)
+    }
     updateById(resource: any){
         return ReviewDaos.getInstance().patchReview(resource);
     }

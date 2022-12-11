@@ -15,6 +15,7 @@ export class WineControllers {
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(WineQueryAttributes);
     const result = await services.list(RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig));
+    //Logger.info(result)
     res.status(200).send({
         count:+req.body.count,
         pages:+req.body.pages,

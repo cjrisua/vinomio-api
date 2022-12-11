@@ -13,6 +13,11 @@ export function CellarFactory (sequelize:Sequelize) : CellarStatic {
             autoIncrement: true,
             primaryKey: true,
         },
+        name: {
+            type: DataTypes.STRING,
+            allowNull:false,
+            defaultValue:'Cellar'
+        },
         attributes:{
             type: DataTypes.JSONB,
             defaultValue:'{}',

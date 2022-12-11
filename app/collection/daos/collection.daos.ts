@@ -36,20 +36,26 @@ export class CollectionDaos {
 
     async addCollection(collectionFields: any[])
     {
-        //Logger.info(collectionFields)
         const collectionEvent = CollectionEventFactory(dbConfig)
         let result:any[] = []
         
         collectionFields.forEach(async (wine:any) =>{
             const bottles = 
                 Array(parseInt(wine.bottleCount)).fill(0)
-                .map(x =>  JSON.parse(JSON.stringify(wine)));
+                .map((item:any,i:number) => {
+                   let bottle = JSON.parse(JSON.stringify(wine))
+                   bottle.locationId = bottle.bottleLocation[i].id
+                   bottle.acquiringSourceId = bottle.merchant.id
+                   return bottle
+                });
 
             const collection = await this.Collection.bulkCreate(bottles).then(async (items)=>{
-                const purchasedOn = items.map((p:any) => { return {
+                //console.log(items)
+                const purchasedOn = items.map((p:any) => {  return {
                         'action':'PurchasedOn', 
                         'actionDate': wine.purchasedOn,
-                        'collectionId':p.id
+                        'collectionId':p.id,
+                        //'locationId' : p.id
                 }})
                 await collectionEvent.bulkCreate(purchasedOn).then(async ()=>
                 {
