@@ -40,3 +40,15 @@ sudo -u postgres psql
 postgres=# create database mydb;
 postgres=# create user myuser with encrypted password 'mypass';
 postgres=# grant all privileges on database mydb to myuser
+
+Manual db updates
+ALTER TABLE "Cellars" ADD Column name varchar(255);
+ALTER TABLE "Users" RENAME Column firstname TO "firstName";
+ALTER TABLE "Users" RENAME Column lastname TO "lastName";
+ALTER TABLE "Collections" ALTER Column "locationId" DROP DEFAULT;
+UPDATE "Collections" set "locationId"=NULL
+ALTER TABLE "Collections" ALTER Column "locationId" TYPE varchar(255);
+ALTER TABLE "Collections" ALTER Column "locationId" TYPE uuid USING "locationId"::uuid;
+ALTER TABLE "People" ALTER COLUMN "role" TYPE varchar(255);
+ALTER TABLE "People" DROP COLUMN "handler";
+ALTER TABLE "People" ADD COLUMN "email" varchar(255);
