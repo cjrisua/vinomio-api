@@ -42,5 +42,8 @@ export class AuthControllers {
         return res.status(401).json({ message: err});
       })
     })
+    .catch((err) =>{
+      return res.status(401).json({ message: err});
+    })
   }
 }

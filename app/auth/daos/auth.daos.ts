@@ -1,6 +1,7 @@
 
 import { dbConfig,User } from "../../common/models";
 import { UserFactory } from "../../common/models/users.model";
+import Logger from "../../lib/logger";
 
 export class AuthDaos {
 
@@ -17,9 +18,8 @@ export class AuthDaos {
     }
 
     async get(user:any){
-        //console.log(user.email)
-        const users = await User.findOne({where: { email : user.email}});
-        return users;
+        const userModel = await User.findOne({where: { email : user.email}});
+        return userModel;
     }
 }
  
