@@ -17,6 +17,7 @@ export class ReviewRoutes
     const reviewMiddleware = ReviewMiddleware.getInstance();
 
     this.app.get("/api/review", [
+        reviewMiddleware.calculatePages,
         reviewControllers.listReviews
     ]);
     this.app.get("/api/review/wine/:wineId", [

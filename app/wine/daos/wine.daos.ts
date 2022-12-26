@@ -54,11 +54,16 @@ export class WineDaos {
                  model: MasterVarietal, attributes:['id','name']
                 },
                 {
-                 model: Vintage , attributes:['id','year']
+                 model: Vintage , attributes:['id','year'], include:[{
+                    model:Review
+                 }]
                 }],
                 order:[['id','DESC']]
             })
-        const instance = ReviewDaos.getInstance()
+        //const instance = ReviewDaos.getInstance()
+        //if (wines.length > 1)
+        //    return wines;
+        /*
         for( let wine of wines){
             await instance.reviewTotalsByWine(wine.id).then((review:any[]) => {
                 const count:number = review.map(r => r.score).reduce((a:any,b:any)=> a+b,0)/review.length;
@@ -82,7 +87,7 @@ export class WineDaos {
                     })
                 }
             })
-        }  
+        } */ 
         return wines;
     }
     

@@ -9,11 +9,14 @@ export class ReviewControllers {
   constructor(){
 
   }
-
   async listReviews(req: express.Request, res: express.Response) {
     const reviewServices = ReviewServices.getInstance();
     const reviews = await reviewServices.list(100,0);
-    res.status(200).send(reviews);
+    res.status(200).send({
+      count:+req.body.count,
+      pages:+req.body.pages,
+      rows:reviews
+    });
   }
   async listReviewsByWineId(req: express.Request, res: express.Response) {
     const vintageServices = ReviewServices.getInstance();

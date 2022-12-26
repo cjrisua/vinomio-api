@@ -4,11 +4,9 @@ import { ReviewDaos } from "../daos/review.daos";
 
 export class ReviewServices implements CRUD{
     private static instance: ReviewServices;
-
     constructor() {
         
     }
-
     static getInstance(): ReviewServices {
         if (!ReviewServices.instance) {
             ReviewServices.instance = new ReviewServices();
@@ -25,7 +23,7 @@ export class ReviewServices implements CRUD{
         return ReviewDaos.getInstance().removeReviewById(resourceId);
     }
     list(limit: number, page: number){
-        return ReviewDaos.getInstance().listReviews(limit, page);
+        return ReviewDaos.getInstance().listReviews(limit, page)
     }
     patchById(resource: any){
         return ReviewDaos.getInstance().patchReview(resource);
@@ -35,9 +33,6 @@ export class ReviewServices implements CRUD{
     }
     listByWineId(limit: number, page: number, wineId:string, filter:any ){
         return ReviewDaos.getInstance().getReviewByWineId(limit, page, wineId, filter);
-    }
-    listScoresByWineId(resourceId: any){
-        return ReviewDaos.getInstance().reviewTotalsByWine(resourceId)
     }
     updateById(resource: any){
         return ReviewDaos.getInstance().patchReview(resource);

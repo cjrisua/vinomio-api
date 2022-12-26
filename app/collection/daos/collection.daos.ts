@@ -1,4 +1,4 @@
-import { dbConfig, Collection, CollectionEvent, Wine, Vintage, Producer, Region, MasterVarietal } from "../../common/models"
+import { dbConfig, Collection, CollectionEvent, Wine, Vintage, Producer, Region, MasterVarietal, Review } from "../../common/models"
 import { CollectionFactory } from "../../common/models/collections.model"
 import * as shortUUID from "short-uuid";
 import Logger from "../../lib/logger";
@@ -6,6 +6,7 @@ import { AllocationFactory } from "../../common/models/allocations.model";
 import { CollectionEventFactory } from "../../common/models/collectionevents.model";
 import { CollectioneventAttributes } from "../../collectionevent/types/collectionevent.type";
 import { IFilter } from "../../common/interface/filter.interface";
+import { Sequelize } from "sequelize";
 
 export function groupBy (array: any[], key: string | number)  {
     // Return the end result
@@ -83,20 +84,25 @@ export class CollectionDaos {
             { 
                 where:filter.where, 
                 offset: page, limit: limit,
+                group:['"Collections"."id"'],
+                attributes:[],
                 include:[
                     {model: CollectionEvent, attributes:['id','action','createdAt']},
-                    //{model: Wine, attributes:['id','name']},
                     {model: Vintage, attributes:['id','year'], 
                         include: [
                             {model: Wine, attributes:['id','name','color','type'],
-                        include:[
-                            {model: Producer, attributes:['name']},
-                            {model: Region, attributes:['name']},
-                            {model: MasterVarietal, attributes:['name']}
-                        ]}
+                            include:[
+                                {model: Producer, attributes:['name']},
+                                {model: Region, attributes:['name']},
+                                {model: MasterVarietal, attributes:['name']}
+                            ]},
+                            {model: Review, attributes:[
+                                [Sequelize.fn('AVG', Sequelize.col('Vintage.Reviews.score')), 'avgRating']
+                            ]}
                         ]},
-                ]
-            }).catch((message) => Logger.warn(message));
+                        
+                ],
+            }).catch((message) => Logger.error(message));
         return collections;
     }
     

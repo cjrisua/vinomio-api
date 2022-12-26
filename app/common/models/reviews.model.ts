@@ -20,6 +20,14 @@ export function ReviewFactory (sequelize:Sequelize) : ReviewStatic {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
+        vintageId: {
+            type: DataTypes.INTEGER,
+            references: {
+              model: Vintage,
+              key: 'id'
+            },
+            allowNull: false,
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -34,7 +42,7 @@ export function ReviewFactory (sequelize:Sequelize) : ReviewStatic {
 
     const Tags = TagFactory(dbConfig)
     const Peoples = PeopleFactory(dbConfig)
-    const Vintages = VintageFactory(dbConfig)
+    //const Vintages = VintageFactory(dbConfig)
 
     Reviews.belongsToMany(Tags, {foreignKey:'reviewId', through: 'ReviewTags'})
     Tags.belongsToMany(Reviews, {foreignKey:'tagId', through: 'ReviewTags'})
@@ -42,8 +50,8 @@ export function ReviewFactory (sequelize:Sequelize) : ReviewStatic {
     Peoples.hasOne(Reviews, {foreignKey:"publisherId"})
     Reviews.belongsTo(Peoples, {as: "people", foreignKey:"publisherId"})
 
-    Vintages.hasOne(Reviews,{foreignKey:"vintageId"} )
-    Reviews.belongsTo(Vintages,{as: "vintage", foreignKey:"vintageId"})
+    //Vintages.hasMany(Reviews,{foreignKey:"vintageId"} )
+    //Reviews.belongsTo(Vintage,{foreignKey:"vintageId"})
 
     return Reviews;
 }
