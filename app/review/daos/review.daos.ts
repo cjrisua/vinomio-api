@@ -84,7 +84,7 @@ export class ReviewDaos {
     return Review.findOne({ where: { id: reviewId } });
   }
   async getReviewByWineId(limit: number = 25, page: number = 0, wineId: string, filter:IFilter) {    
-    const cellarFilter = filter.where?.cellarId ? `INNER JOIN "Collections" AS "C" on "C"."vintageId" = "V"."id" AND "C"."cellarId" = ${filter.where?.cellarId} AND "C"."statusId" IN ('allocated')` : ``
+    const cellarFilter = filter.where?.cellarId ? `INNER JOIN "Collections" AS "C" on "C"."vintageId" = "V"."id" AND "C"."cellarId" = ${filter.where?.cellarId} AND "C"."statusId" IN ('allocated','pending')` : ``
     const where:string = `WHERE "V"."wineId"=${wineId}`
     const query:string =`select "R".*,"P"."name" AS "people.name","P"."role" AS "people.role","P"."email" AS "people.email", "W"."id" AS "wine.id", "W"."name" AS "wine.name", "V"."year" AS "vintage.year" ,"T"."id" AS "tag.id","T"."name" AS "tag.name"  FROM "Reviews" AS "R" LEFT OUTER JOIN "ReviewTags" AS "RT" on "R"."id" = "RT"."reviewId" LEFT OUTER JOIN "People" AS "P" on "P"."id" = "R"."publisherId" LEFT OUTER JOIN "Tags" AS "T" on "T"."id" = "RT"."tagId" LEFT OUTER JOIN "Vintages" AS "V" on "R"."vintageId" = "V"."id" LEFT OUTER JOIN "Wines" AS "W" on "W"."id" = "V"."wineId"  ${cellarFilter} ${where} LIMIT :limit OFFSET :offset`
     const result:any =  await dbConfig.query(query,{ 
