@@ -14,3 +14,7 @@ docker compose up connect --build -d
 docker compose up vinomiostream --build -d
 
 docker compose up elastic --build -d
+
+#how to recover 
+docker-compose up postgres -d
+docker-compose up vinomiohc -d
