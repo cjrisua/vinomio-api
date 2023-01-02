@@ -206,14 +206,57 @@ export class CollectionDaos {
 
   async patchCollection(collectionFields: any) {
     console.log(JSON.stringify(collectionFields));
+    
+    const collectionEvent = CollectionEventFactory(dbConfig);
+
     let collection: any = await Collection.findOne({
       where: { id: collectionFields.id },
     });
+    
+    if(collectionFields?.statusId && collectionFields.statusId == "drunk" && 
+      collection.statusId != collectionFields.statusId ){
+      Logger.debug("Add Event")
+      const event={
+          action:"DrunkOn", 
+          actionDate:collectionFields.actionDate,
+          collectionId:collectionFields.id
+        }
+      await collectionEvent.create(event)
+      .then((r)=> Logger.debug(""))
+      .catch((e)=> Logger.error(e))
+    }
+
+    if(collectionFields?.statusId && collectionFields.statusId == "deleted" && 
+    collection.statusId != collectionFields.statusId ){
+    Logger.debug("Add Event")
+    const event={
+        action:"RemovedOn", 
+        actionDate:collectionFields.actionDate,
+        collectionId:collectionFields.id
+      }
+    await collectionEvent.create(event)
+    .then((r)=> Logger.debug(""))
+    .catch((e)=> Logger.error(e))
+  }
+    
+    if(collectionFields?.statusId && collectionFields.statusId == "allocated" && 
+      collection.statusId == "pending" ){
+      Logger.debug("Add Event")
+      const event={
+          action:"DeliveredOn", 
+          actionDate:collectionFields.actionDate,
+          collectionId:collectionFields.id
+        }
+      await collectionEvent.create(event)
+      .then((r)=> Logger.debug(""))
+      .catch((e)=> Logger.error(e))
+    }
+
     if (collection) {
       for (let i in collectionFields) {
         collection[i] = collectionFields[i];
       }
-      return await collection.save();
+      return await collection.save()
     }
   }
 }
