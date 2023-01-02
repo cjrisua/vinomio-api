@@ -84,7 +84,7 @@ routes.push(new TagRoutes(app));
 dbConfig
 .sync().then(() =>{
 //.authenticate().then(() =>{
-    Logger.info("build_2022_12_31_03_42_PM")
+    Logger.info("build_2022_01_02_05_07_PM")
     Logger.info("connected to db")
     server.listen(PORT,() =>
     {
