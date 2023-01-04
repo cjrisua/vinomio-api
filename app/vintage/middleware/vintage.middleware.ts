@@ -55,7 +55,7 @@ export class VintageMiddleware extends CommonMiddlewareConfig {
         //const filter:Filter = VintageQParameterFilter(req)
 
         //Logger.debug(`validateVintageQueryParamExists: ${filterStatement}`)
-        Logger.debug(filterStatement)
+        //Logger.debug(filterStatement)
         //Logger.debug(Object.keys(filterStatement).length)
 
         if(Object.keys(filterStatement).length == 0)

@@ -25,9 +25,9 @@ export class VintageServices implements CRUD{
         return VintageDaos.getInstance().removeVintageById(resourceId);
     }
     list(limit: number, page: number, filter: any){
-        if(filter?.where?.wine__name)
-            return VintageDaos.getInstance().getVintageByWineName(limit,page,filter.where.wine__name)
-        else
+        //if(filter?.where?.wine__name)
+        //    return VintageDaos.getInstance().getVintageByWineName(limit,page,filter.where.wine__name)
+        //else
             return VintageDaos.getInstance().listVintages(limit, page, filter);
     }
     patchById(resource: any){

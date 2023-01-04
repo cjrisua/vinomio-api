@@ -29,15 +29,23 @@ export class VintageDaos {
     }
 
     async listVintages(limit: number = 25, page: number = 0, filter: IFilter){
+        type CustomFilter = {
+            [name:string] : any
+        };
+        const customFilter = Object.keys(filter?.where || {}).filter(i => !i.startsWith("wine__")).reduce((a:CustomFilter,b:any) =>{
+            a[b]= filter?.where ? filter.where[b] : undefined
+            return a
+        },{})
         const vintages = await Vintage.findAll({ 
-            where:filter.where, 
+            where:customFilter,
             offset: page, 
             limit: limit,
             include:[{
-                model: Wine, attributes:['id','name','slug']
+                model: Wine, attributes:['id','name','slug'], where: filter.where?.wine__name ? {name:filter.where?.wine__name} : {}
             }],
-            
         } )
+        .then((res) => res)
+        .catch((ex) => { Logger.error(ex); return [{error:"DAO Exception"}] })
         return vintages;
     }
     
@@ -55,7 +63,7 @@ export class VintageDaos {
     }
 
     async getVintageByWineName(limit: number = 25, page: number = 0, wineName: string) {
-       // Logger.info("[getVintageByWineName] " + wineName)
+        Logger.info("[getVintageByWineName] " + wineName)
         //return Vintage.findOne({where: {id: vintageId} });
         const query:string ='SELECT "Vintages"."id", "Vintages"."year", "Wines"."id" AS "Wine.id",  "Wines"."name" AS "Wine.name" FROM "Vintages" INNER JOIN "Wines" on "Wines"."id" = "Vintages"."wineId" WHERE "Wines"."name" iLike :name'
         const result:any =  await dbConfig.query(query,{ 
