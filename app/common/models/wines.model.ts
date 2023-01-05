@@ -66,11 +66,11 @@ export function WineFactory (sequelize:Sequelize) : WineStatic {
             }
         },
         color: {
-            type: DataTypes.ENUM('Red','White','Rosé'),
+            type: DataTypes.ENUM('Red','White','Rose'),
             allowNull: false,
         },
         type: {
-            type: DataTypes.ENUM('Red','White','Rosé','Sparkling','Dessert','Fortified'),
+            type: DataTypes.ENUM('Red','White','Rose','Sparkling','Dessert','Fortified'),
             allowNull: false,
         }
     });
