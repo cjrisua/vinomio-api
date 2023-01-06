@@ -11,7 +11,10 @@ export class ReviewControllers {
   }
   async listReviews(req: express.Request, res: express.Response) {
     const reviewServices = ReviewServices.getInstance();
-    const reviews = await reviewServices.list(100,0);
+    const factory = new FilterQueryParamFactory();
+    const filterConfig = factory.create(ReviewQueryAttributes)
+    const filterStatement = filterByKey(req,filterConfig)
+    const reviews = await reviewServices.list(RECORD_LIMIT,0,filterStatement);
     res.status(200).send({
       count:+req.body.count,
       pages:+req.body.pages,

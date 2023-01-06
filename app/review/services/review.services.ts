@@ -22,8 +22,8 @@ export class ReviewServices implements CRUD{
     deleteById(resourceId: any){
         return ReviewDaos.getInstance().removeReviewById(resourceId);
     }
-    list(limit: number, page: number){
-        return ReviewDaos.getInstance().listReviews(limit, page)
+    list(limit: number, page: number, filter: any){
+        return ReviewDaos.getInstance().listReviews(limit, page,filter)
     }
     patchById(resource: any){
         return ReviewDaos.getInstance().patchReview(resource);
