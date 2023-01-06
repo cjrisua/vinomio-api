@@ -16,8 +16,9 @@ import { AllocationFactory } from "../../common/models/allocations.model";
 import { CollectionEventFactory } from "../../common/models/collectionevents.model";
 import { CollectioneventAttributes } from "../../collectionevent/types/collectionevent.type";
 import { IFilter } from "../../common/interface/filter.interface";
-import { QueryTypes, Sequelize } from "sequelize";
+import { Op, QueryTypes, Sequelize } from "sequelize";
 import { number } from "joi";
+import sequelize from "sequelize";
 
 export function groupBy(array: any[], key: string | number) {
   // Return the end result
@@ -96,6 +97,9 @@ export class CollectionDaos {
   }
 
   async listCollections(limit: number = 25, page: number = 0, filter: IFilter) {
+
+    //const test: typeof sequelize.Op = filter?.where?.wine__name
+    
     const querySelect: string = 
     `SELECT "C".*, 
      "V"."year" AS "Vintage.year",
@@ -112,9 +116,9 @@ export class CollectionDaos {
      AVG("R"."score") AS "Vintage.Review.average",
      COUNT("R"."score") AS "Vintage.Review.count"
      FROM "Collections" AS "C"
-     INNER JOIN "Vintages" AS "V" on "C"."vintageId" = "V"."id"
-     INNER JOIN "Wines" AS "W" on "V"."wineId" = "W"."id"
-     INNER JOIN "Regions" AS "Rg" on "Rg"."id" = "W"."regionId"
+     INNER JOIN "Vintages" AS "V" on "C"."vintageId" = "V"."id" ` + (filter?.where?.vintage__year ?  ` AND "V"."year"=:year ` :` ` )+
+     `INNER JOIN "Wines" AS "W" on "V"."wineId" = "W"."id" ` + (filter?.where?.wine__name ?  ` AND "W"."name" ILIKE :name ` :` ` )+
+     `INNER JOIN "Regions" AS "Rg" on "Rg"."id" = "W"."regionId"
      INNER JOIN "Producers" AS "P" on "P"."id" = "W"."producerId"
      INNER JOIN "MasterVarietals" AS "M" on "M"."id" = "W"."mastervarietalId"
      LEFT OUTER JOIN "Reviews" AS "R" on "R"."vintageId" = "V"."id"
@@ -145,15 +149,18 @@ export class CollectionDaos {
     "CE"."action",
     "CE"."createdAt"
     `
-    const queryFilter: string = 'WHERE "C"."cellarId"=:cellarId';
+    
+    const queryFilter: string = `WHERE "C"."cellarId"=:cellarId`;
     const queryLimit: string = "LIMIT :limit OFFSET :offset";
-    const query: string = `${querySelect} ${queryFilter} ${queryGroup} ${queryLimit}`.replace(/\n/g," ");
+    const query: string = `${querySelect} ${queryFilter} ${queryGroup} ${queryLimit}`//.replace(/\n/g," ");
     const result: any = await dbConfig
       .query(query.replace(/\s+/g," "), {
         replacements: {
           limit: limit,
           offset: page,
           cellarId: filter.where?.cellarId,
+          year: filter?.where?.vintage__year ? filter.where.vintage__year : {},
+          name: filter?.where?.wine__name ? filter?.where?.wine__name[Op.iLike] : {}
         },
         raw: true,
         type: QueryTypes.SELECT,
@@ -215,7 +222,7 @@ export class CollectionDaos {
     
     if(collectionFields?.statusId && collectionFields.statusId == "drunk" && 
       collection.statusId != collectionFields.statusId ){
-      Logger.debug("Add Event")
+      //Logger.debug("Add Event")
       const event={
           action:"DrunkOn", 
           actionDate:collectionFields.actionDate,
@@ -228,7 +235,7 @@ export class CollectionDaos {
 
     if(collectionFields?.statusId && collectionFields.statusId == "deleted" && 
     collection.statusId != collectionFields.statusId ){
-    Logger.debug("Add Event")
+    //Logger.debug("Add Event")
     const event={
         action:"RemovedOn", 
         actionDate:collectionFields.actionDate,
@@ -241,7 +248,7 @@ export class CollectionDaos {
     
     if(collectionFields?.statusId && collectionFields.statusId == "allocated" && 
       collection.statusId == "pending" ){
-      Logger.debug("Add Event")
+      //Logger.debug("Add Event")
       const event={
           action:"DeliveredOn", 
           actionDate:collectionFields.actionDate,
