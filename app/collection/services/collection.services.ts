@@ -17,7 +17,9 @@ export class CollectionServices implements CRUD{
     }
 
     create(resource: any){
-        return CollectionDaos.getInstance().addCollection(resource);
+        return CollectionDaos.getInstance()
+        .addCollection(resource)
+        .catch((error)=> { throw error});
     }
     deleteById(resourceId: any){
         return CollectionDaos.getInstance().removeCollectionById(resourceId);

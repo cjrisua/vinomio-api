@@ -51,59 +51,51 @@ export class CollectionDaos {
 
   async addCollection(collectionFields: any[]) {
     const collectionEvent = CollectionEventFactory(dbConfig);
-    try {
-      collectionFields.forEach(async (wine: any) => {
-        try {
-          const bottles = Array(parseInt(wine.bottleCount))
-            .fill(0)
-            .map((item: any, i: number) => {
-              let bottle = JSON.parse(JSON.stringify(wine));
-              bottle.locationId = bottle?.bottleLocation[i]?.id || 0;
-              bottle.acquiringSourceId = bottle?.merchant?.id || 0;
-              return bottle;
-            });
-          await this.Collection.bulkCreate(bottles)
-            .then(async (items) => {
-              const purchasedOn = items.map((p: any) => {
-                return {
-                  action: "PurchasedOn",
-                  actionDate: wine.purchasedOn,
-                  collectionId: p.id,
-                };
-              });
-              await collectionEvent
-                .bulkCreate(purchasedOn)
-                .then(async () => {
-                  if (
-                    bottles[0].statusId == "pending" ||
-                    bottles[0].statusId == "allocated"
-                  ) {
-                    const deliverBy = items.map((p: any) => {
-                      return {
-                        action:
-                          bottles[0].statusId == "pending"
-                            ? "DeliveredBy"
-                            : "DeliveredOn",
-                        actionDate: wine.deliverBy,
-                        collectionId: p.id,
-                      };
-                    });
-                    await collectionEvent
-                      .bulkCreate(deliverBy)
-                      .catch((error) => this.catchError(error));
-                  }
-                })
-                .catch((error) => this.catchError(error));
+    var results:any=[]
+    for await (const wine of collectionFields) {
+      const bottles = Array(parseInt(wine.bottleCount))
+        .fill(0)
+        .map((item: any, i: number) => {
+          let bottle = JSON.parse(JSON.stringify(wine));
+          bottle.locationId = bottle?.bottleLocation[i]?.id || 0;
+          bottle.acquiringSourceId = bottle?.merchant?.id || 0;
+          return bottle;
+        });
+      await this.Collection.bulkCreate(bottles)
+        .then(async (items) => {
+          const purchasedOn = items.map((p: any) => {
+            return {
+              action: "PurchasedOn",
+              actionDate: wine.purchasedOn,
+              collectionId: p.id,
+            };
+          });
+          await collectionEvent
+            .bulkCreate(purchasedOn)
+            .then(async () => {
+              if (bottles[0].statusId == "pending" ||bottles[0].statusId == "allocated") {
+                const deliverBy = items.map((p: any) => {
+                  return {
+                    action:
+                      bottles[0].statusId == "pending"
+                        ? "DeliveredBy"
+                        : "DeliveredOn",
+                    actionDate: wine.deliverBy,
+                    collectionId: p.id,
+                  };
+                });
+                await collectionEvent
+                  .bulkCreate(deliverBy)
+                  .catch((error) => this.catchError(error));
+              }
             })
             .catch((error) => this.catchError(error));
-        } catch (error) {
-          Logger.debug("wrapper catch")
-        }
-      });
-    } catch (error) {
-      return {'error': error}
+          return purchasedOn
+        })
+        .then(purchasedOn => purchasedOn.map(c => results.push({collectionId: c.collectionId})) )
+        .catch((error) => this.catchError(error));
     }
-      return {};
+    return results;
   }
 
   async listCollections(limit: number = 25, page: number = 0, filter: IFilter) {
