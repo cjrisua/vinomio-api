@@ -36,7 +36,10 @@ export function groupBy(array: any[], key: string | number) {
 export class CollectionDaos {
   private Collection = CollectionFactory(dbConfig);
   private static instance: CollectionDaos;
-  private error = (error:any)=>{Logger.error(error); throw new Error(error)}
+  private catchError = (error: any) => {
+    Logger.error(error);
+    throw error;
+  };
   constructor() {}
 
   public static getInstance() {
@@ -50,62 +53,64 @@ export class CollectionDaos {
     const collectionEvent = CollectionEventFactory(dbConfig);
     try {
       collectionFields.forEach(async (wine: any) => {
-        const bottles = Array(parseInt(wine.bottleCount))
-          .fill(0)
-          .map((item: any, i: number) => {
-            let bottle = JSON.parse(JSON.stringify(wine));
-            bottle.locationId = bottle?.bottleLocation[i]?.id || 0;
-            bottle.acquiringSourceId = bottle?.merchant?.id || 0;
-            return bottle;
-          });
-          await this.Collection.bulkCreate(bottles)
-          .then(async (items) => {
-            const purchasedOn = items.map((p: any) => {
-              return {
-                action: "PurchasedOn",
-                actionDate: wine.purchasedOn,
-                collectionId: p.id,
-              };
+        try {
+          const bottles = Array(parseInt(wine.bottleCount))
+            .fill(0)
+            .map((item: any, i: number) => {
+              let bottle = JSON.parse(JSON.stringify(wine));
+              bottle.locationId = bottle?.bottleLocation[i]?.id || 0;
+              bottle.acquiringSourceId = bottle?.merchant?.id || 0;
+              return bottle;
             });
-            await collectionEvent
-              .bulkCreate(purchasedOn)
-              .then(async () => {
-                if (
-                  bottles[0].statusId == "pending" ||
-                  bottles[0].statusId == "allocated"
-                ) {
-                  const deliverBy = items.map((p: any) => {
-                    return {
-                      action:
-                        bottles[0].statusId == "pending"
-                          ? "DeliveredBy"
-                          : "DeliveredOn",
-                      actionDate: wine.deliverBy,
-                      collectionId: p.id,
-                    };
-                  });
-                  await collectionEvent
-                    .bulkCreate(deliverBy)
-                    .catch((error) => error);
-                }
-              })
-              .catch((error) => error);
-          })
-          .catch((error) => error);
+          await this.Collection.bulkCreate(bottles)
+            .then(async (items) => {
+              const purchasedOn = items.map((p: any) => {
+                return {
+                  action: "PurchasedOn",
+                  actionDate: wine.purchasedOn,
+                  collectionId: p.id,
+                };
+              });
+              await collectionEvent
+                .bulkCreate(purchasedOn)
+                .then(async () => {
+                  if (
+                    bottles[0].statusId == "pending" ||
+                    bottles[0].statusId == "allocated"
+                  ) {
+                    const deliverBy = items.map((p: any) => {
+                      return {
+                        action:
+                          bottles[0].statusId == "pending"
+                            ? "DeliveredBy"
+                            : "DeliveredOn",
+                        actionDate: wine.deliverBy,
+                        collectionId: p.id,
+                      };
+                    });
+                    await collectionEvent
+                      .bulkCreate(deliverBy)
+                      .catch((error) => this.catchError(error));
+                  }
+                })
+                .catch((error) => this.catchError(error));
+            })
+            .catch((error) => this.catchError(error));
+        } catch (error) {
+          Logger.debug("wrapper catch")
+        }
       });
     } catch (error) {
-      Logger.error(error)
+      return {'error': error}
     }
-
-    return {};
+      return {};
   }
 
   async listCollections(limit: number = 25, page: number = 0, filter: IFilter) {
-
     //const test: typeof sequelize.Op = filter?.where?.wine__name
-    
-    const querySelect: string = 
-    `SELECT "C".*, 
+
+    const querySelect: string =
+      `SELECT "C".*, 
      "V"."year" AS "Vintage.year",
      "W"."name" AS "Vintage.Wine.name",
      "W"."id" AS "Vintage.Wine.id",
@@ -120,15 +125,17 @@ export class CollectionDaos {
      AVG("R"."score") AS "Vintage.Review.average",
      COUNT("R"."score") AS "Vintage.Review.count"
      FROM "Collections" AS "C"
-     INNER JOIN "Vintages" AS "V" on "C"."vintageId" = "V"."id" ` + (filter?.where?.vintage__year ?  ` AND "V"."year"=:year ` :` ` )+
-     `INNER JOIN "Wines" AS "W" on "V"."wineId" = "W"."id" ` + (filter?.where?.wine__name ?  ` AND "W"."name" ILIKE :name ` :` ` )+
-     `INNER JOIN "Regions" AS "Rg" on "Rg"."id" = "W"."regionId"
+     INNER JOIN "Vintages" AS "V" on "C"."vintageId" = "V"."id" ` +
+      (filter?.where?.vintage__year ? ` AND "V"."year"=:year ` : ` `) +
+      `INNER JOIN "Wines" AS "W" on "V"."wineId" = "W"."id" ` +
+      (filter?.where?.wine__name ? ` AND "W"."name" ILIKE :name ` : ` `) +
+      `INNER JOIN "Regions" AS "Rg" on "Rg"."id" = "W"."regionId"
      INNER JOIN "Producers" AS "P" on "P"."id" = "W"."producerId"
      INNER JOIN "MasterVarietals" AS "M" on "M"."id" = "W"."mastervarietalId"
      LEFT OUTER JOIN "Reviews" AS "R" on "R"."vintageId" = "V"."id"
      LEFT OUTER JOIN "CollectionEvents" AS "CE" on "CE"."collectionId" = "C"."id" 
      `;
-    const queryGroup:string = `
+    const queryGroup: string = `
     GROUP BY "C"."id",
     "C"."vintageId",
     "C"."statusId",
@@ -152,53 +159,75 @@ export class CollectionDaos {
     "CE"."id",
     "CE"."action",
     "CE"."createdAt"
-    `
-    
+    `;
+
     const queryFilter: string = `WHERE "C"."cellarId"=:cellarId`;
     const queryLimit: string = "LIMIT :limit OFFSET :offset";
-    const query: string = `${querySelect} ${queryFilter} ${queryGroup} ${queryLimit}`//.replace(/\n/g," ");
+    const query: string = `${querySelect} ${queryFilter} ${queryGroup} ${queryLimit}`; //.replace(/\n/g," ");
     const result: any = await dbConfig
-      .query(query.replace(/\s+/g," "), {
+      .query(query.replace(/\s+/g, " "), {
         replacements: {
           limit: limit,
           offset: page,
           cellarId: filter.where?.cellarId,
           year: filter?.where?.vintage__year ? filter.where.vintage__year : {},
-          name: filter?.where?.wine__name ? filter?.where?.wine__name[Op.iLike] : {}
+          name: filter?.where?.wine__name
+            ? filter?.where?.wine__name[Op.iLike]
+            : {},
         },
         raw: true,
         type: QueryTypes.SELECT,
       })
       .then((resultSet: any[]) => {
-        const attributes:string[]=['id','statusId','price','locationId','acquiringSourceId','allocationEventId','purchaseNote','bottleSize']
-        const data =  resultSet.reduce((r:Map<string,any[]>, dataSet:any) => {
-            let review:any={}
-            //Object.entries(dataSet).filter(i => attributes.includes(i[0]))
-            Object.keys(dataSet).filter(i => attributes.indexOf(i) != -1).map((m:string) => review[m]=dataSet[m])
-            const key = dataSet.id;
-            const item = r.get(key) || Object.assign({},review, {
-                Vintage: {
-                    id:dataSet.vintageId,
-                    year:dataSet["Vintage.year"],
-                    Wine:{
-                        id:dataSet["Vintage.Wine.id"],
-                        name:dataSet["Vintage.Wine.name"],
-                        color:dataSet["Vintage.Wine.color"],
-                        type: dataSet["Vintage.Wine.type"],
-                        Producer:{name:dataSet["Vintage.Wine.Producer.name"]},
-                        Region:{name:dataSet["Vintage.Wine.Region.name"]},
-                        MasterVarietal:{name:dataSet["Vintage.Wine.MasterVarietal.name"]},
-                    },
-                    Review:{
-                        average:dataSet["Vintage.Review.average"],
-                        count:dataSet["Vintage.Review.count"]
-                    }},
-                CollectionEvent:[],
-                });
-            item.CollectionEvent.push({id:dataSet['CollectionEvents.id'],action:dataSet['CollectionEvents.action'],createdAt:dataSet['CollectionEvents.createdAt']})
-            return r.set(key,item)
-          },new Map)
-          return [ ...data.values()]
+        const attributes: string[] = [
+          "id",
+          "statusId",
+          "price",
+          "locationId",
+          "acquiringSourceId",
+          "allocationEventId",
+          "purchaseNote",
+          "bottleSize",
+        ];
+        const data = resultSet.reduce((r: Map<string, any[]>, dataSet: any) => {
+          let review: any = {};
+          //Object.entries(dataSet).filter(i => attributes.includes(i[0]))
+          Object.keys(dataSet)
+            .filter((i) => attributes.indexOf(i) != -1)
+            .map((m: string) => (review[m] = dataSet[m]));
+          const key = dataSet.id;
+          const item =
+            r.get(key) ||
+            Object.assign({}, review, {
+              Vintage: {
+                id: dataSet.vintageId,
+                year: dataSet["Vintage.year"],
+                Wine: {
+                  id: dataSet["Vintage.Wine.id"],
+                  name: dataSet["Vintage.Wine.name"],
+                  color: dataSet["Vintage.Wine.color"],
+                  type: dataSet["Vintage.Wine.type"],
+                  Producer: { name: dataSet["Vintage.Wine.Producer.name"] },
+                  Region: { name: dataSet["Vintage.Wine.Region.name"] },
+                  MasterVarietal: {
+                    name: dataSet["Vintage.Wine.MasterVarietal.name"],
+                  },
+                },
+                Review: {
+                  average: dataSet["Vintage.Review.average"],
+                  count: dataSet["Vintage.Review.count"],
+                },
+              },
+              CollectionEvent: [],
+            });
+          item.CollectionEvent.push({
+            id: dataSet["CollectionEvents.id"],
+            action: dataSet["CollectionEvents.action"],
+            createdAt: dataSet["CollectionEvents.createdAt"],
+          });
+          return r.set(key, item);
+        }, new Map());
+        return [...data.values()];
       })
       .catch((err) => Logger.error(err));
     return result;
@@ -217,57 +246,69 @@ export class CollectionDaos {
 
   async patchCollection(collectionFields: any) {
     console.log(JSON.stringify(collectionFields));
-    
+
     const collectionEvent = CollectionEventFactory(dbConfig);
 
     let collection: any = await Collection.findOne({
       where: { id: collectionFields.id },
     });
-    
-    if(collectionFields?.statusId && collectionFields.statusId == "drunk" && 
-      collection.statusId != collectionFields.statusId ){
+
+    if (
+      collectionFields?.statusId &&
+      collectionFields.statusId == "drunk" &&
+      collection.statusId != collectionFields.statusId
+    ) {
       //Logger.debug("Add Event")
-      const event={
-          action:"DrunkOn", 
-          actionDate:collectionFields.actionDate,
-          collectionId:collectionFields.id
-        }
-      await collectionEvent.create(event)
-      .then((r)=> Logger.debug(""))
-      .catch((e)=> Logger.error(e))
+      const event = {
+        action: "DrunkOn",
+        actionDate: collectionFields.actionDate,
+        collectionId: collectionFields.id,
+      };
+      await collectionEvent
+        .create(event)
+        .then((r) => Logger.debug(""))
+        .catch((e) => Logger.error(e));
     }
 
-    if(collectionFields?.statusId && collectionFields.statusId == "deleted" && 
-    collection.statusId != collectionFields.statusId ){
-    //Logger.debug("Add Event")
-    const event={
-        action:"RemovedOn", 
-        actionDate:collectionFields.actionDate,
-        collectionId:collectionFields.id
-      }
-    await collectionEvent.create(event)
-    .then((r)=> Logger.debug(""))
-    .catch((e)=> Logger.error(e))
-  }
-    
-    if(collectionFields?.statusId && collectionFields.statusId == "allocated" && 
-      collection.statusId == "pending" ){
+    if (
+      collectionFields?.statusId &&
+      collectionFields.statusId == "deleted" &&
+      collection.statusId != collectionFields.statusId
+    ) {
       //Logger.debug("Add Event")
-      const event={
-          action:"DeliveredOn", 
-          actionDate:collectionFields.actionDate,
-          collectionId:collectionFields.id
-        }
-      await collectionEvent.create(event)
-      .then((r)=> Logger.debug(""))
-      .catch((e)=> Logger.error(e))
+      const event = {
+        action: "RemovedOn",
+        actionDate: collectionFields.actionDate,
+        collectionId: collectionFields.id,
+      };
+      await collectionEvent
+        .create(event)
+        .then((r) => Logger.debug(""))
+        .catch((e) => Logger.error(e));
+    }
+
+    if (
+      collectionFields?.statusId &&
+      collectionFields.statusId == "allocated" &&
+      collection.statusId == "pending"
+    ) {
+      //Logger.debug("Add Event")
+      const event = {
+        action: "DeliveredOn",
+        actionDate: collectionFields.actionDate,
+        collectionId: collectionFields.id,
+      };
+      await collectionEvent
+        .create(event)
+        .then((r) => Logger.debug(""))
+        .catch((e) => Logger.error(e));
     }
 
     if (collection) {
       for (let i in collectionFields) {
         collection[i] = collectionFields[i];
       }
-      return await collection.save()
+      return await collection.save();
     }
   }
 }
