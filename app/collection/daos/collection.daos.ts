@@ -16,10 +16,11 @@ import { AllocationFactory } from "../../common/models/allocations.model";
 import { CollectionEventFactory } from "../../common/models/collectionevents.model";
 import { CollectioneventAttributes } from "../../collectionevent/types/collectionevent.type";
 import { IFilter } from "../../common/interface/filter.interface";
-import { Op, QueryTypes, Sequelize } from "sequelize";
+import { DataTypes, Op, QueryTypes, Sequelize } from "sequelize";
 import { number } from "joi";
 import sequelize from "sequelize";
 import { exceptions } from "winston";
+import { DataType } from "sequelize-typescript";
 
 export function groupBy(array: any[], key: string | number) {
   // Return the end result
@@ -57,7 +58,8 @@ export class CollectionDaos {
         .fill(0)
         .map((item: any, i: number) => {
           let bottle = JSON.parse(JSON.stringify(wine));
-          bottle.locationId = bottle?.bottleLocation[i]?.id || 0;
+          if(bottle?.bottleLocation[i]?.id)
+            bottle.locationId = bottle.bottleLocation[i].id
           bottle.acquiringSourceId = bottle?.merchant?.id || 0;
           return bottle;
         });
