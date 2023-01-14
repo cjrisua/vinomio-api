@@ -1,5 +1,6 @@
 import express from "express";
 import { filterByKey, filterByKeyFindAll, FilterQueryParamFactory, RECORD_LIMIT } from "../../common/common.middleware.config";
+import Logger from "../../lib/logger";
 import { CollectionServices } from "../services/collection.services";
 import { CollectionQueryAttributes } from "../types/collection.qparam";
 
@@ -25,7 +26,8 @@ export class CollectionControllers {
 
   async createCollection(req: express.Request, res: express.Response) {
     const collectionServices = CollectionServices.getInstance();
-    const collectionId = await collectionServices.create(req.body);
+    const collectionId = await collectionServices.create(req.body)
+    .catch((error) => Logger.error("Catch!"));
     res.status(201).send({id: collectionId});
   }
   
