@@ -19,6 +19,7 @@ import { IFilter } from "../../common/interface/filter.interface";
 import { Op, QueryTypes, Sequelize } from "sequelize";
 import { number } from "joi";
 import sequelize from "sequelize";
+import { exceptions } from "winston";
 
 export function groupBy(array: any[], key: string | number) {
   // Return the end result
@@ -35,7 +36,7 @@ export function groupBy(array: any[], key: string | number) {
 export class CollectionDaos {
   private Collection = CollectionFactory(dbConfig);
   private static instance: CollectionDaos;
-
+  private error = (error:any)=>{Logger.error(error); throw new Error(error)}
   constructor() {}
 
   public static getInstance() {
@@ -47,51 +48,54 @@ export class CollectionDaos {
 
   async addCollection(collectionFields: any[]) {
     const collectionEvent = CollectionEventFactory(dbConfig);
-    let result: any[] = [];
-
-    collectionFields.forEach(async (wine: any) => {
-      const bottles = Array(parseInt(wine.bottleCount))
-        .fill(0)
-        .map((item: any, i: number) => {
-          let bottle = JSON.parse(JSON.stringify(wine));
-          bottle.locationId = bottle.bottleLocation[i].id;
-          bottle.acquiringSourceId = bottle.merchant.id;
-          return bottle;
-        });
-
-      const collection = await this.Collection.bulkCreate(bottles).then(
-        async (items) => {
-          //console.log(items)
-          const purchasedOn = items.map((p: any) => {
-            return {
-              action: "PurchasedOn",
-              actionDate: wine.purchasedOn,
-              collectionId: p.id,
-              //'locationId' : p.id
-            };
+    try {
+      collectionFields.forEach(async (wine: any) => {
+        const bottles = Array(parseInt(wine.bottleCount))
+          .fill(0)
+          .map((item: any, i: number) => {
+            let bottle = JSON.parse(JSON.stringify(wine));
+            bottle.locationId = bottle?.bottleLocation[i]?.id || 0;
+            bottle.acquiringSourceId = bottle?.merchant?.id || 0;
+            return bottle;
           });
-          await collectionEvent.bulkCreate(purchasedOn).then(async () => {
-            if (
-              bottles[0].statusId == "pending" ||
-              bottles[0].statusId == "allocated"
-            ) {
-              const deliverBy = items.map((p: any) => {
-                return {
-                  action:
-                    bottles[0].statusId == "pending"
-                      ? "DeliveredBy"
-                      : "DeliveredOn",
-                  actionDate: wine.deliverBy,
-                  collectionId: p.id,
-                };
-              });
-              await collectionEvent.bulkCreate(deliverBy);
-            }
-          });
-          //result.push(collection);
-        }
-      );
-    });
+          await this.Collection.bulkCreate(bottles)
+          .then(async (items) => {
+            const purchasedOn = items.map((p: any) => {
+              return {
+                action: "PurchasedOn",
+                actionDate: wine.purchasedOn,
+                collectionId: p.id,
+              };
+            });
+            await collectionEvent
+              .bulkCreate(purchasedOn)
+              .then(async () => {
+                if (
+                  bottles[0].statusId == "pending" ||
+                  bottles[0].statusId == "allocated"
+                ) {
+                  const deliverBy = items.map((p: any) => {
+                    return {
+                      action:
+                        bottles[0].statusId == "pending"
+                          ? "DeliveredBy"
+                          : "DeliveredOn",
+                      actionDate: wine.deliverBy,
+                      collectionId: p.id,
+                    };
+                  });
+                  await collectionEvent
+                    .bulkCreate(deliverBy)
+                    .catch((error) => error);
+                }
+              })
+              .catch((error) => error);
+          })
+          .catch((error) => error);
+      });
+    } catch (error) {
+      Logger.error(error)
+    }
 
     return {};
   }
