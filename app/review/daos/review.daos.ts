@@ -51,16 +51,22 @@ export class ReviewDaos {
 
   async listReviews(limit: number = 25, page: number = 0,  filter: IFilter) {
     Logger.info(filter)
-    const query:string ='select "R".*,"P"."name" AS "people.name","P"."role" AS "people.role","P"."email" AS "people.email", "W"."id" AS "wine.id", "W"."name" AS "wine.name", "V"."year" AS "vintage.year" ,"T"."id" AS "tag.id","T"."name" AS "tag.name"  FROM "Reviews" AS "R" LEFT OUTER JOIN "ReviewTags" AS "RT" on "R"."id" = "RT"."reviewId" LEFT OUTER JOIN "People" AS "P" on "P"."id" = "R"."publisherId" LEFT OUTER JOIN "Tags" AS "T" on "T"."id" = "RT"."tagId" LEFT OUTER JOIN "Vintages" AS "V" on "R"."vintageId" = "V"."id"'+ 
-    'LEFT OUTER JOIN "Wines" AS "W" on "W"."id" = "V"."wineId"'+
-    (filter?.where?.vintage__wine__name ?  ` WHERE "W"."name" ILIKE :name ` :` ` )+ 
+    const query:string ='select "R".*,"P"."name" AS "people.name","P"."role" AS "people.role","P"."email" AS "people.email", "W"."id" AS "wine.id", "W"."name" AS "wine.name", "V"."year" AS "vintage.year" ,"T"."id" AS "tag.id","T"."name" AS "tag.name"'+
+    'FROM "Reviews" AS "R" '+
+    'LEFT OUTER JOIN "ReviewTags" AS "RT" on "R"."id" = "RT"."reviewId" ' +
+    'LEFT OUTER JOIN "People" AS "P" on "P"."id" = "R"."publisherId" LEFT OUTER JOIN "Tags" AS "T" on "T"."id" = "RT"."tagId" LEFT OUTER JOIN "Vintages" AS "V" on "R"."vintageId" = "V"."id" '+ 
+    'LEFT OUTER JOIN "Wines" AS "W" on "W"."id" = "V"."wineId" '+
+    (filter?.where?.vintage__wine__name  || filter?.where?.id ?  ` WHERE ` + 
+      ((filter?.where?.vintage__wine__name ? ` "W"."name" ILIKE :name ` : ``) + (filter?.where?.id ? ` "R"."id" = :id ` : ``)) 
+      : ` `) +
     'LIMIT :limit OFFSET :offset'
 
     const result:any =  await dbConfig.query(query,{ 
       replacements: { 
         limit: limit, 
         offset:page,
-        name: filter?.where?.vintage__wine__name ? filter?.where?.vintage__wine__name[Op.iLike] : {}
+        name: filter?.where?.vintage__wine__name ? filter?.where?.vintage__wine__name[Op.iLike] : {},
+        id: filter?.where?.id ? filter.where.id : {}
        },
       raw: true,
       type: QueryTypes.SELECT}).then((resultSet:any[])=> {
