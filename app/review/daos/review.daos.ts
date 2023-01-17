@@ -30,9 +30,9 @@ export class ReviewDaos {
   async addReview(reviewFields: any) {
     const review = await Review.create(reviewFields).then(async (response) => {
       if (reviewFields?.tags) {
-        //Logger.info(reviewFields.tags)
+        const tags = reviewFields.tags.map((i:any) => {return {name:i.key}})
         await TagFactory(dbConfig)
-          .bulkCreate(reviewFields.tags, {
+          .bulkCreate(tags, {
             updateOnDuplicate: ["name"],
             returning: true,
           })
@@ -139,11 +139,29 @@ export class ReviewDaos {
   }
 
   async patchReview(reviewFields: any) {
-    console.log(JSON.stringify(reviewFields));
     let review: any = await Review.findOne({ where: { id: reviewFields.id } });
     if (review) {
       for (let i in reviewFields) {
-        review[i] = reviewFields[i];
+        if(i=="tags"){
+          //add tags
+          const newTags = reviewFields.tags.filter((i:any) => i.flag=="new").map((m:any)=>{return {name:m.name}})
+          await TagFactory(dbConfig)
+          .bulkCreate(newTags, {
+            updateOnDuplicate: ["name"],
+            returning: true,
+          })
+          .then((tagCollection) => {
+            tagCollection.forEach((tagInstance) =>
+              review.addTags(tagInstance.id)
+            );
+          });
+          //remove tag
+          const removeTags:any[] = reviewFields.tags.filter((i:any) => i.flag=="remove").map((m:any)=>m.id)
+          for(const tagId of removeTags)
+            review.removeTag(tagId)
+        }
+        else
+          review[i] = reviewFields[i];
       }
       return await review.save();
     }

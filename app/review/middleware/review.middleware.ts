@@ -2,6 +2,7 @@
 import express from 'express';
 import { calculatePageInfo, CommonMiddlewareConfig, filterByKey, FilterQueryParamFactory, RECORD_LIMIT } from '../../common/common.middleware.config';
 import Logger from '../../lib/logger';
+import { ReviewSchemaFactory } from '../schema/review.schema';
 import { ReviewServices } from '../services/review.services';
 import { ReviewQueryAttributes } from '../types/review.qparam';
 
@@ -13,6 +14,16 @@ export class ReviewMiddleware extends CommonMiddlewareConfig{
             ReviewMiddleware.instance = new ReviewMiddleware();
         }
         return ReviewMiddleware.instance;
+    }
+    async validateAddOrUpdate(req: express.Request, res: express.Response, next: express.NextFunction){
+        const schema = ReviewSchemaFactory().AddOrUpdatePOST;
+        await schema.validateAsync(req.body)
+        .then(()=>{
+            next();
+        })
+        .catch((error:any) => {
+            ReviewMiddleware.processValidationError(error,res);
+        });
     }
     async validateReviewExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const reviewServices = ReviewServices.getInstance();

@@ -1,4 +1,4 @@
-import { BelongsToManyAddAssociationMixin, BuildOptions, Model } from "sequelize";
+import { BelongsToManyAddAssociationMixin, BelongsToManyRemoveAssociationMixin, BuildOptions, Model } from "sequelize";
 import { Tag } from "../../tag/types/tag.type";
 
 export interface ReviewAttributes {
@@ -20,6 +20,7 @@ export class Review extends Model<ReviewModel, ReviewAttributes>  implements Rev
   updatedAt?: Date | undefined;
 
   public addTags!: BelongsToManyAddAssociationMixin<Tag, number>;
+  public removeTag!: BelongsToManyRemoveAssociationMixin<Tag, number>;
 
 }
 

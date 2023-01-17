@@ -26,14 +26,17 @@ export class ReviewRoutes
       reviewControllers.listReviewsByWineId
     ]);
     this.app.post("/api/review", [
+        reviewMiddleware.validateAddOrUpdate,
         reviewControllers.createReview
     ]);
     this.app.put(`/api/review/:reviewId`, [
+        reviewMiddleware.validateAddOrUpdate,
         reviewMiddleware.validateReviewExists,
         reviewMiddleware.extractReviewId,
         reviewControllers.putReview
     ]);
     this.app.patch(`/api/review/:reviewId`, [
+        reviewMiddleware.validateAddOrUpdate,
         reviewMiddleware.validateReviewExists,
         reviewMiddleware.extractReviewId,
         reviewControllers.patchReview
