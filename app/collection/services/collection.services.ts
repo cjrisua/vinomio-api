@@ -33,6 +33,9 @@ export class CollectionServices implements CRUD{
     readById(resourceId: any){
         return CollectionDaos.getInstance().getCollectionById(resourceId);
     }
+    readByWineId(cellarId:number, wineId:number, filter:any){
+        return CollectionDaos.getInstance().findCollectionsByWineId(cellarId,wineId,filter);
+    }
     updateById(resource: any){
         return CollectionDaos.getInstance().patchCollection(resource);
     }

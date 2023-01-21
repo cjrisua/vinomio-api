@@ -100,11 +100,9 @@ export class CollectionDaos {
     return results;
   }
 
-  async listCollections(limit: number = 25, page: number = 0, filter: IFilter) {
-    //const test: typeof sequelize.Op = filter?.where?.wine__name
-
+  async findCollectionsByWineId(cellarId:number,wineId:number,filter: IFilter) {
     const querySelect: string =
-      `SELECT "C".*, 
+    `SELECT "C".*, 
      "V"."year" AS "Vintage.year",
      "W"."name" AS "Vintage.Wine.name",
      "W"."id" AS "Vintage.Wine.id",
@@ -115,7 +113,88 @@ export class CollectionDaos {
      "M"."name" AS "Vintage.Wine.MasterVarietal.name",
      "CE"."id" AS "CollectionEvents.id",
      "CE"."action" AS "CollectionEvents.action",
-     "CE"."createdAt" AS "CollectionEvents.createdAt",
+     "CE"."createdAt" AS "CollectionEvents.createdAt"
+     FROM "Collections" AS "C"
+     INNER JOIN "Vintages" AS "V" on "C"."vintageId" = "V"."id" 
+     INNER JOIN "Wines" AS "W" on "V"."wineId" = "W"."id" AND "W"."id"=:wineId
+     INNER JOIN "Regions" AS "Rg" on "Rg"."id" = "W"."regionId"
+     INNER JOIN "Producers" AS "P" on "P"."id" = "W"."producerId"
+     INNER JOIN "MasterVarietals" AS "M" on "M"."id" = "W"."mastervarietalId"
+     LEFT OUTER JOIN "CollectionEvents" AS "CE" on "CE"."collectionId" = "C"."id"`;
+     const queryFilter: string = 
+     `WHERE "C"."cellarId"=:cellarId AND "C"."statusId" IN ('allocated','pending')`;
+
+     const query: string = `${querySelect} ${queryFilter}`;
+     const result: any = await dbConfig
+     .query(query.replace(/\s+/g, " "), {
+       replacements: {
+         cellarId: cellarId,
+         wineId: wineId
+       },
+       raw: true,
+       type: QueryTypes.SELECT,
+     })
+     .then((resultSet: any[]) => {
+      const attributes: string[] = [
+        "id",
+        "statusId",
+        "price",
+        "locationId",
+        "acquiringSourceId",
+        "allocationEventId",
+        "purchaseNote",
+        "bottleSize",
+      ];
+      const data = resultSet.reduce((r: Map<string, any[]>, dataSet: any) => {
+        let review: any = {};
+        //Object.entries(dataSet).filter(i => attributes.includes(i[0]))
+        Object.keys(dataSet)
+          .filter((i) => attributes.indexOf(i) != -1)
+          .map((m: string) => (review[m] = dataSet[m]));
+        const key = dataSet.id;
+        const item =
+          r.get(key) ||
+          Object.assign({}, review, {
+            Vintage: {
+              id: dataSet.vintageId,
+              year: dataSet["Vintage.year"],
+              Wine: {
+                id: dataSet["Vintage.Wine.id"],
+                name: dataSet["Vintage.Wine.name"],
+                color: dataSet["Vintage.Wine.color"],
+                type: dataSet["Vintage.Wine.type"],
+                Producer: { name: dataSet["Vintage.Wine.Producer.name"] },
+                Region: { name: dataSet["Vintage.Wine.Region.name"] },
+                MasterVarietal: {
+                  name: dataSet["Vintage.Wine.MasterVarietal.name"],
+                },
+              },
+            },
+            CollectionEvent: [],
+          });
+        item.CollectionEvent.push({
+          id: dataSet["CollectionEvents.id"],
+          action: dataSet["CollectionEvents.action"],
+          createdAt: dataSet["CollectionEvents.createdAt"],
+        });
+        return r.set(key, item);
+      }, new Map());
+      return [...data.values()];
+    })
+    .catch((err) => Logger.error(err));
+  return result;
+  }
+  async listCollections(limit: number = 25, page: number = 0, filter: IFilter) {
+    const querySelect: string =
+    `SELECT "C".*, 
+     "V"."year" AS "Vintage.year",
+     "W"."name" AS "Vintage.Wine.name",
+     "W"."id" AS "Vintage.Wine.id",
+     "W"."color" AS "Vintage.Wine.color",
+     "W"."type" AS "Vintage.Wine.type",
+     "P"."name" AS "Vintage.Wine.Producer.name",
+     "Rg"."name" AS "Vintage.Wine.Region.name",
+     "M"."name" AS "Vintage.Wine.MasterVarietal.name",
      AVG("R"."score") AS "Vintage.Review.average",
      COUNT("R"."score") AS "Vintage.Review.count"
      FROM "Collections" AS "C"
@@ -127,7 +206,6 @@ export class CollectionDaos {
      INNER JOIN "Producers" AS "P" on "P"."id" = "W"."producerId"
      INNER JOIN "MasterVarietals" AS "M" on "M"."id" = "W"."mastervarietalId"
      LEFT OUTER JOIN "Reviews" AS "R" on "R"."vintageId" = "V"."id"
-     LEFT OUTER JOIN "CollectionEvents" AS "CE" on "CE"."collectionId" = "C"."id" 
      `;
     const queryGroup: string = `
     GROUP BY "C"."id",
@@ -149,13 +227,10 @@ export class CollectionDaos {
     "W"."type",
     "P"."name", 
     "Rg"."name", 
-    "M"."name",
-    "CE"."id",
-    "CE"."action",
-    "CE"."createdAt"
+    "M"."name"
     `;
 
-    const queryFilter: string = `WHERE "C"."cellarId"=:cellarId`;
+    const queryFilter: string = `WHERE "C"."cellarId"=:cellarId AND "C"."statusId" IN ('allocated','pending')`;
     const queryLimit: string = "LIMIT :limit OFFSET :offset";
     const query: string = `${querySelect} ${queryFilter} ${queryGroup} ${queryLimit}`; //.replace(/\n/g," ");
     const result: any = await dbConfig
@@ -214,11 +289,11 @@ export class CollectionDaos {
               },
               CollectionEvent: [],
             });
-          item.CollectionEvent.push({
+          /*item.CollectionEvent.push({
             id: dataSet["CollectionEvents.id"],
             action: dataSet["CollectionEvents.action"],
             createdAt: dataSet["CollectionEvents.createdAt"],
-          });
+          });*/
           return r.set(key, item);
         }, new Map());
         return [...data.values()];

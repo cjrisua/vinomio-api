@@ -40,6 +40,16 @@ export class CollectionMiddleware extends CommonMiddlewareConfig{
             CollectionMiddleware.processValidationError(error,res);
         });
     }
+    async validateCollectionWinePOST(req: express.Request, res: express.Response, next: express.NextFunction){
+        const schema = CollectionSchemaFactory().GetByWinePOST;
+        await schema.validateAsync(req.body)
+        .then(()=>{
+            next();
+        })
+        .catch((error:any) => {
+            CollectionMiddleware.processValidationError(error,res);
+        });
+    }
     async validateCollectionExists(req: express.Request, res: express.Response, next: express.NextFunction) {
         const collectionServices = CollectionServices.getInstance();
         const collection = await collectionServices.readById(req.params.collectionId);

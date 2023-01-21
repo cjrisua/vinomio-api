@@ -26,6 +26,15 @@ export class CollectionControllers {
     );
     res.status(200).send(collection);
   }
+  async getCollectionByWineId(req: express.Request, res: express.Response) {
+    const collectionServices = CollectionServices.getInstance();
+    const collection = await collectionServices.readByWineId(
+      Number(req.body.cellarId),
+      Number(req.params.wineId),
+      {}
+    );
+    res.status(200).send(collection);
+  }
 
   async createCollection(req: express.Request, res: express.Response) {
     const collectionServices = CollectionServices.getInstance();

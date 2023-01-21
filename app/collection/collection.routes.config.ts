@@ -20,6 +20,10 @@ export class CollectionRoutes
         collectionMiddleware.validateCollectionQueryParamExists,
         collectionControllers.listCollections
     ]);
+    this.app.post("/api/collection/wine/:wineId", [
+      collectionMiddleware.validateCollectionWinePOST,
+      collectionControllers.getCollectionByWineId
+  ]);
     this.app.post("/api/collection", [
         collectionMiddleware.validateCollectionPOST,
         collectionMiddleware.validateWineVintageExists,

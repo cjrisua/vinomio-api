@@ -24,7 +24,10 @@ export function CollectionSchemaFactory ()  {
                   merchant: Joi.object(),
                   purchasedOn: Joi.date().default(Date.now),
                   deliverBy: Joi.date().default(Date.now)
-                })) 
+                })),
+        GetByWinePOST: Joi.object().keys({
+          cellarId : Joi.number().required(),
+        }) 
       };
       return schemas;
 }
