@@ -25,7 +25,10 @@ export class AllocationDaos {
     private static Allocation = AllocationFactory(dbConfig);
 
     private static instance: AllocationDaos;
-
+    private catchError = (error: any) => {
+        Logger.error(error);
+        throw error;
+      };
 
     constructor(){}
     
@@ -118,17 +121,25 @@ export class AllocationDaos {
         return result;
     }
     async listAllocations(limit: number = 25, page: number = 0,  filter:IFilter){
-        const allocations = await Allocation.findAll(
+        var results:any;
+        await Allocation.findAll(
             { 
                 offset: page, 
                 limit: limit,
                 include: [
-                    {model: Merchant, as:"merchant", attributes:['id','name','userId','producerId']},
+                    {
+                        model: Merchant, 
+                        as:"merchant", 
+                        attributes:['id','name','userId','producerId'],
+                        where:  filter.where?.merchant__userId ? { userId: filter.where.merchant__userId} : {}
+                    },
                     {model: AllocationEvent, as:"events", include:[{
                         model: AllocationEventOffer
                     }]}]
             } )
-        return allocations;
+            .then(response => results = response )
+            .catch(err => this.catchError(err))
+        return results
     }
     
     async removeAllocationById(allocationId: string){

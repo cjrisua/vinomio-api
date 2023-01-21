@@ -19,12 +19,13 @@ export class AllocationMiddleware  extends CommonMiddlewareConfig{
         const factory = new FilterQueryParamFactory();
         const filterConfig = factory.create(AllocationQueryAttributes);
         const filterStatement = filterByKey(req,filterConfig)
-        const collection = await services.list(RECORD_LIMIT,0,filterStatement);
-        if (collection && collection.length > 0) {
-            next();
-        } else {
-            res.status(404).send({error: `Allocation not found`});
-        }
+        await services.list(RECORD_LIMIT,0,filterStatement)
+        .then((collection:any) =>{
+            Logger.info("")
+            if (collection && collection.length > 0) next()
+            else res.status(404).send({error: `[validateAllocationParamExists] Allocation not found`});
+        })
+        .catch((error) => {res.status(500).send({error:"Server Error"}) })
     }
     async calculatePages(req: express.Request, res: express.Response, next: express.NextFunction){
         const services = AllocationServices.getInstance();
@@ -41,11 +42,12 @@ export class AllocationMiddleware  extends CommonMiddlewareConfig{
         if(Object.keys(filterStatement).length == 0)
             next();
         else{
-            const result = await services.list( RECORD_LIMIT,0,filterStatement);
-            if (result && result.length > 0)
-                next();
-            else
-                res.status(404).send({error: `Wine not found`});
+            await services.list( RECORD_LIMIT,0,filterStatement)
+            .then((collection:any) =>{
+                if (collection && collection.length > 0) next()
+                else res.status(404).send({error: `[validateAllocationQueryParamExists] Allocation not found`});
+            })
+            .catch((error) => {res.status(500).send({error:"Server Error"}) })
         }
     }
     async validateAllocationExists(req: express.Request, res: express.Response, next: express.NextFunction) {

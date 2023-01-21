@@ -32,12 +32,22 @@ export class AllocationControllers {
     const services = AllocationServices.getInstance();
     const factory = new FilterQueryParamFactory();
     const filterConfig = factory.create(AllocationQueryAttributes);
-    const result = await services.list(RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig));
-    res.status(200).send({
+    await services.list(RECORD_LIMIT, req.body.offset, filterByKey(req,filterConfig))
+    .then((result)=>{
+      res.status(200).send({
         count:+req.body.count,
         pages:+req.body.pages,
         rows:result
       });
+    })
+    .catch((exception)=>{
+      res.status(404).send({
+        count:0,
+        pages:0,
+        rows:[],
+        error:exception
+      });
+    })
   }
 
   async getAllocationById(req: express.Request, res: express.Response) {
